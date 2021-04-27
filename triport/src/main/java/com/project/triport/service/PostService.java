@@ -2,31 +2,29 @@ package com.project.triport.service;
 
 import com.project.triport.repository.PostRepository;
 import com.project.triport.responseDto.MsgResponseDto;
-import com.project.triport.responseDto.PostDetailResponseDto;
-import com.project.triport.responseDto.PostListResponseDto;
+import com.project.triport.responseDto.DetailResponseDto;
+import com.project.triport.responseDto.ListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
 
-    public PostListResponseDto readPostsAll(){
-        return new PostListResponseDto();
+    public ListResponseDto readPostsAll(){
+        return new ListResponseDto(true,new ArrayList<>(),"무야호",true);
     }
 
-    public PostDetailResponseDto readPost(){
-        return new PostDetailResponseDto();
+    public DetailResponseDto readPost(){
+        return new DetailResponseDto();
     }
 
-    public PostListResponseDto readPostsUser(){
-        return new PostListResponseDto();
+    public ListResponseDto readPostsUser(){
+        return new ListResponseDto(true,3,"last 없이");
     }
 
     public MsgResponseDto createPost(){

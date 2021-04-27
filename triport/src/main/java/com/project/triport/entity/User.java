@@ -1,5 +1,6 @@
 package com.project.triport.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.triport.requestDto.UserDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

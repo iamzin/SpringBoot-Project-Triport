@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PostCommentService {
-    public MsgResponseDto createComment(){return new MsgResponseDto(true,"댓글 작성 완료!");}
+    public MsgResponseDto createComment(){
+
+        return new MsgResponseDto(true,"댓글 작성 완료!");
+    }
 
     public MsgResponseDto updateComment(){return new MsgResponseDto(true,"댓글 수정 완료!");}
 

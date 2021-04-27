@@ -32,4 +32,12 @@ public class PostComment extends Timestamped{
         this.post = post;
     }
 
+    public class PostCommentInner{
+        private String commentContents;
+
+
+        public PostCommentInner(){
+            this.commentContents =
+        }
+    }
 }
