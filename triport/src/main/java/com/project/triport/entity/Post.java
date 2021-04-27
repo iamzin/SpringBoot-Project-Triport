@@ -20,7 +20,7 @@ public class Post extends Timestamped {
     private String description;
 
     @Column(nullable = false)
-    private String imgURL;
+    private String imgUrl;
 
     @Column(nullable = false)
     private Long likeNum;
@@ -33,15 +33,22 @@ public class Post extends Timestamped {
     private User user;
 
     @OneToMany
-    @JoinColumn
+    @JoinColumn(name = "POST_ID")
     private List<PostComment> commentList;
 
     public Post(PostDto requestDto, User user){
         this.description = requestDto.getDescription();
-        this.imgURL = requestDto.getImgURL();
+        this.imgUrl = requestDto.getImgURL();
         this.likeNum = requestDto.getLikeNum();
         this.commentNum = requestDto.getCommentNum();
         this.user = user;
+    }
+
+    public void update(PostDto requestDto){
+        this.description = requestDto.getDescription();
+        this.imgUrl = requestDto.getImgURL();
+        this.likeNum = requestDto.getLikeNum();
+        this.commentNum = requestDto.getCommentNum();
     }
 
 }

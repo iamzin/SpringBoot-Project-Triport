@@ -1,4 +1,7 @@
 package com.project.triport.repository;
 
-public interface PostCommentRepository {
+import com.project.triport.entity.PostComment;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PostCommentRepository extends JpaRepository<PostComment, Long> {
 }

@@ -15,12 +15,12 @@ public class PostListResponseDto { // 10개씩 내보내야 함. page 처리 필
     private String msg;
     private Boolean last; // 마지막 postId일 때 true, 이외에는 false
 
-    public PostListResponseDto(Boolean ok, List<PostResponseDto> results, String msg, Boolean last){
-        this.ok = ok;
-        this.results = results;
-        this.msg = msg;
-        this.last = last;
-    }
+//    public PostListResponseDto(Boolean ok, List<PostResponseDto> results, String msg, Boolean last){
+//        this.ok = ok;
+//        this.results = results;
+//        this.msg = msg;
+//        this.last = last;
+//    }
 
     public static class PostResponseDto{
         // post 관련 전달 사항
@@ -43,10 +43,10 @@ public class PostListResponseDto { // 10개씩 내보내야 함. page 처리 필
         }
     }
 
-    public List<PostResponseDto> makePostResponseDtoList(List<Post> postList){
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-
-
-        return postResponseDtoList;
-    }
+//    public List<PostResponseDto> makePostResponseDtoList(List<Post> postList){
+//        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+//
+//
+//        return postResponseDtoList;
+//    }
 }
