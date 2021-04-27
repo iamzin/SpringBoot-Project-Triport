@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class PostListResponseDto {
+public class PostListResponseDto { // 10개씩 내보내야 함. page 처리 필요.
 
     private Boolean ok;
     private List<PostResponseDto> results;

@@ -2,7 +2,6 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Post;
 import com.project.triport.repository.PostRepository;
-import com.project.triport.responseDto.ObjectResponseDto;
 import com.project.triport.responseDto.PostListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
 package com.project.triport.repository;
 
-public interface ObjectRepository {
+public interface PostCommentRepository {
 }

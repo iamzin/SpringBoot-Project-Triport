@@ -1,6 +1,6 @@
 package com.project.triport.controller;
 
-import com.project.triport.responseDto.ObjectResponseDto;
+import com.project.triport.responseDto.PostListResponseDto;
 import com.project.triport.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/api/posts")
-    public ObjectResponseDto readPostsAll(){
+    public PostListResponseDto readPostsAll(){
         return postService.readPostsAll();
     }
 

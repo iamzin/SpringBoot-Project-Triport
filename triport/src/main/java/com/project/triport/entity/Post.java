@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -30,6 +31,10 @@ public class Post extends Timestamped {
     @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
+
+    @OneToMany
+    @JoinColumn
+    private List<PostComment> commentList;
 
     public Post(PostDto requestDto, User user){
         this.description = requestDto.getDescription();
