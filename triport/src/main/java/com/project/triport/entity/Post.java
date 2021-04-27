@@ -1,5 +1,6 @@
 package com.project.triport.entity;
 
+import com.project.triport.requestDto.PostDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,8 +31,12 @@ public class Post extends Timestamped {
     @JoinColumn(nullable = false)
     private User user;
 
-    public Post(PostDto requestDto){
-
+    public Post(PostDto requestDto, User user){
+        this.description = requestDto.getDescription();
+        this.imgURL = requestDto.getImgURL();
+        this.likeNum = requestDto.getLikeNum();
+        this.commentNum = requestDto.getCommentNum();
+        this.user = user;
     }
 
 }

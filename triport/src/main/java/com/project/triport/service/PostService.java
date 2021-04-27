@@ -15,7 +15,9 @@ public class PostService {
     private final PostRepository postRepository;
 
     public PostListResponseDto readPostsAll(){
-        List<Post> Posts = postRepository.findAll();
+
+        // 전체 Post List를 DB에서 불러온다.
+        List<Post> PostList = postRepository.findAll();
 
         return;
     }

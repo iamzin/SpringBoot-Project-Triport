@@ -1,6 +1,7 @@
 package com.project.triport.responseDto;
 
 import com.project.triport.entity.Post;
+import com.project.triport.entity.User;
 import lombok.Getter;
 
 import java.util.ArrayList;
