@@ -8,10 +8,8 @@ public class AccessUserResponseDto {
     // islike 관련 전달 사항
     private Boolean isLike; // 열람하는 user가 좋아요 했으면 true 아니면 false
 
-    public AccessUserResponseDto(Post post, User accessUser){
-//        if()
-//
-//        this.isLike =
+    public AccessUserResponseDto(Boolean isLike) {
+        this.isLike = isLike;
     }
 
     public AccessUserResponseDto(BasicBoard basicBoard, User accessUser){

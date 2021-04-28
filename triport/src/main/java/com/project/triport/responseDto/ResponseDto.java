@@ -15,7 +15,7 @@ public class ResponseDto { // 10개씩 내보내야 함. page 처리 필요.
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean last; // 마지막 postId일 때 true, 이외에는 false
 
-    public ResponseDto(Boolean ok, List<Object> results, String msg, Boolean last){
+    public ResponseDto(Boolean ok, Object results, String msg, Boolean last){
         this.ok = ok;
         this.results = results;
         this.msg = msg;

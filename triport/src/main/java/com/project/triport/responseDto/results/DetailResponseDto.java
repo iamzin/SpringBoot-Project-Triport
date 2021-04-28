@@ -19,10 +19,11 @@ public class DetailResponseDto {
     private List<CommentResponseDto> commentList;
     private AccessUserResponseDto user;
 
-    public DetailResponseDto(Post post, User accessUser) {
+    public DetailResponseDto(Post post, List<CommentResponseDto> commentList, Boolean isLike){
         this.information = new PostInformationResponseDto(post);
         this.author = new AuthorResponseDto(post);
-        this.user = new AccessUserResponseDto(post, accessUser);
+        this.commentList = commentList;
+        this.user = new AccessUserResponseDto(isLike);
     }
 
     public DetailResponseDto(BasicBoard basicBoard, User accessUser, List<CommentResponseDto> commentResponseDtoList) {

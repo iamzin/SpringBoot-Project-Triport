@@ -14,10 +14,10 @@ public class ListResponseDto {
     private AuthorResponseDto author;
     private AccessUserResponseDto user;
 
-    public ListResponseDto(Post post, User accessUser){
+    public ListResponseDto(Post post, Boolean isLike){
         this.information = new PostInformationResponseDto(post);
         this.author = new AuthorResponseDto(post);
-        this.user = new AccessUserResponseDto(post, accessUser);
+        this.user = new AccessUserResponseDto(isLike);
     }
 
     public ListResponseDto(BasicBoard basicBoard, User accessUser){
@@ -25,8 +25,5 @@ public class ListResponseDto {
         this.author = new AuthorResponseDto(basicBoard);
         this.user = new AccessUserResponseDto(basicBoard, accessUser);
     }
-
-
-
 }
 
