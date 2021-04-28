@@ -1,6 +1,6 @@
 package com.project.triport.entity;
 
-import com.project.triport.requestDto.PostDto;
+import com.project.triport.requestDto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,7 +36,7 @@ public class Post extends Timestamped {
     @JoinColumn(name = "POST_ID")
     private List<PostComment> commentList;
 
-    public Post(PostDto requestDto, User user){
+    public Post(PostRequestDto requestDto, User user){
         this.description = requestDto.getDescription();
         this.imgUrl = requestDto.getImgURL();
         this.likeNum = requestDto.getLikeNum();
@@ -44,7 +44,7 @@ public class Post extends Timestamped {
         this.user = user;
     }
 
-    public void update(PostDto requestDto){
+    public void update(PostRequestDto requestDto){
         this.description = requestDto.getDescription();
         this.imgUrl = requestDto.getImgURL();
         this.likeNum = requestDto.getLikeNum();

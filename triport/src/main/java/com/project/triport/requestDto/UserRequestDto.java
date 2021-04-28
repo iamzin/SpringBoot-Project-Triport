@@ -5,7 +5,7 @@ import lombok.Getter;
 import javax.persistence.Column;
 
 @Getter
-public class UserDto {
+public class UserRequestDto {
     private String email;
     private String password;
     private String nickname;
