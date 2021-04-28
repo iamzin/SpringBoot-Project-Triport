@@ -1,8 +1,5 @@
 package com.project.triport.controller;
 
-import com.project.triport.requestDto.BasicBoardRequestDto;
-import com.project.triport.responseDto.BasicBoardDetailResponseDto;
-import com.project.triport.responseDto.BasicBoardListResponseDto;
 //import com.project.triport.responseDto.MsgResponseDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.BasicBoardService;
@@ -18,7 +15,7 @@ public class BasicBoardController {
 
     // Basic 게시글 전체 리스트 조회
     @GetMapping("/api/boards/basic")
-    public BasicBoardListResponseDto getBoardBasicList() {
+    public ResponseDto getBoardBasicList() {
         return basicBoardService.getBasicBoardList();
     }
 

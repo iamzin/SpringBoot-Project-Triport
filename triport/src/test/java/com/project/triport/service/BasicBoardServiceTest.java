@@ -12,7 +12,6 @@ import com.project.triport.repository.UserRepository;
 import com.project.triport.requestDto.BasicBoardCommentRequestDto;
 import com.project.triport.requestDto.BasicBoardRequestDto;
 import com.project.triport.requestDto.UserRequestDto;
-import com.project.triport.responseDto.BasicBoardDetailResponseDto;
 import com.project.triport.responseDto.ResponseDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,42 @@ class BasicBoardServiceTest {
     BasicBoardCommentRepository basicBoardCommentRepository;
 
     @Test
-    public void boardTest() throws Exception {
+    public void basicBoardListTest() throws Exception {
+        //given
+        UserRequestDto userDto1 = new UserRequestDto("cowlsdnr77@naver.com", "1234", "진욱", "profileImgUrl입니다.", "USER");
+        User user1 = new User(userDto1);
+        userRepository.save(user1);
+
+        UserRequestDto userDto2 = new UserRequestDto("rtan@naver.com", "1234", "르탄이", "profileImgUrl입니다.", "USER");
+        User user2 = new User(userDto2);
+        userRepository.save(user2);
+
+        BasicBoardRequestDto basicBoardRequestDto1 = new BasicBoardRequestDto("강릉 앞바다", "강릉 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
+                0L, 1L, "강릉 어딘가");
+        BasicBoard basicBoard1 = new BasicBoard(basicBoardRequestDto1, user1);
+        basicBoardRepository.save(basicBoard1);
+
+        BasicBoardRequestDto basicBoardRequestDto2 = new BasicBoardRequestDto("인천 앞바다", "인천 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
+                0L, 1L, "인천 소래포구");
+        BasicBoard basicBoard2 = new BasicBoard(basicBoardRequestDto2, user2);
+        basicBoardRepository.save(basicBoard2);
+
+        //when
+        ResponseDto responseDto = basicBoardService.getBasicBoardList();
+
+        //then
+        System.out.println(responseDto.getOk());
+        System.out.println(responseDto.getMsg());
+        System.out.println(responseDto.getResults());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY); //json 변환 이슈 해결: https://steady-hello.tistory.com/90
+        String resultJson = objectMapper.writeValueAsString(responseDto);
+        System.out.println(resultJson);
+    }
+
+    @Test
+    public void basicBoardDetailTest() throws Exception {
         //given
         UserRequestDto userDto = new UserRequestDto("cowlsdnr77@naver.com", "1234", "rtan", "profileImgUrl입니다.", "USER");
         User user = new User(userDto);
@@ -64,7 +98,7 @@ class BasicBoardServiceTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY); //json 변환 이슈 해결: https://steady-hello.tistory.com/90
-        String resultJson = objectMapper.writeValueAsString(responseDto.getResults());
+        String resultJson = objectMapper.writeValueAsString(responseDto);
         System.out.println(resultJson);
 
     }
