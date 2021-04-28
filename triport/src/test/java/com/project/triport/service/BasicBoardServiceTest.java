@@ -9,7 +9,7 @@ import com.project.triport.repository.BasicBoardRepository;
 import com.project.triport.repository.UserRepository;
 import com.project.triport.requestDto.BasicBoardCommentRequestDto;
 import com.project.triport.requestDto.BasicBoardRequestDto;
-import com.project.triport.requestDto.UserDto;
+import com.project.triport.requestDto.UserRequestDto;
 import com.project.triport.responseDto.BasicBoardDetailResponseDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ class BasicBoardServiceTest {
     @Test
     public void boardTest() throws Exception {
         //given
-        UserDto userDto = new UserDto("cowlsdnr77@naver.com", "1234", "jinook", "profileImgUrl입니다.", "tripper");
+        UserRequestDto userDto = new UserRequestDto("cowlsdnr77@naver.com", "1234", "rtan", "profileImgUrl입니다.", "USER");
         User user = new User(userDto);
         userRepository.save(user);
 
@@ -51,7 +51,7 @@ class BasicBoardServiceTest {
 
 
         //when
-        BasicBoardDetailResponseDto responseDto = basicBoardService.getBasicBoardDetail(2L); //성공
+        BasicBoardDetailResponseDto responseDto = basicBoardService.getBasicBoardDetail(1L); //성공
 
         //then
         System.out.println(responseDto.getMsg());

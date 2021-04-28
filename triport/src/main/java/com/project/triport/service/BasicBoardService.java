@@ -2,19 +2,15 @@ package com.project.triport.service;
 
 import com.project.triport.entity.BasicBoard;
 import com.project.triport.entity.BasicBoardComment;
-import com.project.triport.entity.BasicBoardLike;
-import com.project.triport.entity.User;
 import com.project.triport.repository.BasicBoardRepository;
-import com.project.triport.requestDto.BasicBoardRequestDto;
-import com.project.triport.requestDto.UserDto;
 import com.project.triport.responseDto.BasicBoardCommentResponseDto;
 import com.project.triport.responseDto.BasicBoardDetailResponseDto;
 import com.project.triport.responseDto.BasicBoardListResponseDto;
-import com.project.triport.responseDto.MsgResponseDto;
+import com.project.triport.responseDto.results.property.AuthorResponseDto;
+import com.project.triport.responseDto.results.property.information.BasicBoardInformationResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -36,7 +32,7 @@ public class BasicBoardService {
             }
         }
 
-        return new BasicBoardListResponseDto(true,results,"모든 basic 게시글 조회에 성공하였습니다.");
+        return new BasicBoardListResponseDto(true, results,"모든 basic 게시글 조회에 성공하였습니다.");
     }
 
     // Basic 게시글 상세 조회
@@ -46,27 +42,16 @@ public class BasicBoardService {
 
         Map<String, Object> map = new HashMap<>();
 
-        // "information": 현재 basic 게시글
+        // DB에서 해당 BasicBoard 조회
         BasicBoard basicBoard = basicBoardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
-        BasicBoardDetailResponseDto.BasicBoardDetailInformationDto basicBoardDetailInformationDto = new BasicBoardDetailResponseDto.BasicBoardDetailInformationDto();
-        basicBoardDetailInformationDto.setBasicId(basicBoard.getId());
-        basicBoardDetailInformationDto.setBasicTitle(basicBoard.getTitle());
-        basicBoardDetailInformationDto.setBasicDescription(basicBoard.getDescription());
-        basicBoardDetailInformationDto.setBasicImgUrl(basicBoard.getImgUrl());
-        basicBoardDetailInformationDto.setBasicVideoUrl(basicBoard.getVideoUrl());
-        basicBoardDetailInformationDto.setBasicLikeNum(basicBoard.getLikeNum()); // 나중에 count 필요
-        basicBoardDetailInformationDto.setBasicCommentNum(basicBoard.getCommentNum()); // 나중에 count 필요
-        basicBoardDetailInformationDto.setBasicAddress(basicBoard.getAddress());
-        basicBoardDetailInformationDto.setModifiedAt(basicBoard.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
 
-        // "author": board의 user 연관관계 -> 게시글 작성자의 nickname, profileImgUrl 가져오기
-        String nickname = basicBoard.getUser().getNickname();
-        String profileImgUrl = basicBoard.getUser().getProfileImgUrl();
-        BasicBoardDetailResponseDto.BasicBoardDetailAuthorDto basicBoardDetailAuthorDto = new BasicBoardDetailResponseDto.BasicBoardDetailAuthorDto();
-        basicBoardDetailAuthorDto.setNickname(nickname);
-        basicBoardDetailAuthorDto.setProfileImgUrl(profileImgUrl);
+        // "information": 현재 basic 게시글 정보
+        BasicBoardInformationResponseDto basicBoardInformationDto = new BasicBoardInformationResponseDto(basicBoard);
+
+        // "author": 현재 basic 게시글의 작성자 정보
+        AuthorResponseDto authorResponseDto = new AuthorResponseDto(basicBoard);
 
         // "user": 현재 로그인한 유저 정보 -> islike 가져오기 위함
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

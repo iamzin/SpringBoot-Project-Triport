@@ -1,7 +1,7 @@
 package com.project.triport.entity;
 
 import com.project.triport.requestDto.BasicBoardRequestDto;
-import com.project.triport.requestDto.UserDto;
+//import com.project.triport.requestDto.UserDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

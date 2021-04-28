@@ -2,20 +2,20 @@ package com.project.triport.responseDto.results;
 
 import com.project.triport.entity.Post;
 import com.project.triport.entity.User;
-import com.project.triport.responseDto.results.property.Author;
-import com.project.triport.responseDto.results.property.information.Information;
-import com.project.triport.responseDto.results.property.information.PostInformation;
-import com.project.triport.responseDto.results.property.AccessUser;
+import com.project.triport.responseDto.results.property.AuthorResponseDto;
+import com.project.triport.responseDto.results.property.information.InformationResponseDto;
+import com.project.triport.responseDto.results.property.information.PostInformationResponseDto;
+import com.project.triport.responseDto.results.property.AccessUserResponseDto;
 
 public class PostResultsDto {
-    private Information information;
-    private Author author;
-    private AccessUser user;
+    private InformationResponseDto information;
+    private AuthorResponseDto authorResponseDto;
+    private AccessUserResponseDto user;
 
     public PostResultsDto(Post post, User accessUser){
-        this.information = new PostInformation(post);
-        this.author = new Author(post);
-        this.user = new AccessUser(post, accessUser);
+        this.information = new PostInformationResponseDto(post);
+        this.authorResponseDto = new AuthorResponseDto(post);
+        this.user = new AccessUserResponseDto(post, accessUser);
     }
 
 

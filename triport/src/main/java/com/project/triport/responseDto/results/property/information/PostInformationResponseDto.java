@@ -4,7 +4,7 @@ import com.project.triport.entity.Post;
 
 import java.time.format.DateTimeFormatter;
 
-public class PostInformation extends Information {
+public class PostInformationResponseDto extends InformationResponseDto {
     // post 관련 전달 사항
     private Long id;
     private String description; // "인천 앞바다 갈매기와 한 컷"
@@ -14,7 +14,7 @@ public class PostInformation extends Information {
     private String modifiedAt; // "2021-04-24T16:25:30.013"
                                 // "yyyy-MM-dd kk:mm"
 
-    public PostInformation(Post post){
+    public PostInformationResponseDto(Post post){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
 
         this.id = post.getId();

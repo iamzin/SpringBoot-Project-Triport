@@ -76,18 +76,18 @@ public class User extends Timestamped implements UserDetails {
         return false;
     }
 
-//    public User(UserRequestDto userRequestDto){
-//        this.email = userRequestDto.getEmail();
-//        this.password = userRequestDto.getPassword();
-//        this.nickname = userRequestDto.getNickname();
-//        this.profileImgUrl = userRequestDto.getProfileImgUrl();
-//        this.role = userRequestDto.getRole();
-//    }
-
-    public User(UserRequestDto userRequestDto) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
+    public User(UserRequestDto userRequestDto){
         this.email = userRequestDto.getEmail();
         this.password = userRequestDto.getPassword();
+        this.nickname = userRequestDto.getNickname();
+        this.profileImgUrl = userRequestDto.getProfileImgUrl();
+        this.role = userRequestDto.getRole();
     }
+
+//    public User(UserRequestDto userRequestDto) {
+//        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//
+//        this.email = userRequestDto.getEmail();
+//        this.password = userRequestDto.getPassword();
+//    }
 }

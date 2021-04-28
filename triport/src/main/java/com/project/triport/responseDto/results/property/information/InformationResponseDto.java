@@ -1,6 +1,6 @@
 package com.project.triport.responseDto.results.property.information;
 
-public class Information {
+public class InformationResponseDto {
     protected Long id;
     protected String description; // "인천 앞바다 갈매기와 한 컷"
     protected String imgUrl; // http://15.165.205.40/images/img1.png
