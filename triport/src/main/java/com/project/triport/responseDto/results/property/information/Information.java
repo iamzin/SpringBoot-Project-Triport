@@ -1,8 +1,13 @@
 package com.project.triport.responseDto.results.property.information;
 
-import com.project.triport.entity.Post;
-
 public class Information {
+    protected Long id;
+    protected String description; // "인천 앞바다 갈매기와 한 컷"
+    protected String imgUrl; // http://15.165.205.40/images/img1.png
+    protected Long likeNum; // Like 총 개수
+    protected Long commentNum; // comment 총 개수
+    protected String modifiedAt; // "2021-04-24T16:25:30.013"
+                                 // "yyyy-MM-dd kk:mm"
 }
 
 //    PostInformation
