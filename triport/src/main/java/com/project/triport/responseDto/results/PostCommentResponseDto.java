@@ -1,4 +1,4 @@
-package com.project.triport.responseDto;
+package com.project.triport.responseDto.results;
 
 import com.project.triport.entity.PostComment;
 import lombok.Getter;
