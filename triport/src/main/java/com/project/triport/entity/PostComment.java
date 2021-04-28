@@ -1,6 +1,6 @@
 package com.project.triport.entity;
 
-import com.project.triport.requestDto.PostCommentDto;
+import com.project.triport.requestDto.PostCommentRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,18 +26,9 @@ public class PostComment extends Timestamped{
     @JoinColumn(nullable = false)
     private Post post;
 
-    public PostComment(PostCommentDto postCommentDto, User user, Post post){
+    public PostComment(PostCommentRequestDto postCommentDto, User user, Post post) {
         this.commentContents = postCommentDto.getCommentContents();
         this.user = user;
         this.post = post;
-    }
-
-    public class PostCommentInner{
-        private String commentContents;
-
-
-        public PostCommentInner(){
-            this.commentContents =
-        }
     }
 }
