@@ -110,6 +110,7 @@ public class BasicBoardService {
 //
 //        BasicBoard basicBoard = new BasicBoard(requestDto, user);
 //        basicBoardRepository.save(basicBoard);
+    //테스트
 //
 //    }
 }

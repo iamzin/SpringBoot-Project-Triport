@@ -40,4 +40,5 @@ out/
 
 
 ### MAC ###
-.DS_STORE
+.DS_STOREapplication.properties
+application.properties
