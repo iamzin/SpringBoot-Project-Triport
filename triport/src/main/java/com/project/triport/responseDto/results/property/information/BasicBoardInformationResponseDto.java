@@ -14,7 +14,7 @@ public class BasicBoardInformationResponseDto extends InformationResponseDto {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
 
         this.id = basicBoard.getId();
-        this.commentNum = basicBoard.getCommentNum();
+        this.description = basicBoard.getDescription();
         this.imgUrl = basicBoard.getImgUrl();
         this.videoUrl = basicBoard.getVideoUrl();
         this.likeNum = basicBoard.getLikeNum();

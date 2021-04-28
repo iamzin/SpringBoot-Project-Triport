@@ -16,7 +16,7 @@ public class PostComment extends Timestamped{
     private Long id;
 
     @Column
-    private String commentContents;
+    private String contents;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -27,7 +27,7 @@ public class PostComment extends Timestamped{
     private Post post;
 
     public PostComment(PostCommentRequestDto postCommentDto, User user, Post post) {
-        this.commentContents = postCommentDto.getCommentContents();
+        this.contents = postCommentDto.getContents();
         this.user = user;
         this.post = post;
     }

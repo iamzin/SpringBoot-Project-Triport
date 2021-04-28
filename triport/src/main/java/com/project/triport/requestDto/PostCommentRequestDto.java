@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class PostCommentRequestDto {
-    private String commentContents;
+    private String contents;
 }
