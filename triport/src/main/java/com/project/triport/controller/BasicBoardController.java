@@ -4,6 +4,7 @@ import com.project.triport.requestDto.BasicBoardRequestDto;
 import com.project.triport.responseDto.BasicBoardDetailResponseDto;
 import com.project.triport.responseDto.BasicBoardListResponseDto;
 //import com.project.triport.responseDto.MsgResponseDto;
+import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.BasicBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,7 @@ public class BasicBoardController {
 
     // 게시글 상세 조회
     @GetMapping("/api/boards/basic/detail/{id}")
-    public BasicBoardDetailResponseDto getBoardBasicDetail(@PathVariable Long id) {
+    public ResponseDto getBoardBasicDetail(@PathVariable Long id) {
         return basicBoardService.getBasicBoardDetail(id);
     }
 

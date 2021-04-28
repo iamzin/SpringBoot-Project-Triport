@@ -1,5 +1,7 @@
 package com.project.triport.service;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.triport.entity.BasicBoard;
 import com.project.triport.entity.BasicBoardComment;
@@ -11,6 +13,7 @@ import com.project.triport.requestDto.BasicBoardCommentRequestDto;
 import com.project.triport.requestDto.BasicBoardRequestDto;
 import com.project.triport.requestDto.UserRequestDto;
 import com.project.triport.responseDto.BasicBoardDetailResponseDto;
+import com.project.triport.responseDto.ResponseDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,12 +54,16 @@ class BasicBoardServiceTest {
 
 
         //when
-        BasicBoardDetailResponseDto responseDto = basicBoardService.getBasicBoardDetail(1L); //성공
+        ResponseDto responseDto = basicBoardService.getBasicBoardDetail(1L);
+//        BasicBoardDetailResponseDto responseDto = basicBoardService.getBasicBoardDetail(1L); //성공
 
         //then
+        System.out.println(responseDto.getOk());
         System.out.println(responseDto.getMsg());
+        System.out.println(responseDto.getResults());
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY); //json 변환 이슈 해결: https://steady-hello.tistory.com/90
         String resultJson = objectMapper.writeValueAsString(responseDto.getResults());
         System.out.println(resultJson);
 

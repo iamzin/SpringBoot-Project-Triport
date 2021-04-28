@@ -6,7 +6,10 @@ import com.project.triport.repository.BasicBoardRepository;
 import com.project.triport.responseDto.BasicBoardCommentResponseDto;
 import com.project.triport.responseDto.BasicBoardDetailResponseDto;
 import com.project.triport.responseDto.BasicBoardListResponseDto;
+import com.project.triport.responseDto.ResponseDto;
+import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.property.AuthorResponseDto;
+import com.project.triport.responseDto.results.property.CommentResponseDto;
 import com.project.triport.responseDto.results.property.information.BasicBoardInformationResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +39,7 @@ public class BasicBoardService {
     }
 
     // Basic 게시글 상세 조회
-    public BasicBoardDetailResponseDto getBasicBoardDetail(Long id) {
+    public ResponseDto getBasicBoardDetail(Long id) {
 
         BasicBoardDetailResponseDto basicBoardDetailResponseDto = new BasicBoardDetailResponseDto();
 
@@ -60,30 +63,33 @@ public class BasicBoardService {
 
         // "commentList": 현재 게시글의 comment 리스트
         List<BasicBoardComment> basicBoardCommentList = basicBoardCommentService.getBasicBoardCommentList(basicBoard.getId());
-        List<BasicBoardCommentResponseDto> basicBoardCommentResponseDtoList = new ArrayList<>();
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
         // comment 리스트 -> comment DTO 로 변경
         for (BasicBoardComment basicBoardComment : basicBoardCommentList) {
-            BasicBoardCommentResponseDto basicBoardCommentResponseDto = new BasicBoardCommentResponseDto();
-            basicBoardCommentResponseDto.setCommentId(basicBoardComment.getId());
-            basicBoardCommentResponseDto.setNickname(basicBoardComment.getUser().getNickname());
-            basicBoardCommentResponseDto.setProfileImgUrl(basicBoardComment.getUser().getProfileImgUrl());
-            basicBoardCommentResponseDto.setContents(basicBoardComment.getContents());
-            basicBoardCommentResponseDtoList.add(basicBoardCommentResponseDto);
+            CommentResponseDto commentResponseDto = new CommentResponseDto(basicBoardComment);
+            commentResponseDtoList.add(commentResponseDto);
         }
 
-        map.put("information", basicBoardDetailInformationDto);
-        map.put("author", basicBoardDetailAuthorDto);
-        map.put("commentList", basicBoardCommentResponseDtoList);
+        DetailResponseDto detailResponseDto = new DetailResponseDto(basicBoard, basicBoard.getUser(), commentResponseDtoList); // user 파리미터는 변경되야함
 
-        basicBoardDetailResponseDto.setOk(true);
-        basicBoardDetailResponseDto.setResults(map);
-        basicBoardDetailResponseDto.setMsg("특정 Basic 게시글 조회에 성공하였습니다.");
+        return new ResponseDto(true, detailResponseDto,"특정 Basic 게시글 조회에 성공하였습니다.");
 
-        return basicBoardDetailResponseDto;
+
+
+//        map.put("information", basicBoardDetailInformationDto);
+//        map.put("author", basicBoardDetailAuthorDto);
+//        map.put("commentList", basicBoardCommentResponseDtoList);
+//
+//        basicBoardDetailResponseDto.setOk(true);
+//        basicBoardDetailResponseDto.setResults(map);
+//        basicBoardDetailResponseDto.setMsg("특정 Basic 게시글 조회에 성공하였습니다.");
+//
+//        return basicBoardDetailResponseDto;
     }
 
-//    // 게시글 작성
+
+    // 게시글 작성
 //    public MsgResponseDto createBasicBoard(BasicBoardRequestDto requestDto) {
 //        // "user": 현재 로그인한 유저 정보 -> islike 가져오기 위함
 ////        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
