@@ -50,7 +50,7 @@ public class BasicBoardCommentService {
                 () -> new IllegalArgumentException("해당 댓글 정보가 없습니다.")
         );
 
-        // "user": 현재 로그인한 유저 정보 -> 댓글 작성자가 맞는지 검증 필요
+        // "user": 현재 로그인한 유저 정보 -> 댓글 작성자가 맞는지 검증 필요!
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
 
