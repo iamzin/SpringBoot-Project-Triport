@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class PostComment extends Timestamped{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
@@ -26,9 +26,12 @@ public class PostComment extends Timestamped{
     @JoinColumn(nullable = false)
     private Post post;
 
-    public PostComment(Post post, PostCommentRequestDto postCommentDto, User user) {
-        this.contents = postCommentDto.getContents();
+    public PostComment(Post post, PostCommentRequestDto requestDto, User user) {
+        this.contents = requestDto.getContents();
         this.user = user;
         this.post = post;
+    }
+    public void update(PostCommentRequestDto requestDto){
+        this.contents = requestDto.getContents();
     }
 }

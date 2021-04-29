@@ -16,14 +16,18 @@ public class PostCommentController {
     private final PostCommentService postCommentService;
 
     @PostMapping("/api/posts/comments/{postId}")
-    public ResponseDto createComment(@PathVariable Long postId, @RequestBody PostCommentRequestDto requestDto, User user){
+    public ResponseDto createComment(@PathVariable Long postId, @RequestBody PostCommentRequestDto requestDto, User user) {
         return postCommentService.createComment(postId, requestDto, user);
     }
 
     @PutMapping("/api/posts/comments/{commentId}")
-    public ResponseDto updateComment(){return postCommentService.updateComment();}
+    public ResponseDto updateComment(@PathVariable Long commentId, @RequestBody PostCommentRequestDto requestDto) {
+        return postCommentService.updateComment(commentId, requestDto);
+    }
 
     @DeleteMapping("/api/posts/comments/{commentId}")
-    public ResponseDto deleteComment(){return postCommentService.deleteComment();}
+    public ResponseDto deleteComment(@PathVariable Long commentId) {
+        return postCommentService.deleteComment(commentId);
+    }
 
 }

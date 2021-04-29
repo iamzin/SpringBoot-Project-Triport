@@ -3,17 +3,20 @@ package com.project.triport.entity;
 import com.project.triport.requestDto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
+@ToString
 @NoArgsConstructor
 public class Post extends Timestamped {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -42,6 +45,7 @@ public class Post extends Timestamped {
         this.likeNum = requestDto.getLikeNum();
         this.commentNum = requestDto.getCommentNum();
         this.user = user;
+        this.commentList = new ArrayList<>();
     }
 
     public void update(PostRequestDto requestDto){
@@ -51,4 +55,21 @@ public class Post extends Timestamped {
         this.commentNum = requestDto.getCommentNum();
     }
 
+    public void addPostComment(PostComment postComment) {
+        this.commentList.add(postComment);
+        this.commentNum++;
+    }
+
+    public void removePostComment(PostComment postComment) {
+        this.commentList.remove(postComment);
+        this.commentNum--;
+    }
+
+    public void plusLikeNum(){
+        this.likeNum++;
+    }
+
+    public void minusLikeNum(){
+        this.likeNum--;
+    }
 }
