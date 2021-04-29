@@ -22,4 +22,9 @@ public class BasicBoardLike extends Timestamped{
     @ManyToOne
     @JoinColumn(name = "basic_board_id")
     private BasicBoard basicBoard;
+
+    public BasicBoardLike(BasicBoard basicBoard, User user) {
+        this.basicBoard = basicBoard;
+        this.user = user;
+    }
 }

@@ -46,8 +46,7 @@ class BasicBoardCommentServiceTest {
         User user1 = new User(userDto1);
         userRepository.save(user1);
 
-        BasicBoardRequestDto basicBoardRequestDto1 = new BasicBoardRequestDto("강릉 앞바다", "강릉 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, "강릉 어딘가");
+        BasicBoardRequestDto basicBoardRequestDto1 = new BasicBoardRequestDto("강릉 앞바다", "강릉 앞바다 멋지당", "imgurl입니다.", "videourl입니다.", "강릉 어딘가");
         BasicBoard basicBoard1 = new BasicBoard(basicBoardRequestDto1, user1);
         basicBoardRepository.save(basicBoard1);
 
@@ -74,8 +73,7 @@ class BasicBoardCommentServiceTest {
         User user1 = new User(userDto1);
         userRepository.save(user1);
 
-        BasicBoardRequestDto basicBoardRequestDto1 = new BasicBoardRequestDto("강릉 앞바다", "강릉 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, "강릉 어딘가");
+        BasicBoardRequestDto basicBoardRequestDto1 = new BasicBoardRequestDto("강릉 앞바다", "강릉 앞바다 멋지당", "imgurl입니다.", "videourl입니다.","강릉 어딘가");
         BasicBoard basicBoard1 = new BasicBoard(basicBoardRequestDto1, user1);
         basicBoardRepository.save(basicBoard1);
 

@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BasicBoardLikeRepository extends JpaRepository<BasicBoardLike, Long> {
     boolean existsByBasicBoardAndUser(BasicBoard basicBoard, User user);
+    void deleteByBasicBoardAndUser(BasicBoard basicBoard, User user);
 }

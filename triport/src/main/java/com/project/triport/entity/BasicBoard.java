@@ -46,7 +46,7 @@ public class BasicBoard extends Timestamped { //basicBoard에서 지도 주소 �
         this.description = basicBoardRequestDto.getDescription();
         this.imgUrl = basicBoardRequestDto.getImgUrl();
         this.videoUrl = basicBoardRequestDto.getVideoUrl();
-        this.likeNum = basicBoardRequestDto.getLikeNum();
+        this.likeNum = 0L;
         this.commentNum = 0L;
         this.address = basicBoardRequestDto.getAddress();
         this.user = user;
@@ -57,11 +57,14 @@ public class BasicBoard extends Timestamped { //basicBoard에서 지도 주소 �
         this.description = basicBoardRequestDto.getDescription();
         this.imgUrl = basicBoardRequestDto.getImgUrl();
         this.videoUrl = basicBoardRequestDto.getVideoUrl();
-        this.likeNum = basicBoardRequestDto.getLikeNum();
         this.address = basicBoardRequestDto.getAddress();
     }
 
     public void updateCommentNum(int count) {
         this.commentNum += count;
+    }
+
+    public void updateLikeNum(int count) {
+        this.likeNum += count;
     }
 }
