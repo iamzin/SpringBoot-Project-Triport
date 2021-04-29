@@ -46,18 +46,22 @@ public class PostService {
     }
 
     public ResponseDto readPost(Long postId, User user){
-        // DetailPost 불러온다.
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("post가 존재하지 않습니다.")
-        );
-        // 접근 User의 좋아요 상태를 확인한다.
-        boolean isLike = postLikeRepository.existsByPostAndUser(post,user);
-        // 해당 post에 작성되어 있는 댓글들을 불러와 response 양식에 맞게 정리한다.
-        List<PostComment> commentList = post.getCommentList();
-        List<CommentResponseDto> commentResponseDtoList = postCommentService.makeCommentResponseDtoList(commentList);
-        // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다..
-        DetailResponseDto detailResponseDto = new DetailResponseDto(post,commentResponseDtoList,isLike);
-        return new ResponseDto(true, detailResponseDto, "post detail 불러오기 성공");
+        try {
+            // DetailPost 불러온다.
+            Post post = postRepository.findById(postId).orElseThrow(
+                    () -> new IllegalArgumentException("post가 존재하지 않습니다.")
+            );
+            // 접근 User의 좋아요 상태를 확인한다.
+            boolean isLike = postLikeRepository.existsByPostAndUser(post, user);
+            // 해당 post에 작성되어 있는 댓글들을 불러와 response 양식에 맞게 정리한다.
+            List<PostComment> commentList = post.getCommentList();
+            List<CommentResponseDto> commentResponseDtoList = postCommentService.makeCommentResponseDtoList(commentList);
+            // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다..
+            DetailResponseDto detailResponseDto = new DetailResponseDto(post, commentResponseDtoList, isLike);
+            return new ResponseDto(true, detailResponseDto, "post detail 불러오기 성공");
+        } catch(IllegalArgumentException e){
+            return new ResponseDto(false, e.getMessage());
+        }
     }
 
     public ResponseDto readPostsUser(User user){
@@ -91,23 +95,4 @@ public class PostService {
         post.update(requestDto);
         return new ResponseDto(true, "포스트 수정 완료!");
     }
-
-    @Transactional
-    public void addPostComment(Post post, PostComment postComment){
-        post.addPostComment(postComment);
-    }
-    @Transactional
-    public void removePostComment(Post post, PostComment postComment){
-        post.removePostComment(postComment);
-    }
-    @Transactional
-    public void plusLikeNum(Post post){
-        post.plusLikeNum();
-    }
-    @Transactional
-    public void minusLikeNum(Post post){
-        post.minusLikeNum();
-    }
-
-
 }

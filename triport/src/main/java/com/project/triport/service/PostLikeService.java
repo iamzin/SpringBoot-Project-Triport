@@ -9,6 +9,7 @@ import com.project.triport.responseDto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -17,8 +18,8 @@ public class PostLikeService {
 
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
-    private final PostService postService;
 
+    @Transactional
     public ResponseDto creatDeletePostLike(Long postId, User user){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 post 입니다.")
@@ -26,12 +27,12 @@ public class PostLikeService {
         boolean isExist = postLikeRepository.existsByPostAndUser(post, user);
         if(isExist){
             postLikeRepository.deleteByPostAndUser(post, user);
-            postService.plusLikeNum(post);
+            post.plusLikeNum();
             return new ResponseDto(true, "좋아요 취소");
         }else{
             PostLike postLike = new PostLike(post, user);
             postLikeRepository.save(postLike);
-            postService.minusLikeNum(post);
+            post.minusLikeNum();
             return new ResponseDto(true, "좋아요 완료");
         }
     }

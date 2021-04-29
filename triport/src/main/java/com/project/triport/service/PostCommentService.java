@@ -11,6 +11,7 @@ import com.project.triport.responseDto.results.property.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,15 +20,15 @@ import java.util.List;
 public class PostCommentService {
     private final PostCommentRepository postCommentRepository;
     private final PostRepository postRepository;
-    private final PostService postService;
 
+    @Transactional
     public ResponseDto createComment(Long postId, PostCommentRequestDto requestDto, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 post 입니다.")
         );
         PostComment postComment = new PostComment(post, requestDto, user);
         postCommentRepository.save(postComment);
-        postService.addPostComment(post, postComment);
+        post.addPostComment(postComment);
         return new ResponseDto(true, "댓글 작성 완료!");
     }
 
@@ -39,12 +40,13 @@ public class PostCommentService {
         return new ResponseDto(true, "댓글 수정 완료!");
     }
 
+    @Transactional
     public ResponseDto deleteComment(Long commentId) {
         PostComment postComment = postCommentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 댓글 입니다.")
         );
         Post post = postComment.getPost();
-        postService.removePostComment(post,postComment);
+        post.removePostComment(postComment);
         postCommentRepository.deleteById(commentId);
         return new ResponseDto(true, "댓글을 삭제 하였습니다.");
     }
