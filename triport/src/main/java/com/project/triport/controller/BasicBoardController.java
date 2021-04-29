@@ -1,6 +1,8 @@
 package com.project.triport.controller;
 
 //import com.project.triport.responseDto.MsgResponseDto;
+import com.project.triport.entity.User;
+import com.project.triport.requestDto.BasicBoardRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.BasicBoardService;
 import lombok.RequiredArgsConstructor;
@@ -15,27 +17,41 @@ public class BasicBoardController {
 
     // Basic 게시글 전체 리스트 조회
     @GetMapping("/api/boards/basic")
-    public ResponseDto getBoardBasicList() {
-        return basicBoardService.getBasicBoardList();
+    public ResponseDto getBasicBoardList(User user, @RequestParam int page, @RequestParam String filter) {
+        return basicBoardService.getBasicBoardList(user, page, filter);
     }
 
     // 게시글 상세 조회
-    @GetMapping("/api/boards/basic/detail/{id}")
-    public ResponseDto getBoardBasicDetail(@PathVariable Long id) {
-        return basicBoardService.getBasicBoardDetail(id);
+    @GetMapping("/api/boards/basic/detail/{basicId}")
+    public ResponseDto getBasicBoardDetail(User user, @PathVariable Long basicId) {
+        return basicBoardService.getBasicBoardDetail(user, basicId);
     }
 
-//    @GetMapping("/api/boards/basic/user")
-
-//    @PostMapping("/api/board/basic")
-//    public MsgResponseDto createBasicBoard(@RequestBody BasicBoardRequestDto requestDto) {
-//        return basicBoardService.createBasicBoard(requestDto);
-//    }
-
-//    @PostMapping("/api/boards/basic/photo")
-//    @PostMapping("/api/boards/basic/video")
+    // 로그인한 User가 작성한 전체 게시글 리스트 조회
+    @GetMapping("/api/boards/basic/user")
+    public ResponseDto getBasicBoardListFromUser(User user) {
+        return basicBoardService.getBasicBoardListCreatedByUser(user);
+    }
 
 
-//    @PutMapping("/api/boards/basic/${board_id}")
-//    @DeleteMapping("/api/boards/basic/${board_id}")
+    // 게시글 작성
+    @PostMapping("/api/board/basic")
+    public ResponseDto createBasicBoard(User user, @RequestBody BasicBoardRequestDto requestDto) {
+        return basicBoardService.createBasicBoard(user, requestDto);
+    }
+
+    // 게시글 수정
+    @PutMapping("/api/boards/basic/{boardId}")
+    public ResponseDto updateBasicBoard(@PathVariable Long basicId, @RequestBody BasicBoardRequestDto requestDto) {
+        return basicBoardService.updateBasicBoard(basicId, requestDto);
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/api/boards/basic/{boardId}")
+    public ResponseDto deleteBasicBoard(@PathVariable Long basicId) {
+        return basicBoardService.deleteBasicBoard(basicId);
+    }
+
+    //    @PostMapping("/api/boards/basic/photo")
+    //    @PostMapping("/api/boards/basic/video")
 }

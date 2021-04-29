@@ -11,10 +11,4 @@ public class AccessUserResponseDto {
     public AccessUserResponseDto(Boolean isLike) {
         this.isLike = isLike;
     }
-
-    public AccessUserResponseDto(BasicBoard basicBoard, User accessUser){
-//        if()
-//
-//        this.isLike =
-    }
 }

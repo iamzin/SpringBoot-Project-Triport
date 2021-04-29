@@ -20,10 +20,10 @@ public class ListResponseDto {
         this.user = new AccessUserResponseDto(isLike);
     }
 
-    public ListResponseDto(BasicBoard basicBoard, User accessUser){
+    public ListResponseDto(BasicBoard basicBoard, Boolean isLike){
         this.information = new BasicBoardInformationResponseDto(basicBoard);
         this.author = new AuthorResponseDto(basicBoard);
-        this.user = new AccessUserResponseDto(basicBoard, accessUser);
+        this.user = new AccessUserResponseDto(isLike);
     }
 }
 

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class BasicBoard extends Timestamped { //basicBoard에서 지도 주소 값 column 필요
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -50,5 +50,15 @@ public class BasicBoard extends Timestamped { //basicBoard에서 지도 주소 �
         this.commentNum = basicBoardRequestDto.getCommentNum();
         this.address = basicBoardRequestDto.getAddress();
         this.user = user;
+    }
+
+    public void update(BasicBoardRequestDto basicBoardRequestDto) {
+        this.title = basicBoardRequestDto.getTitle();
+        this.description = basicBoardRequestDto.getDescription();
+        this.imgUrl = basicBoardRequestDto.getImgUrl();
+        this.videoUrl = basicBoardRequestDto.getVideoUrl();
+        this.likeNum = basicBoardRequestDto.getLikeNum();
+        this.commentNum = basicBoardRequestDto.getCommentNum();
+        this.address = basicBoardRequestDto.getAddress();
     }
 }
