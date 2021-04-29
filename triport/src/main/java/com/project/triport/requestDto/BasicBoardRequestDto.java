@@ -11,6 +11,5 @@ public class BasicBoardRequestDto {
     private String imgUrl;
     private String videoUrl;
     private Long likeNum;
-    private Long commentNum;
     private String address;
 }

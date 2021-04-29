@@ -46,12 +46,12 @@ class BasicBoardServiceTest {
         userRepository.save(user2);
 
         BasicBoardRequestDto basicBoardRequestDto1 = new BasicBoardRequestDto("강릉 앞바다", "강릉 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "강릉 어딘가");
+                0L, "강릉 어딘가");
         BasicBoard basicBoard1 = new BasicBoard(basicBoardRequestDto1, user1);
         basicBoardRepository.save(basicBoard1);
 
         BasicBoardRequestDto basicBoardRequestDto2 = new BasicBoardRequestDto("인천 앞바다", "인천 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "인천 소래포구");
+                0L, "인천 소래포구");
         BasicBoard basicBoard2 = new BasicBoard(basicBoardRequestDto2, user2);
         basicBoardRepository.save(basicBoard2);
 
@@ -77,7 +77,7 @@ class BasicBoardServiceTest {
         userRepository.save(user);
 
         BasicBoardRequestDto basicBoardRequestDto = new BasicBoardRequestDto("인천 앞바다", "인천 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "인천 소래포구");
+                0L,"인천 소래포구");
         BasicBoard basicBoard = new BasicBoard(basicBoardRequestDto, user);
         basicBoardRepository.save(basicBoard);
 
@@ -114,17 +114,17 @@ class BasicBoardServiceTest {
         userRepository.save(user2);
 
         BasicBoardRequestDto basicBoardRequestDto1 = new BasicBoardRequestDto("강릉 앞바다", "강릉 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "강릉 어딘가");
+                0L,"강릉 어딘가");
         BasicBoard basicBoard1 = new BasicBoard(basicBoardRequestDto1, user1);
         basicBoardRepository.save(basicBoard1);
 
         BasicBoardRequestDto basicBoardRequestDto2 = new BasicBoardRequestDto("여수 앞바다", "여수 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "여수시");
+                0L, "여수시");
         BasicBoard basicBoard2 = new BasicBoard(basicBoardRequestDto2, user1);
         basicBoardRepository.save(basicBoard2);
 
         BasicBoardRequestDto basicBoardRequestDto3 = new BasicBoardRequestDto("인천 앞바다", "인천 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "인천 소래포구");
+                0L,"인천 소래포구");
         BasicBoard basicBoard3 = new BasicBoard(basicBoardRequestDto3, user2);
         basicBoardRepository.save(basicBoard3);
 
@@ -149,7 +149,7 @@ class BasicBoardServiceTest {
         userRepository.save(user);
 
         BasicBoardRequestDto basicBoardRequestDto = new BasicBoardRequestDto("인천 앞바다", "인천 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "인천 소래포구");
+                0L,"인천 소래포구");
 
         //when
         ResponseDto responseDto = basicBoardService.createBasicBoard(user, basicBoardRequestDto);
@@ -169,14 +169,14 @@ class BasicBoardServiceTest {
         userRepository.save(user);
 
         BasicBoardRequestDto basicBoardRequestDto = new BasicBoardRequestDto("인천 앞바다", "인천 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "인천 소래포구");
+                0L,"인천 소래포구");
 
         basicBoardService.createBasicBoard(user, basicBoardRequestDto);
 
         BasicBoardRequestDto inputDto = new BasicBoardRequestDto("제주 앞바다", "제주 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "제주시");
+                0L,"제주시");
         //when
-        ResponseDto responseDto = basicBoardService.updateBasicBoard(1L, inputDto);
+        ResponseDto responseDto = basicBoardService.updateBasicBoard(user,1L, inputDto);
 
         //then
         ObjectMapper objectMapper = new ObjectMapper();
@@ -193,12 +193,12 @@ class BasicBoardServiceTest {
         userRepository.save(user);
 
         BasicBoardRequestDto basicBoardRequestDto = new BasicBoardRequestDto("인천 앞바다", "인천 앞바다 멋지당", "imgurl입니다.", "videourl입니다.",
-                0L, 1L, "인천 소래포구");
+                0L,"인천 소래포구");
 
         basicBoardService.createBasicBoard(user, basicBoardRequestDto);
 
         //when
-        ResponseDto responseDto = basicBoardService.deleteBasicBoard(1L);
+        ResponseDto responseDto = basicBoardService.deleteBasicBoard(user,1L);
 
         //then
         ObjectMapper objectMapper = new ObjectMapper();

@@ -29,4 +29,8 @@ public class BasicBoardComment extends Timestamped{
         this.basicBoard = basicBoard;
         this.user = user;
     }
+
+    public void update(BasicBoardCommentRequestDto basicBoardCommentRequestDto) {
+        this.contents = basicBoardCommentRequestDto.getCommentContents();
+    }
 }

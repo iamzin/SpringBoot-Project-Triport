@@ -41,15 +41,15 @@ public class BasicBoardController {
     }
 
     // 게시글 수정
-    @PutMapping("/api/boards/basic/{boardId}")
-    public ResponseDto updateBasicBoard(@PathVariable Long basicId, @RequestBody BasicBoardRequestDto requestDto) {
-        return basicBoardService.updateBasicBoard(basicId, requestDto);
+    @PutMapping("/api/boards/basic/{basicId}")
+    public ResponseDto updateBasicBoard(User user, @PathVariable Long basicId, @RequestBody BasicBoardRequestDto requestDto) {
+        return basicBoardService.updateBasicBoard(user, basicId, requestDto);
     }
 
     // 게시글 삭제
-    @DeleteMapping("/api/boards/basic/{boardId}")
-    public ResponseDto deleteBasicBoard(@PathVariable Long basicId) {
-        return basicBoardService.deleteBasicBoard(basicId);
+    @DeleteMapping("/api/boards/basic/{basicId}")
+    public ResponseDto deleteBasicBoard(User user, @PathVariable Long basicId) {
+        return basicBoardService.deleteBasicBoard(user, basicId);
     }
 
     //    @PostMapping("/api/boards/basic/photo")

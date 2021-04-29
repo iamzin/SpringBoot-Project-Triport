@@ -33,7 +33,7 @@ public class BasicBoardService {
     public ResponseDto getBasicBoardList(User user, int page, String filter) {
 
         // page 관련 request 설정
-        PageRequest pageRequest = PageRequest.of(page-1,5, Sort.by(Sort.Direction.DESC, filter));
+        PageRequest pageRequest = PageRequest.of(page-1,10, Sort.by(Sort.Direction.DESC, filter));
 
         // 페이징 처리된 BasicBoard 리스트 조회
         Slice<BasicBoard> basicBoardSlice = basicBoardRepository.findBy(pageRequest);
@@ -55,10 +55,10 @@ public class BasicBoardService {
     }
 
     // Basic 게시글 상세 조회
-    public ResponseDto getBasicBoardDetail(User user,Long id) {
+    public ResponseDto getBasicBoardDetail(User user, Long basicId) {
 
         // DB에서 해당 BasicBoard 조회
-        BasicBoard basicBoard = basicBoardRepository.findById(id).orElseThrow(
+        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
 
@@ -113,28 +113,40 @@ public class BasicBoardService {
 
     //     게시글 수정
     @Transactional
-    public ResponseDto updateBasicBoard(Long id, BasicBoardRequestDto requestDto) {
-        // "user": 현재 로그인한 유저 정보 -> islike 가져오기 위함
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+    public ResponseDto updateBasicBoard(User user, Long basicId, BasicBoardRequestDto requestDto) {
 
-        BasicBoard basicBoard = basicBoardRepository.findById(id).orElseThrow(
+        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")
         );
 
-        basicBoard.update(requestDto);
-
-        return new ResponseDto(true, "Basic 게시글 수정 완료");
-    }
-
-    //     게시글 삭제
-    public ResponseDto deleteBasicBoard(Long id) {
-        // "user": 현재 로그인한 유저 정보 -> islike 가져오기 위함
+        // "user": 현재 로그인한 유저 정보 -> 게시글 작성자가 맞는지 검증
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
 
-        basicBoardRepository.deleteById(id);
+        if(user.getId().equals(basicBoard.getUser().getId())) {
+            basicBoard.update(requestDto);
+            return new ResponseDto(true, "Basic 게시글 수정이 완료되었습니다.");
+        } else {
+            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+        }
+    }
 
-        return new ResponseDto(true, "Basic 게시글 삭제 완료");
+    //     게시글 삭제
+    public ResponseDto deleteBasicBoard(User user,Long basicId) {
+
+        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
+                () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")
+        );
+
+        // "user": 현재 로그인한 유저 정보 -> 게시글 작성자가 맞는지 검증
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+
+        if(user.getId().equals(basicBoard.getUser().getId())) {
+            basicBoardRepository.deleteById(basicId);
+            return new ResponseDto(true, "Basic 게시글 삭제가 완료되었습니다.");
+        } else {
+            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+        }
     }
 }
