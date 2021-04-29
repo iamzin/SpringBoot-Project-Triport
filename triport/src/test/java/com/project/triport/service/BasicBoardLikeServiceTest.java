@@ -53,10 +53,11 @@ class BasicBoardLikeServiceTest {
         basicBoardRepository.save(basicBoard1);
 
         //when
-        basicBoardLikeService.CreateAndDeleteBasicBoardLike(basicBoard1.getId(), user1);
+        basicBoardLikeService.CreateAndDeleteBasicBoardLike(basicBoard1.getId(), user1); // 처음 누른경우 -> true
+//        basicBoardLikeService.CreateAndDeleteBasicBoardLike(basicBoard1.getId(), user1); // 다시 누른경우 -> false
 
         //then
-        ResponseDto responseDto = basicBoardService.getBasicBoardList(user1,1,"modifiedAt");
+        ResponseDto responseDto = basicBoardService.getBasicBoardList(user2,1,"modifiedAt");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY); //json 변환 이슈 해결: https://steady-hello.tistory.com/90
         String resultJson = objectMapper.writeValueAsString(responseDto);

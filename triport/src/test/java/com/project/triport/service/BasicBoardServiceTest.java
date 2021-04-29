@@ -57,10 +57,6 @@ class BasicBoardServiceTest {
         ResponseDto responseDto = basicBoardService.getBasicBoardList(user1,1,"modifiedAt");
 
         //then
-        System.out.println(responseDto.getOk());
-        System.out.println(responseDto.getMsg());
-        System.out.println(responseDto.getResults());
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY); //json 변환 이슈 해결: https://steady-hello.tistory.com/90
         String resultJson = objectMapper.writeValueAsString(responseDto);
