@@ -15,7 +15,10 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/api/posts")
-    public ResponseDto readPostsAll(User user, @RequestParam int page){return postService.readPostsAll(user, page);}
+    public ResponseDto readPostsAll(
+            User user,
+            @RequestParam int page,
+            @RequestParam String filter){return postService.readPostsAll(user, page, filter);}
 
     @GetMapping("/api/posts/{postId}")
     public ResponseDto readPost(@PathVariable Long postId, User user){
@@ -33,9 +36,11 @@ public class PostController {
     }
 
     @PutMapping("/api/posts/{postId}")
-    public ResponseDto updatePost(){return postService.updatePost();}
+    public ResponseDto updatePost(@RequestBody PostRequestDto requestDto, @PathVariable Long postId){
+        return postService.updatePost(requestDto,postId);
+    }
 
     @DeleteMapping("/api/posts/{postId}")
-    public ResponseDto deletePost(){return postService.deletePost();}
+    public ResponseDto deletePost(@PathVariable Long postId){return postService.deletePost(postId);}
 
 }
