@@ -18,29 +18,35 @@ public class PostController {
     public ResponseDto readPostsAll(
             User user,
             @RequestParam int page,
-            @RequestParam String filter){return postService.readPostsAll(user, page, filter);}
+            @RequestParam String filter) {
+        return postService.readPostsAll(user, page, filter);
+    }
 
     @GetMapping("/api/posts/{postId}")
-    public ResponseDto readPost(@PathVariable Long postId, User user){
+    public ResponseDto readPost(@PathVariable Long postId, User user) {
         return postService.readPost(postId, user);
     }
 
     @GetMapping("/api/posts/user?page={pageNum}")
-    public ResponseDto readPostsUser(User user){return postService.readPostsUser(user);}
+    public ResponseDto readPostsUser(User user) {
+        return postService.readPostsUser(user);
+    }
 
     // post 사진 업로드 부분 api 별도 필요한지 확인 필요
 
     @PostMapping("/api/posts")
-    public ResponseDto createPost(@RequestBody PostRequestDto requestDto, User user){
+    public ResponseDto createPost(@RequestBody PostRequestDto requestDto, User user) {
         return postService.createPost(requestDto, user);
     }
 
     @PutMapping("/api/posts/{postId}")
-    public ResponseDto updatePost(@RequestBody PostRequestDto requestDto, @PathVariable Long postId){
-        return postService.updatePost(requestDto,postId);
+    public ResponseDto updatePost(@RequestBody PostRequestDto requestDto, @PathVariable Long postId) {
+        return postService.updatePost(requestDto, postId);
     }
 
     @DeleteMapping("/api/posts/{postId}")
-    public ResponseDto deletePost(@PathVariable Long postId){return postService.deletePost(postId);}
+    public ResponseDto deletePost(@PathVariable Long postId) {
+        return postService.deletePost(postId);
+    }
 
 }

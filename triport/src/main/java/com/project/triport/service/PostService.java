@@ -10,10 +10,7 @@ import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
 import com.project.triport.responseDto.results.property.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,13 +30,13 @@ public class PostService {
         Sort sort = Sort.by(Sort.Direction.DESC,filter);
         Pageable pageable = PageRequest.of(page, 10, sort);
         // 전체 post 리스트 조회
-        Page<Post> postList = postRepository.findAll(pageable);
+        Slice<Post> postPage = postRepository.findAllBy(pageable);
         // 반환 page가 last page인지 확인
-        Boolean isLast = postList.isLast();
+        Boolean isLast = postPage.isLast();
         // 필요한 post 정보를 담은 ListResponseDto 를 담기 위한 리스트 생성
         List<ListResponseDto> listResponseDtoList = new ArrayList<>();
         // post와 user 정보를 통해 ListResponseDto에 필요한 정보를 기입(생성자 사용)
-        for(Post post : postList){
+        for(Post post : postPage){
             Boolean isLike = postLikeRepository.existsByPostAndUser(post,user);
             ListResponseDto listResponseDto = new ListResponseDto(post,isLike);
             listResponseDtoList.add(listResponseDto);

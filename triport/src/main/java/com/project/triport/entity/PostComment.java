@@ -26,7 +26,7 @@ public class PostComment extends Timestamped{
     @JoinColumn(nullable = false)
     private Post post;
 
-    public PostComment(PostCommentRequestDto postCommentDto, User user, Post post) {
+    public PostComment(Post post, PostCommentRequestDto postCommentDto, User user) {
         this.contents = postCommentDto.getContents();
         this.user = user;
         this.post = post;
