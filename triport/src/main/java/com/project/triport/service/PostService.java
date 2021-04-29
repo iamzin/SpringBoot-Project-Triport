@@ -1,6 +1,7 @@
 package com.project.triport.service;
 
 import com.project.triport.entity.Post;
+import com.project.triport.entity.PostComment;
 import com.project.triport.entity.User;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
@@ -49,10 +50,11 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("post가 존재하지 않습니다.")
         );
-        // 해당 post에 작성되어 있는 댓글들을 불러와 response 양식에 맞게 정리한다.
-        List<CommentResponseDto> commentResponseDtoList = postCommentService.makeCommentResponseDtoList(post.getCommentList());
         // 접근 User의 좋아요 상태를 확인한다.
         boolean isLike = postLikeRepository.existsByPostAndUser(post,user);
+        // 해당 post에 작성되어 있는 댓글들을 불러와 response 양식에 맞게 정리한다.
+        List<PostComment> commentList = post.getCommentList();
+        List<CommentResponseDto> commentResponseDtoList = postCommentService.makeCommentResponseDtoList(commentList);
         // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다..
         DetailResponseDto detailResponseDto = new DetailResponseDto(post,commentResponseDtoList,isLike);
         return new ResponseDto(true, detailResponseDto, "post detail 불러오기 성공");
@@ -75,9 +77,14 @@ public class PostService {
         return new ResponseDto(true, "포스팅 완료!");
     }
 
+    public ResponseDto deletePost(Long postId){
+        postRepository.deleteById(postId);
+        return new ResponseDto(true, "포스트를 삭제 하였습니다.");
+    }
+
     @Transactional
     public ResponseDto updatePost(PostRequestDto requestDto, Long postId){
-        // 앞서 Optional<>로 정의되어있는 경우 가져다 사용할 때 Optional<>을 사용하면 if,else로 예외처리 가능
+        // 앞서 Optional<>로 정의되어있는 경우 가져다 사용할 때 Optional<>을 사용하면 if,else로 예외처리 가능할 듯
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
@@ -85,8 +92,22 @@ public class PostService {
         return new ResponseDto(true, "포스트 수정 완료!");
     }
 
-    public ResponseDto deletePost(Long postId){
-        postRepository.deleteById(postId);
-        return new ResponseDto(true, "포스트를 삭제 하였습니다.");
+    @Transactional
+    public void addPostComment(Post post, PostComment postComment){
+        post.addPostComment(postComment);
     }
+    @Transactional
+    public void removePostComment(Post post, PostComment postComment){
+        post.removePostComment(postComment);
+    }
+    @Transactional
+    public void plusLikeNum(Post post){
+        post.plusLikeNum();
+    }
+    @Transactional
+    public void minusLikeNum(Post post){
+        post.minusLikeNum();
+    }
+
+
 }

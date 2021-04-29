@@ -22,10 +22,10 @@ public class PostController {
         return postService.readPostsAll(user, page, filter);
     }
 
-    @GetMapping("/api/posts/{postId}")
-    public ResponseDto readPost(@PathVariable Long postId, User user) {
-        return postService.readPost(postId, user);
-    }
+//    @GetMapping("/api/posts/{postId}")
+//    public ResponseDto readPost(@PathVariable Long postId, User user) {
+//        return postService.readPost(postId, user);
+//    }
 
     @GetMapping("/api/posts/user?page={pageNum}")
     public ResponseDto readPostsUser(User user) {

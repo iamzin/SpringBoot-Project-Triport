@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class PostLike {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -22,7 +22,7 @@ public class PostLike {
     @JoinColumn
     private Post post;
 
-    public PostLike(User user, Post post){
+    public PostLike(Post post, User user){
         this.user = user;
         this.post = post;
     }
