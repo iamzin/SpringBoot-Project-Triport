@@ -7,22 +7,24 @@ import com.project.triport.responseDto.results.property.information.BoardInforma
 import com.project.triport.responseDto.results.property.information.InformationResponseDto;
 import com.project.triport.responseDto.results.property.information.PostInformationResponseDto;
 import com.project.triport.responseDto.results.property.AccessUserResponseDto;
+import lombok.Getter;
 
+@Getter
 public class ListResponseDto {
     private InformationResponseDto information;
     private AuthorResponseDto author;
-    private AccessUserResponseDto user;
+    private AccessUserResponseDto member;
 
     public ListResponseDto(Post post, Boolean isLike){
         this.information = new PostInformationResponseDto(post);
         this.author = new AuthorResponseDto(post);
-        this.user = new AccessUserResponseDto(isLike);
+        this.member = new AccessUserResponseDto(isLike);
     }
 
     public ListResponseDto(Board board, Boolean isLike){
         this.information = new BoardInformationResponseDto(board);
         this.author = new AuthorResponseDto(board);
-        this.user = new AccessUserResponseDto(isLike);
+        this.member = new AccessUserResponseDto(isLike);
     }
 }
 

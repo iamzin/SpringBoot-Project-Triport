@@ -9,9 +9,11 @@ import com.project.triport.responseDto.results.property.CommentResponseDto;
 import com.project.triport.responseDto.results.property.information.BoardInformationResponseDto;
 import com.project.triport.responseDto.results.property.information.InformationResponseDto;
 import com.project.triport.responseDto.results.property.information.PostInformationResponseDto;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class DetailResponseDto {
 
     private InformationResponseDto information;
