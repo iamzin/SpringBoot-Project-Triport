@@ -9,9 +9,9 @@ import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
-import com.project.triport.responseDto.results.property.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class PostService {
     public ResponseDto readPostsAll(int page, String filter ){
         // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(10), sort 고정값(DESC))
         Sort sort = Sort.by(Sort.Direction.DESC,filter);
-        Pageable pageable = PageRequest.of(page, 10, sort);
+        Pageable pageable = PageRequest.of(page-1, 10, sort);
         // 전체 post 리스트 조회
         Slice<Post> postPage = postRepository.findAllBy(pageable);
         // 반환 page가 last page인지 확인
@@ -112,6 +112,10 @@ public class PostService {
 
     public Member getAuthMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || AnonymousAuthenticationToken.class.
+                isAssignableFrom(authentication.getClass())) {
+            return null;
+        }
         return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
 }
