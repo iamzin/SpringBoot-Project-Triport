@@ -1,8 +1,9 @@
 package com.project.triport.responseDto.results.property;
 
 import com.project.triport.entity.BoardCommentParent;
-import com.project.triport.entity.PostComment;
+import lombok.Getter;
 
+@Getter
 public class CommentResponseDto {
     private Long id;
     private String nickname;
