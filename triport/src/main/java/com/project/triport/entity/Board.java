@@ -25,19 +25,11 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     private String description;
 
     @Column(nullable = false)
-    private String imgUrl;
-
-    @Column(nullable = false)
-    private String videoUrl;
-
-    @Column(nullable = false)
     private Long likeNum;
 
     @Column(nullable = false)
     private Long commentNum;
 
-    @Column(nullable = false)
-    private String address;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -49,20 +41,14 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     public Board(BoardRequestDto boardRequestDto, Member member){
         this.title = boardRequestDto.getTitle();
         this.description = boardRequestDto.getDescription();
-        this.imgUrl = boardRequestDto.getImgUrl();
-        this.videoUrl = boardRequestDto.getVideoUrl();
         this.likeNum = 0L;
         this.commentNum = 0L;
-        this.address = boardRequestDto.getAddress();
         this.member = member;
     }
 
     public void update(BoardRequestDto boardRequestDto) {
         this.title = boardRequestDto.getTitle();
         this.description = boardRequestDto.getDescription();
-        this.imgUrl = boardRequestDto.getImgUrl();
-        this.videoUrl = boardRequestDto.getVideoUrl();
-        this.address = boardRequestDto.getAddress();
     }
 
     public void updateCommentNum(int count) {

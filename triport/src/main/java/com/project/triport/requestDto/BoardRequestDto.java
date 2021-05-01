@@ -9,7 +9,4 @@ import lombok.Setter;
 public class BoardRequestDto {
     private String title;
     private String description;
-    private String imgUrl;
-    private String videoUrl;
-    private String address;
 }
