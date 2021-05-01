@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class BasicBoardLike extends Timestamped{
+public class BoardLike extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,10 +21,10 @@ public class BasicBoardLike extends Timestamped{
 
     @ManyToOne
     @JoinColumn(name = "basic_board_id")
-    private BasicBoard basicBoard;
+    private Board board;
 
-    public BasicBoardLike(BasicBoard basicBoard, Member member) {
-        this.basicBoard = basicBoard;
+    public BoardLike(Board board, Member member) {
+        this.board = board;
         this.member = member;
     }
 }

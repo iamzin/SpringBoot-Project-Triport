@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class BasicBoardCommentRequestDto {
+public class BoardCommentRequestDto {
     private String commentContents;
 }

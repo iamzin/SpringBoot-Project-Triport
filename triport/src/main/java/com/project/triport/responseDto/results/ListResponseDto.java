@@ -1,9 +1,9 @@
 package com.project.triport.responseDto.results;
 
-import com.project.triport.entity.BasicBoard;
+import com.project.triport.entity.Board;
 import com.project.triport.entity.Post;
 import com.project.triport.responseDto.results.property.AuthorResponseDto;
-import com.project.triport.responseDto.results.property.information.BasicBoardInformationResponseDto;
+import com.project.triport.responseDto.results.property.information.BoardInformationResponseDto;
 import com.project.triport.responseDto.results.property.information.InformationResponseDto;
 import com.project.triport.responseDto.results.property.information.PostInformationResponseDto;
 import com.project.triport.responseDto.results.property.AccessUserResponseDto;
@@ -19,9 +19,9 @@ public class ListResponseDto {
         this.user = new AccessUserResponseDto(isLike);
     }
 
-    public ListResponseDto(BasicBoard basicBoard, Boolean isLike){
-        this.information = new BasicBoardInformationResponseDto(basicBoard);
-        this.author = new AuthorResponseDto(basicBoard);
+    public ListResponseDto(Board board, Boolean isLike){
+        this.information = new BoardInformationResponseDto(board);
+        this.author = new AuthorResponseDto(board);
         this.user = new AccessUserResponseDto(isLike);
     }
 }

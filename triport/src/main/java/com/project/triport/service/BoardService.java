@@ -1,12 +1,12 @@
 package com.project.triport.service;
 
-import com.project.triport.entity.BasicBoard;
-import com.project.triport.entity.BasicBoardComment;
+import com.project.triport.entity.Board;
+import com.project.triport.entity.BoardComment;
 import com.project.triport.entity.Member;
 import com.project.triport.jwt.CustomUserDetails;
-import com.project.triport.repository.BasicBoardLikeRepository;
-import com.project.triport.repository.BasicBoardRepository;
-import com.project.triport.requestDto.BasicBoardRequestDto;
+import com.project.triport.repository.BoardLikeRepository;
+import com.project.triport.repository.BoardRepository;
+import com.project.triport.requestDto.BoardRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
@@ -24,34 +24,41 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class BasicBoardService {
+public class BoardService {
 
-    private final BasicBoardRepository basicBoardRepository;
-    private final BasicBoardLikeRepository basicBoardLikeRepository;
-    private final BasicBoardCommentService basicBoardCommentService;
+    private final BoardRepository boardRepository;
+    private final BoardLikeRepository boardLikeRepository;
+    private final BoardCommentService boardCommentService;
 
     // Basic 게시글 전체 리스트 조회 -> 페이징 //User는 Authentication으로 수정해야됨
-    public ResponseDto getBasicBoardList(int page, String filter) {
+    public ResponseDto getBoardList(int page, String filter) {
 
+        // 로그인한 멤버의 authentication
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
         // page 관련 request 설정
         PageRequest pageRequest = PageRequest.of(page-1,10, Sort.by(Sort.Direction.DESC, filter));
 
         // 페이징 처리된 BasicBoard 리스트 조회
-        Slice<BasicBoard> basicBoardSlice = basicBoardRepository.findBy(pageRequest);
+        Slice<Board> BoardSlice = boardRepository.findBy(pageRequest);
 
         // 마지막 페이지 여부 설정
-        Boolean isLast = basicBoardSlice.isLast();
+        Boolean isLast = BoardSlice.isLast();
 
         // Response의 results에 담길 DtoList 객체 생성
         List<ListResponseDto> responseDtoList = new ArrayList<>();
 
+        boolean isLike;
+
         // 페이징된 BasicBoard 리스트를 Dto로 변환
-        for (BasicBoard basicBoard : basicBoardSlice) {
-            Boolean isLike = basicBoardLikeRepository.existsByBasicBoardAndMember(basicBoard, member); //User는 현재 로그인한 유저로 변경해야됨
-            ListResponseDto responseDto = new ListResponseDto(basicBoard, isLike);
+        for (Board board : BoardSlice) {
+            if(authentication.getPrincipal() == null) { // 비로그인 상황
+                isLike = false; //비로그인이므로 islike 값은 false
+            } else {
+                Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+                isLike = boardLikeRepository.existsByBoardAndMember(board, member); //Member는 현재 로그인한 멤버로 변경해야됨
+            }
+            ListResponseDto responseDto = new ListResponseDto(board, isLike);
             responseDtoList.add(responseDto);
         }
 
@@ -59,48 +66,54 @@ public class BasicBoardService {
     }
 
     // Basic 게시글 상세 조회
-    public ResponseDto getBasicBoardDetail( Long basicId) {
+    public ResponseDto getBoardDetail( Long basicId) {
 
         // DB에서 해당 BasicBoard 조회
-        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
+        Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
 
-        // "user": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
+        // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
 
         // "commentList": 현재 게시글의 comment 리스트
-        List<BasicBoardComment> basicBoardCommentList = basicBoardCommentService.getBasicBoardCommentList(basicBoard.getId());
+        List<BoardComment> boardCommentList = boardCommentService.getBoardCommentList(board.getId());
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
         // comment 리스트 -> comment DTO 로 변경
-        for (BasicBoardComment basicBoardComment : basicBoardCommentList) {
-            CommentResponseDto commentResponseDto = new CommentResponseDto(basicBoardComment);
+        for (BoardComment boardComment : boardCommentList) {
+            CommentResponseDto commentResponseDto = new CommentResponseDto(boardComment);
             commentResponseDtoList.add(commentResponseDto);
         }
 
-        // isLike 더미 값
-        Boolean isLike = basicBoardLikeRepository.existsByBasicBoardAndMember(basicBoard, member);
+        // isLike 로그인/비로그인 구분
+        boolean isLike;
 
-        DetailResponseDto detailResponseDto = new DetailResponseDto(basicBoard, isLike, commentResponseDtoList); // user 파리미터는 현재 로그인한 User로 변경되야함
+        if(authentication.getPrincipal() == null) { // 비로그인 상황
+            isLike = false; //비로그인이므로 islike 값은 false
+        } else {
+            Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+            isLike = boardLikeRepository.existsByBoardAndMember(board, member); //Member는 현재 로그인한 멤버로 변경해야됨
+        }
+
+        DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike, commentResponseDtoList); // user 파리미터는 현재 로그인한 User로 변경되야함
 
         return new ResponseDto(true, detailResponseDto,"특정 Basic 게시글 조회에 성공하였습니다."); //detailResponseDto
     }
 
 
     // 로그인한 User가 작성한 BasicBoard 리스트 조회 // 페이징 가능성 있음
-    public ResponseDto getBasicBoardListCreatedByUser() {
+    public ResponseDto getBoardListCreatedByUser() {
         // "user": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
-        List<BasicBoard> basicBoardList = basicBoardRepository.findByMember(member);
+        List<Board> boardList = boardRepository.findByMember(member);
         List<ListResponseDto> responseDtoList = new ArrayList<>();
-        for (BasicBoard basicBoard : basicBoardList) {
-            Boolean isLike = basicBoardLikeRepository.existsByBasicBoardAndMember(basicBoard, member); //User는 현재 로그인한 유저로 변경해야됨
-            ListResponseDto responseDto = new ListResponseDto(basicBoard, isLike);
+        for (Board board : boardList) {
+            Boolean isLike = boardLikeRepository.existsByBoardAndMember(board, member); //User는 현재 로그인한 유저로 변경해야됨
+            ListResponseDto responseDto = new ListResponseDto(board, isLike);
             responseDtoList.add(responseDto);
         }
         return new ResponseDto(true, responseDtoList, "User가 작성한 전체 Basic 게시글 조회에 성공하였습니다.");
@@ -108,39 +121,33 @@ public class BasicBoardService {
 
 
     //     게시글 작성
-    public ResponseDto createBasicBoard(BasicBoardRequestDto requestDto) {
-        System.out.println("안녕");
-        // "user": 현재 로그인한 유저 정보 -> islike 가져오기 위함
+    public ResponseDto createBoard(BoardRequestDto requestDto) {
+
+        // "member": 현재 로그인한 유저 정보 -> islike 가져오기 위함
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("안녕1");
-
-        Object customUserDetails = authentication.getPrincipal().getClass();
-        System.out.println("customUserDetails = " + customUserDetails);
-
         Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
-        System.out.println(member.getEmail());
 
-        BasicBoard basicBoard = new BasicBoard(requestDto, member);
-        basicBoardRepository.save(basicBoard);
+        Board board = new Board(requestDto, member);
+        boardRepository.save(board);
 
         return new ResponseDto(true, "게시글 작성 완료");
     }
 
     //     게시글 수정
     @Transactional
-    public ResponseDto updateBasicBoard(Long basicId, BasicBoardRequestDto requestDto) {
+    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) {
 
-        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
+        Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")
         );
 
-        // "user": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
+        // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
 
-        if(member.getId().equals(basicBoard.getMember().getId())) {
-            basicBoard.update(requestDto);
+        if(member.getId().equals(board.getMember().getId())) {
+            board.update(requestDto);
             return new ResponseDto(true, "Basic 게시글 수정이 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
@@ -148,19 +155,19 @@ public class BasicBoardService {
     }
 
     //     게시글 삭제
-    public ResponseDto deleteBasicBoard(Long basicId) {
+    public ResponseDto deleteBoard(Long basicId) {
 
-        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
+        Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")
         );
 
-//         "user": 현재 로그인한 유저 정보 -> 게시글 작성자가 맞는지 검증
+//         "member": 현재 로그인한 유저 정보 -> 게시글 작성자가 맞는지 검증
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
 
-        if(member.getId().equals(basicBoard.getMember().getId())) {
-            basicBoardRepository.deleteById(basicId);
+        if(member.getId().equals(board.getMember().getId())) {
+            boardRepository.deleteById(basicId);
             return new ResponseDto(true, "Basic 게시글 삭제가 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");

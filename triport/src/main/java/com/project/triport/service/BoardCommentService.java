@@ -1,12 +1,12 @@
 package com.project.triport.service;
 
-import com.project.triport.entity.BasicBoard;
-import com.project.triport.entity.BasicBoardComment;
+import com.project.triport.entity.Board;
+import com.project.triport.entity.BoardComment;
 import com.project.triport.entity.Member;
 import com.project.triport.jwt.CustomUserDetails;
-import com.project.triport.repository.BasicBoardCommentRepository;
-import com.project.triport.repository.BasicBoardRepository;
-import com.project.triport.requestDto.BasicBoardCommentRequestDto;
+import com.project.triport.repository.BoardCommentRepository;
+import com.project.triport.repository.BoardRepository;
+import com.project.triport.requestDto.BoardCommentRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.property.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -22,24 +22,26 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BasicBoardCommentService {
+public class BoardCommentService {
 
-    private final BasicBoardRepository basicBoardRepository;
-    private final BasicBoardCommentRepository basicBoardCommentRepository;
+    //진행 필요 사항: 댓글 좋아요(islike) 필요요
+
+   private final BoardRepository boardRepository;
+    private final BoardCommentRepository boardCommentRepository;
 
     //BasicBoard 상세 페이지 전체 Comment 조회
-    public List<BasicBoardComment> getBasicBoardCommentList(Long basicId) {
-        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
+    public List<BoardComment> getBoardCommentList(Long basicId) {
+        Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글 정보가 없습니다.")
         );
-        return basicBoardCommentRepository.findByBasicBoard(basicBoard);
+        return boardCommentRepository.findByBoard(board);
     }
 
     //BasicBoard 상세 페이지 전체 Comment 페이징 조회
-    public ResponseDto getPagedBasicBoardCommentList(Long basicId, int page) {
+    public ResponseDto getPagedBoardCommentList(Long basicId, int page) {
 
         // DB에서 해당 BasicBoard 조회
-        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
+        Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
 
@@ -47,20 +49,20 @@ public class BasicBoardCommentService {
         PageRequest pageRequest = PageRequest.of(page-1,5);
 
         // 페이징 처리된 BasicBoardComment 리스트 조회
-        Page<BasicBoardComment> basicBoardCommentPage = basicBoardCommentRepository.findByBasicBoard(basicBoard,pageRequest);
+        Page<BoardComment> BoardCommentPage = boardCommentRepository.findByBoard(board,pageRequest);
 
         // 마지막 페이지 여부 설정
-        Boolean isLast = basicBoardCommentPage.isLast();
+        Boolean isLast = BoardCommentPage.isLast();
 
         // 총 페이지 개수
-        Long totalPage = (long)basicBoardCommentPage.getTotalPages();
+        Long totalPage = (long)BoardCommentPage.getTotalPages();
 
         // Response의 results에 담길 DtoList 객체 생성
         List<CommentResponseDto> responseDtoList = new ArrayList<>();
 
         // 페이징된 BasicBoardComment 리스트를 Dto로 변환
-        for (BasicBoardComment basicBoardComment : basicBoardCommentPage) {
-            CommentResponseDto responseDto = new CommentResponseDto(basicBoardComment,isLast,totalPage);
+        for (BoardComment boardComment : BoardCommentPage) {
+            CommentResponseDto responseDto = new CommentResponseDto(boardComment,isLast,totalPage);
             responseDtoList.add(responseDto);
         }
 
@@ -69,54 +71,56 @@ public class BasicBoardCommentService {
 
     // BasicBoard Comment 작성
     @Transactional
-    public ResponseDto createBasicBoardComment(Long basicId, BasicBoardCommentRequestDto requestDto) {
-        BasicBoard basicBoard = basicBoardRepository.findById(basicId).orElseThrow(
+    public ResponseDto createBoardComment(Long basicId, BoardCommentRequestDto requestDto) {
+        Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시판 정보가 없습니다.")
         );
 
-        // "user": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
+        // "member": 현재 로그인한 유저 정보
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
-        BasicBoardComment basicBoardComment = new BasicBoardComment(requestDto, basicBoard, member);
-        basicBoardCommentRepository.save(basicBoardComment);
+        BoardComment boardComment = new BoardComment(requestDto, board, member);
+        boardCommentRepository.save(boardComment);
 
-        basicBoard.updateCommentNum(1);
+        board.updateCommentNum(1);
 
         return new ResponseDto(true, "댓글 작성이 완료되었습니다.");
     }
 
     // BasicBoard Comment 수정
     @Transactional
-    public ResponseDto updateBasicBoardComment(Long commentId, BasicBoardCommentRequestDto requestDto) {
-        BasicBoardComment basicBoardComment = basicBoardCommentRepository.findById(commentId).orElseThrow(
+    public ResponseDto updateBoardComment(Long commentId, BoardCommentRequestDto requestDto) {
+        BoardComment boardComment = boardCommentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글 정보가 없습니다.")
         );
 
-        // "user": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
+        // "member": 현재 로그인한 유저 정보 -> 댓글 작성자가 맞는지 검증 필요!
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
-        if(member.getId().equals(basicBoardComment.getMember().getId())) {
-            basicBoardComment.update(requestDto);
+        // 댓글 작성자가 맞는지 검증
+        if(member.getId().equals(boardComment.getMember().getId())) {
+            boardComment.update(requestDto);
             return new ResponseDto(true, "댓글 수정이 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
     }
 
-    public ResponseDto deleteBasicBoardComment(Long commentId) {
-        BasicBoardComment basicBoardComment = basicBoardCommentRepository.findById(commentId).orElseThrow(
+    public ResponseDto deleteBoardComment(Long commentId) {
+        BoardComment boardComment = boardCommentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글 정보가 없습니다.")
         );
 
-        // "user": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
+        // "member": 현재 로그인한 유저 정보
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
 
-        if(member.getId().equals(basicBoardComment.getMember().getId())) {
-            basicBoardCommentRepository.deleteById(commentId);
-            basicBoardComment.getBasicBoard().updateCommentNum(-1);
+        // 댓글 작성자가 맞는지 검증
+        if(member.getId().equals(boardComment.getMember().getId())) {
+            boardCommentRepository.deleteById(commentId);
+            boardComment.getBoard().updateCommentNum(-1);
             return new ResponseDto(true, "댓글 삭제가 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");

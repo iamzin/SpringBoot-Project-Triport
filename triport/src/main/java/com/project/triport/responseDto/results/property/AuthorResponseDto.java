@@ -1,6 +1,6 @@
 package com.project.triport.responseDto.results.property;
 
-import com.project.triport.entity.BasicBoard;
+import com.project.triport.entity.Board;
 import com.project.triport.entity.Post;
 
 public class AuthorResponseDto {
@@ -13,8 +13,8 @@ public class AuthorResponseDto {
         this.profileImgUrl = post.getUser().getProfileImgUrl();
     }
 
-    public AuthorResponseDto(BasicBoard basicBoard){
-        this.nickname = basicBoard.getMember().getEmail(); //nickname
-        this.profileImgUrl = basicBoard.getMember().getEmail(); //profileImgUrl
+    public AuthorResponseDto(Board board){
+        this.nickname = board.getMember().getNickname(); //nickname
+        this.profileImgUrl = board.getMember().getProfileImgUrl(); //profileImgUrl
     }
 }

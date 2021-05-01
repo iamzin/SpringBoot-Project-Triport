@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BasicBoardRequestDto {
+public class BoardRequestDto {
     private String title;
     private String description;
     private String imgUrl;
