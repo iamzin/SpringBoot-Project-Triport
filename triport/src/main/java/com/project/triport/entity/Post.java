@@ -33,26 +33,24 @@ public class Post extends Timestamped {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private User user;
+    private Member user;
 
     @OneToMany
     @JoinColumn(name = "POST_ID")
     private List<PostComment> commentList;
 
-    public Post(PostRequestDto requestDto, User user){
+    public Post(PostRequestDto requestDto, Member user){
         this.description = requestDto.getDescription();
-        this.imgUrl = requestDto.getImgURL();
-        this.likeNum = requestDto.getLikeNum();
-        this.commentNum = requestDto.getCommentNum();
+        this.imgUrl = requestDto.getImgUrl();
+        this.likeNum = 0L;
+        this.commentNum = 0L;
         this.user = user;
         this.commentList = new ArrayList<>();
     }
 
     public void update(PostRequestDto requestDto){
         this.description = requestDto.getDescription();
-        this.imgUrl = requestDto.getImgURL();
-        this.likeNum = requestDto.getLikeNum();
-        this.commentNum = requestDto.getCommentNum();
+        this.imgUrl = requestDto.getImgUrl();
     }
 
     public void addPostComment(PostComment postComment) {

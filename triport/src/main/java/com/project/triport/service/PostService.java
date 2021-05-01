@@ -1,5 +1,6 @@
 package com.project.triport.service;
 
+import com.project.triport.entity.Member;
 import com.project.triport.entity.Post;
 import com.project.triport.entity.PostComment;
 import com.project.triport.entity.User;
@@ -75,7 +76,7 @@ public class PostService {
         return new ResponseDto(true,listResponseDtoList,"전체 post 조회 완료");
     }
 
-    public ResponseDto createPost(PostRequestDto requestDto, User user){
+    public ResponseDto createPost(PostRequestDto requestDto, Member user){
         Post post = new Post(requestDto,user);
         postRepository.save(post);
         return new ResponseDto(true, "포스팅 완료!");

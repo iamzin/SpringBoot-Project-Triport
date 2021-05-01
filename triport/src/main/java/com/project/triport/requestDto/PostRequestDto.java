@@ -7,7 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PostRequestDto {
     private String description;
-    private String imgURL;
-    private Long likeNum;
-    private Long commentNum;
+    private String imgUrl;
 }
