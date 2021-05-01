@@ -7,8 +7,7 @@ import com.project.triport.repository.MemberRepository;
 import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PostServiceTest{
 
     @Autowired
@@ -38,8 +38,13 @@ class PostServiceTest{
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    public void removeAuthentication(){
+        SecurityContextHolder.getContext().setAuthentication(null);
+    }
+
     @Test
-    @DisplayName("Create:비로그인 유저 작성 불가")
+    @Order(1)
+    @DisplayName("create:비로그인 유저 작성 불가")
     public void createPostNotLoginTest(){
         List<String> hashtag = new ArrayList<>();
         hashtag.add("인천");
@@ -52,6 +57,7 @@ class PostServiceTest{
     }
 
     @Test
+    @Order(2)
     @DisplayName("create:로그인(인증) 유저 작성")
     public void createPostLoginTest(){
         Member member = new Member("create@member1.com","asdfasdf",Authority.ROLE_USER);
@@ -70,6 +76,7 @@ class PostServiceTest{
     }
 
     @Test
+    @Order(3)
     @DisplayName("read:10개 작성 후 List 불러오기")
     public void readPostAllTest(){
 
@@ -90,13 +97,80 @@ class PostServiceTest{
     }
 
     @Test
-    @DisplayName("read:1개 작성 후 Post Detail 불러오기")
+    @Order(4)
+    @DisplayName("read:Post Detail 불러오기")
     public void readPostTest(){
+        ResponseDto responseDtoTrue = postService.readPost(1L);
+        Assertions.assertThat(responseDtoTrue.getOk()).isEqualTo(true);
 
     }
 
+    @Test
+    @Order(5)
+    @DisplayName("read:신규 가입 후 본인 메세지만 불러오기")
+    public void readPostsMemberTest(){
+        Member member = new Member("create@member2.com","asdfasdf",Authority.ROLE_USER);
+        memberRepository.save(member);
+        Long memberId = memberRepository.findByEmail("create@member2.com").orElseThrow(
+                () -> new IllegalArgumentException("없는 아이디야!!!")
+        ).getId();
 
+        getAuthentication(memberId);
+        for(int i = 0; i < 3; i++) {
+            List<String> hashtag = new ArrayList<>();
+            hashtag.add("일산");
+            hashtag.add("공원");
+            hashtag.add("푸릇푸릇");
+            PostRequestDto postRequestDto = new PostRequestDto("http://create.post", hashtag);
+            postService.createPost(postRequestDto);
+        }
+        ResponseDto responseDto = postService.readPostsMember();
+        Assertions.assertThat(responseDto.getOk()).isEqualTo(true);
+        Assertions.assertThat(((List<?>)responseDto.getResults()).size()).isEqualTo(3);
+    }
 
+    @Test
+    @Order(6)
+    @DisplayName("update:로그인 후 포스트 수정하기")
+    public void updatePostLoginTest(){
+        getAuthentication(1L);
+        List<String> hashtag = new ArrayList<>();
+        hashtag.add("수정");
+        hashtag.add("로그인");
+        hashtag.add("목아파");
+        PostRequestDto postRequestDto = new PostRequestDto("http://update.post.setAuth", hashtag);
+        ResponseDto responseDto = postService.updatePost(postRequestDto,1L);
+        Assertions.assertThat(responseDto.getOk()).isEqualTo(true);
+    }
 
+    @Test
+    @Order(7)
+    @DisplayName("update:비로그인 포스트 수정하기")
+    public void updatePostNotLoginTest(){
+        List<String> hashtag = new ArrayList<>();
+        hashtag.add("수정");
+        hashtag.add("비로그인");
+        hashtag.add("푸릇푸릇");
+        PostRequestDto postRequestDto = new PostRequestDto("http://create.post.removeAuth", hashtag);
+        ResponseDto responseDto = postService.updatePost(postRequestDto,1L);
+        Assertions.assertThat(responseDto.getOk()).isEqualTo(false);
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("delete:로그인 후 포스트 삭제하기")
+    public void deletePostLoginTest(){
+        getAuthentication(1L);
+        ResponseDto responseDto = postService.deletePost(1L);
+        Assertions.assertThat(responseDto.getOk()).isEqualTo(true);
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("delete:비로그인 포스트 삭제하기")
+    public void deletePostNotLoginTest(){
+        ResponseDto responseDto = postService.deletePost(2L);
+        Assertions.assertThat(responseDto.getOk()).isEqualTo(false);
+    }
 
 }

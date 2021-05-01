@@ -96,13 +96,20 @@ public class PostService {
     }
 
     public ResponseDto deletePost(Long postId){
+        Member member = getAuthMember();
+        if(member == null){
+            return new ResponseDto(false, "로그인이 필요합니다.");
+        }
         postRepository.deleteById(postId);
         return new ResponseDto(true, "포스트를 삭제 하였습니다.");
     }
 
     @Transactional
     public ResponseDto updatePost(PostRequestDto requestDto, Long postId){
-        // 앞서 Optional<>로 정의되어있는 경우 가져다 사용할 때 Optional<>을 사용하면 if,else로 예외처리 가능할 듯
+        Member member = getAuthMember();
+        if(member == null){
+            return new ResponseDto(false, "로그인이 필요합니다.");
+        }
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
