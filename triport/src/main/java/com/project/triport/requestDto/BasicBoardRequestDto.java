@@ -2,9 +2,10 @@ package com.project.triport.requestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class BasicBoardRequestDto {
     private String title;
     private String description;

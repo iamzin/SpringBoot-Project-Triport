@@ -17,17 +17,17 @@ public class BasicBoardComment extends Timestamped{
     private String contents;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "basic_board_id")
     private BasicBoard basicBoard;
 
-    public BasicBoardComment(BasicBoardCommentRequestDto basicBoardCommentRequestDto, BasicBoard basicBoard, User user) {
+    public BasicBoardComment(BasicBoardCommentRequestDto basicBoardCommentRequestDto, BasicBoard basicBoard, Member member) {
         this.contents = basicBoardCommentRequestDto.getCommentContents();
         this.basicBoard = basicBoard;
-        this.user = user;
+        this.member = member;
     }
 
     public void update(BasicBoardCommentRequestDto basicBoardCommentRequestDto) {

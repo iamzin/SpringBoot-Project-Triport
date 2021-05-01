@@ -15,7 +15,7 @@ public class BasicBoardLikeController {
     private final BasicBoardLikeService basicBoardLikeService;
 
     @PostMapping("/api/boards/basic/like/{basicId}")
-    public ResponseDto CreateAndDeleteBasicBoardLike(User user, @PathVariable Long basicId) {
-        return basicBoardLikeService.CreateAndDeleteBasicBoardLike(basicId, user);
+    public ResponseDto CreateAndDeleteBasicBoardLike(@PathVariable Long basicId) {
+        return basicBoardLikeService.CreateAndDeleteBasicBoardLike(basicId);
     }
 }

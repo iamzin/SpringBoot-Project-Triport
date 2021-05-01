@@ -15,21 +15,27 @@ public class BasicBoardCommentController {
 
     private final BasicBoardCommentService basicBoardCommentService;
 
+    // BasicBoard Comment 리스트 조회(페이징 처리)
+    @GetMapping("/api/boards/basic/comments/{basicId}")
+    public ResponseDto getBasicBoardCommentList(@PathVariable Long basicId, @RequestParam int page) {
+        return basicBoardCommentService.getPagedBasicBoardCommentList(basicId,page);
+    }
+
     // BasicBoard Comment 작성
     @PostMapping("/api/boards/basic/comments/{basicId}")
-    public ResponseDto createBasicBoardComment(@PathVariable Long basicId, @RequestBody BasicBoardCommentRequestDto requestDto, User user) {
-        return basicBoardCommentService.createBasicBoardComment(basicId, requestDto, user);
+    public ResponseDto createBasicBoardComment(@PathVariable Long basicId, @RequestBody BasicBoardCommentRequestDto requestDto) {
+        return basicBoardCommentService.createBasicBoardComment(basicId, requestDto);
     }
 
     // BasicBoard Comment 수정
     @PutMapping("/api/boards/basic/comments/{commentId}")
-    public ResponseDto updateBasicBoardComment(@PathVariable Long commentId, @RequestBody BasicBoardCommentRequestDto requestDto, User user) {
-        return basicBoardCommentService.updateBasicBoardComment(commentId, requestDto, user);
+    public ResponseDto updateBasicBoardComment(@PathVariable Long commentId, @RequestBody BasicBoardCommentRequestDto requestDto) {
+        return basicBoardCommentService.updateBasicBoardComment(commentId, requestDto);
     }
 
     // BasicBoard Comment 삭제
     @DeleteMapping("/api/boards/basic/comments/{commentId}")
-    public ResponseDto deleteBasicBoardComment(@PathVariable Long commentId, User user) {
-        return basicBoardCommentService.deleteBasicBoardComment(commentId, user);
+    public ResponseDto deleteBasicBoardComment(@PathVariable Long commentId) {
+        return basicBoardCommentService.deleteBasicBoardComment(commentId);
     }
 }

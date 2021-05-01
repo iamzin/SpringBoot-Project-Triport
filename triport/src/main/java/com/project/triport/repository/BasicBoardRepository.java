@@ -1,6 +1,7 @@
 package com.project.triport.repository;
 
 import com.project.triport.entity.BasicBoard;
+import com.project.triport.entity.Member;
 import com.project.triport.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -12,5 +13,5 @@ public interface BasicBoardRepository extends JpaRepository<BasicBoard, Long> {
 
     Slice<BasicBoard> findBy(Pageable pageable);
 
-    List<BasicBoard> findByUser(User user);
+    List<BasicBoard> findByMember(Member member);
 }

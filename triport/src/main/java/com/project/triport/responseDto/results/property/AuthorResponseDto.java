@@ -14,7 +14,7 @@ public class AuthorResponseDto {
     }
 
     public AuthorResponseDto(BasicBoard basicBoard){
-        this.nickname = basicBoard.getUser().getNickname();
-        this.profileImgUrl = basicBoard.getUser().getProfileImgUrl();
+        this.nickname = basicBoard.getMember().getEmail(); //nickname
+        this.profileImgUrl = basicBoard.getMember().getEmail(); //profileImgUrl
     }
 }

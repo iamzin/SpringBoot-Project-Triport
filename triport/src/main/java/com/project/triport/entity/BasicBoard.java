@@ -38,10 +38,10 @@ public class BasicBoard extends Timestamped { //basicBoard에서 지도 주소 �
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user; //user의 nickname, profileImgUrl
+    @JoinColumn(name = "member_id")
+    private Member member; //user의 nickname, profileImgUrl
 
-    public BasicBoard(BasicBoardRequestDto basicBoardRequestDto, User user){
+    public BasicBoard(BasicBoardRequestDto basicBoardRequestDto, Member member){
         this.title = basicBoardRequestDto.getTitle();
         this.description = basicBoardRequestDto.getDescription();
         this.imgUrl = basicBoardRequestDto.getImgUrl();
@@ -49,7 +49,7 @@ public class BasicBoard extends Timestamped { //basicBoard에서 지도 주소 �
         this.likeNum = 0L;
         this.commentNum = 0L;
         this.address = basicBoardRequestDto.getAddress();
-        this.user = user;
+        this.member = member;
     }
 
     public void update(BasicBoardRequestDto basicBoardRequestDto) {

@@ -16,15 +16,15 @@ public class BasicBoardLike extends Timestamped{
 
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "basic_board_id")
     private BasicBoard basicBoard;
 
-    public BasicBoardLike(BasicBoard basicBoard, User user) {
+    public BasicBoardLike(BasicBoard basicBoard, Member member) {
         this.basicBoard = basicBoard;
-        this.user = user;
+        this.member = member;
     }
 }

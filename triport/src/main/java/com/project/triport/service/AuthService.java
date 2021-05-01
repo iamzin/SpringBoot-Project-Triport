@@ -2,6 +2,7 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.entity.RefreshToken;
+import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.jwt.TokenProvider;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
@@ -10,6 +11,7 @@ import com.project.triport.requestDto.TokenRequestDto;
 import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.responseDto.TokenDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -38,11 +40,20 @@ public class AuthService {
     @Transactional
     public TokenDto login(MemberRequestDto memberRequestDto) {
         // 1. Login 시 입력한 ID/PW를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(memberRequestDto.getEmail(),memberRequestDto.getPassword());
+
+        System.out.println("로그인 시도중");
 
         // 2. 실제로 비밀번호 검증이 이루어지는 부분
         //    authenticate method가 실행될 때, CustomuserDetailService에서 만들었던 loadUserByUsername method 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        System.out.println("로그인 성공");
+        //=> 로그인이 되었다는 뜻
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        System.out.println(customUserDetails.getMember().getEmail());
 
         // 3. 인증 정보 authentication을 기반으로 JWT token 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
