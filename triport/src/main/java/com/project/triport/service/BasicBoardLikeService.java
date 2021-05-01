@@ -3,7 +3,6 @@ package com.project.triport.service;
 import com.project.triport.entity.BasicBoard;
 import com.project.triport.entity.BasicBoardLike;
 import com.project.triport.entity.Member;
-import com.project.triport.entity.User;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BasicBoardLikeRepository;
 import com.project.triport.repository.BasicBoardRepository;

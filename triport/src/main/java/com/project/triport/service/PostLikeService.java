@@ -2,7 +2,6 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Post;
 import com.project.triport.entity.PostLike;
-import com.project.triport.entity.User;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.responseDto.ResponseDto;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

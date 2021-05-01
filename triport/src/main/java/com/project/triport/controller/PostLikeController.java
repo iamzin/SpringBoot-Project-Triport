@@ -1,7 +1,6 @@
 package com.project.triport.controller;
 
 
-import com.project.triport.entity.User;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostLikeService;
 import lombok.RequiredArgsConstructor;

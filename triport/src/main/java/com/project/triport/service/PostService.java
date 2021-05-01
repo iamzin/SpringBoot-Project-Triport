@@ -3,7 +3,6 @@ package com.project.triport.service;
 import com.project.triport.entity.Member;
 import com.project.triport.entity.Post;
 import com.project.triport.entity.PostComment;
-import com.project.triport.entity.User;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.requestDto.PostRequestDto;

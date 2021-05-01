@@ -2,7 +2,6 @@ package com.project.triport.repository;
 
 import com.project.triport.entity.BasicBoard;
 import com.project.triport.entity.Member;
-import com.project.triport.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;

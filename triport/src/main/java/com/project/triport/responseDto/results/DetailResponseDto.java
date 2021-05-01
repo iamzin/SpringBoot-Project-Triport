@@ -2,7 +2,6 @@ package com.project.triport.responseDto.results;
 
 import com.project.triport.entity.BasicBoard;
 import com.project.triport.entity.Post;
-import com.project.triport.entity.User;
 import com.project.triport.responseDto.results.property.AccessUserResponseDto;
 import com.project.triport.responseDto.results.property.AuthorResponseDto;
 import com.project.triport.responseDto.results.property.CommentResponseDto;
