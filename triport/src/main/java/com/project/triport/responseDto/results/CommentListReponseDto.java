@@ -7,11 +7,9 @@ import java.util.List;
 public class CommentListReponseDto {
     private List<CommentResponseDto> commentList;
     private Boolean last;
-    private Long totalPage;
 
-    public CommentListReponseDto(List<CommentResponseDto> commentList, Boolean last, Long totalPage) {
+    public CommentListReponseDto(List<CommentResponseDto> commentList, Boolean last) {
         this.commentList = commentList;
         this.last = last;
-        this.totalPage = totalPage;
     }
 }

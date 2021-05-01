@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -40,6 +42,9 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member; //user의 nickname, profileImgUrl
+
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE}) // 일반적으로 CascadeType.All 을 사용
+    private List<BoardCommentParent> BoardCommentParentList = new ArrayList<>(); //양방향 연관관계를 통해 영속성 전이 삭제를 일으키기 위해 설정
 
     public Board(BoardRequestDto boardRequestDto, Member member){
         this.title = boardRequestDto.getTitle();

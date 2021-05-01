@@ -1,7 +1,7 @@
 package com.project.triport.service;
 
 import com.project.triport.entity.Board;
-import com.project.triport.entity.BoardComment;
+import com.project.triport.entity.BoardCommentParent;
 import com.project.triport.entity.Member;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BoardLikeRepository;
@@ -28,7 +28,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
-    private final BoardCommentService boardCommentService;
+    private final BoardCommentParentService boardCommentParentService;
 
     // Basic 게시글 전체 리스트 조회 -> 페이징 //User는 Authentication으로 수정해야됨
     public ResponseDto getBoardList(int page, String filter) {
@@ -78,12 +78,12 @@ public class BoardService {
 
 
         // "commentList": 현재 게시글의 comment 리스트
-        List<BoardComment> boardCommentList = boardCommentService.getBoardCommentList(board.getId());
+        List<BoardCommentParent> boardCommentParentList = boardCommentParentService.getBoardCommentList(board.getId());
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
         // comment 리스트 -> comment DTO 로 변경
-        for (BoardComment boardComment : boardCommentList) {
-            CommentResponseDto commentResponseDto = new CommentResponseDto(boardComment);
+        for (BoardCommentParent boardCommentParent : boardCommentParentList) {
+            CommentResponseDto commentResponseDto = new CommentResponseDto(boardCommentParent);
             commentResponseDtoList.add(commentResponseDto);
         }
 
