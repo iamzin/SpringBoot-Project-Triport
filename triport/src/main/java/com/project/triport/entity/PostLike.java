@@ -16,14 +16,14 @@ public class PostLike {
 
     @ManyToOne
     @JoinColumn
-    private User user;
+    private Member member;
 
     @ManyToOne
     @JoinColumn
     private Post post;
 
-    public PostLike(Post post, User user){
-        this.user = user;
+    public PostLike(Post post, Member member){
+        this.member = member;
         this.post = post;
     }
 

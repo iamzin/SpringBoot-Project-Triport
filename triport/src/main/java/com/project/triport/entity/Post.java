@@ -20,47 +20,29 @@ public class Post extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private String imgUrl;
+    private String videoUrl;
 
     @Column(nullable = false)
     private Long likeNum;
 
-    @Column(nullable = false)
-    private Long commentNum;
+    @ElementCollection
+    private List<String> hashtag;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Member user;
+    private Member member;
 
-    @OneToMany
-    @JoinColumn(name = "POST_ID")
-    private List<PostComment> commentList;
-
-    public Post(PostRequestDto requestDto, Member user){
-        this.description = requestDto.getDescription();
-        this.imgUrl = requestDto.getImgUrl();
+    public Post(PostRequestDto requestDto, Member member){
+        this.videoUrl = requestDto.getVideoUrl();
         this.likeNum = 0L;
-        this.commentNum = 0L;
-        this.user = user;
-        this.commentList = new ArrayList<>();
+        this.hashtag = requestDto.getHashtag();
+        this.member = member;
     }
 
     public void update(PostRequestDto requestDto){
-        this.description = requestDto.getDescription();
-        this.imgUrl = requestDto.getImgUrl();
-    }
+        this.videoUrl = requestDto.getVideoUrl();
+        this.hashtag = requestDto.getHashtag();
 
-    public void addPostComment(PostComment postComment) {
-        this.commentList.add(postComment);
-        this.commentNum++;
-    }
-
-    public void removePostComment(PostComment postComment) {
-        this.commentList.remove(postComment);
-        this.commentNum--;
     }
 
     public void plusLikeNum(){

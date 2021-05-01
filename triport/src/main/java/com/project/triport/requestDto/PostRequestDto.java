@@ -3,9 +3,11 @@ package com.project.triport.requestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class PostRequestDto {
-    private String description;
-    private String imgUrl;
+    private String videoUrl;
+    private List<String> hashtag;
 }

@@ -1,5 +1,6 @@
 package com.project.triport.service;
 
+import com.project.triport.entity.Member;
 import com.project.triport.entity.Post;
 import com.project.triport.entity.PostLike;
 import com.project.triport.repository.PostLikeRepository;
@@ -18,17 +19,17 @@ public class PostLikeService {
     private final PostRepository postRepository;
 
     @Transactional
-    public ResponseDto creatDeletePostLike(Long postId, User user){
+    public ResponseDto creatDeletePostLike(Long postId, Member member){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 post 입니다.")
         );
-        boolean isExist = postLikeRepository.existsByPostAndUser(post, user);
+        boolean isExist = postLikeRepository.existsByPostAndMember(post, member);
         if(isExist){
-            postLikeRepository.deleteByPostAndUser(post, user);
+            postLikeRepository.deleteByPostAndMember(post, member);
             post.plusLikeNum();
             return new ResponseDto(true, "좋아요 취소");
         }else{
-            PostLike postLike = new PostLike(post, user);
+            PostLike postLike = new PostLike(post, member);
             postLikeRepository.save(postLike);
             post.minusLikeNum();
             return new ResponseDto(true, "좋아요 완료");

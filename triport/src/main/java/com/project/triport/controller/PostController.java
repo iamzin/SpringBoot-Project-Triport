@@ -1,12 +1,10 @@
 package com.project.triport.controller;
 
 
-import com.project.triport.entity.Member;
 import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,32 +15,25 @@ public class PostController {
 
     @GetMapping("/api/posts")
     public ResponseDto readPostsAll(
-            @AuthenticationPrincipal User user,
             @RequestParam int page,
             @RequestParam String filter) {
-        return postService.readPostsAll(user, page, filter);
+        return postService.readPostsAll(page, filter);
     }
 
-//    @GetMapping("/api/posts/{postId}")
-//    public ResponseDto readPost(@PathVariable Long postId, User user) {
-//        return postService.readPost(postId, user);
-//    }
+    @GetMapping("/api/posts/detail/{postId}")
+    public ResponseDto readPost(@PathVariable Long postId) {
+        return postService.readPost(postId);
+    }
 
-    @GetMapping("/api/posts/user?page={pageNum}")
-    public ResponseDto readPostsUser(@AuthenticationPrincipal User user) {
-        return postService.readPostsUser(user);
+    @GetMapping("/api/posts/member")
+    public ResponseDto readPostsMember() {
+        return postService.readPostsMember();
     }
 
     // post 사진 업로드 부분 api 별도 필요한지 확인 필요
-
     @PostMapping("/api/posts")
-    public ResponseDto createPost(@RequestBody PostRequestDto requestDto,@AuthenticationPrincipal Member user) {
-//        if(user == null){
-//            return new ResponseDto(false, "user가 비어있다!");
-//        }else{
-//            return new ResponseDto(true, user.getUsername(), "user가 들어가있다!!");
-//        }
-        return postService.createPost(requestDto, user);
+    public ResponseDto createPost(@RequestBody PostRequestDto requestDto) {
+        return postService.createPost(requestDto);
     }
 
     @PutMapping("/api/posts/{postId}")
