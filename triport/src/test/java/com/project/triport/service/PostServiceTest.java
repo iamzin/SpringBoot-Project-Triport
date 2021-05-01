@@ -21,6 +21,7 @@ import java.util.List;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PostServiceTest{
+    // 메서드 하나씩 확인하려면 앞서 회원가입 절차가 필요한 녀석들이 있어서 전체 클래스를 한 번에 테스트 하는 방식으로 구현하였다.
 
     @Autowired
     private PostService postService;

@@ -16,5 +16,5 @@ public class PostLikeController {
     private final PostLikeService postLikeService;
 
     @PostMapping("/api/posts/like/{postId}")
-    public ResponseDto creatDeletePostLike(@PathVariable Long postId,@AuthenticationPrincipal Member member){return postLikeService.creatDeletePostLike(postId,member);}
+    public ResponseDto creatDeletePostLike(@PathVariable Long postId){return postLikeService.creatDeletePostLike(postId);}
 }
