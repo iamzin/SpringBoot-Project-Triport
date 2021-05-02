@@ -41,7 +41,7 @@ public class CommentParentService {
         return commentParentRepository.findByBoard(board);
     }
 
-    //BasicBoard 상세 페이지 전체 Comment 페이징 조회
+    //Board 상세 페이지 전체 Comment 페이징 조회
     public ResponseDto getPagedCommentParentList(Long boardId, int page) {
 
         // DB에서 해당 BasicBoard 조회

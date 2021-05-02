@@ -1,5 +1,6 @@
 package com.project.triport.responseDto.results;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.triport.entity.CommentChild;
 import com.project.triport.entity.CommentParent;
 import com.project.triport.responseDto.results.property.AccessUserResponseDto;
@@ -9,7 +10,10 @@ import lombok.Getter;
 
 @Getter
 public class CommentListResponseDto {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private CommentResponseDto commentParent;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private CommentResponseDto commentChild;
     private AuthorResponseDto author;
     private AccessUserResponseDto user;
 
@@ -20,7 +24,7 @@ public class CommentListResponseDto {
     }
 
     public CommentListResponseDto(CommentChild commentChild, Boolean isLike) {
-        this.commentParent = new CommentResponseDto(commentChild);
+        this.commentChild = new CommentResponseDto(commentChild);
         this.author = new AuthorResponseDto(commentChild);
         this.user = new AccessUserResponseDto(isLike);
     }

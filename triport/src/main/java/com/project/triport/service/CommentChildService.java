@@ -4,14 +4,17 @@ import com.project.triport.entity.CommentChild;
 import com.project.triport.entity.CommentParent;
 import com.project.triport.entity.Member;
 import com.project.triport.jwt.CustomUserDetails;
+import com.project.triport.repository.CommentChildLikeRepository;
 import com.project.triport.repository.CommentChildRepository;
 import com.project.triport.repository.CommentParentRepository;
 import com.project.triport.requestDto.CommentRequestDto;
 import com.project.triport.responseDto.ResponseDto;
+import com.project.triport.responseDto.results.CommentListResponseDto;
 import com.project.triport.responseDto.results.property.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ public class CommentChildService {
 
     private final CommentParentRepository commentParentRepository;
     private final CommentChildRepository commentChildRepository;
+    private final CommentChildLikeRepository commentChildLikeRepository;
 
     // BoardCommentParent 의 답글 페이징 조회
     public ResponseDto getPagedCommentChildList(Long commentParentId, int page) {
@@ -35,6 +39,9 @@ public class CommentChildService {
                 .orElseThrow(
                         () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
                 );
+
+        // "member": 현재 로그인한 유저 정보
+        Member member = getAuthMember();
 
         // page 관련 request 설정
         PageRequest pageRequest = PageRequest.of(page-1,5);
@@ -46,11 +53,15 @@ public class CommentChildService {
         Boolean isLast = boardCommentChildPage.isLast();
 
         // Response의 results에 담길 DtoList 객체 생성
-        List<CommentResponseDto> responseDtoList = new ArrayList<>();
+        List<CommentListResponseDto> responseDtoList = new ArrayList<>();
 
         // 페이징된 BoardCommentChild 리스트를 Dto로 변환
         for (CommentChild commentChild : boardCommentChildPage) {
-            CommentResponseDto responseDto = new CommentResponseDto(commentChild);
+            boolean isLike = false;
+            if (member != null) {
+                isLike = commentChildLikeRepository.existsByCommentChildAndMember(commentChild, member);
+            }
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild,isLike);
             responseDtoList.add(responseDto);
         }
 
@@ -66,8 +77,7 @@ public class CommentChildService {
                 );
 
         // "member": 현재 로그인한 유저 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+        Member member = getAuthMember();
 
         CommentChild commentChild = new CommentChild(requestDto, commentParent, member);
         System.out.println("boardCommentChild.getContents() = " + commentChild.getContents());
@@ -83,9 +93,9 @@ public class CommentChildService {
                 .orElseThrow(
                         () -> new IllegalArgumentException("해당 답글이 존재하지 않습니다.")
                 );
+
         // "member": 현재 로그인한 유저 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+        Member member = getAuthMember();
 
         // 답글 작성자가 맞는지 검증
         if(member.getId().equals(commentChild.getMember().getId())) {
@@ -105,8 +115,7 @@ public class CommentChildService {
                 );
 
         // "member": 현재 로그인한 유저 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+        Member member = getAuthMember();
 
         // 답글 작성자가 맞는지 검증
         if(member.getId().equals(commentChild.getMember().getId())) {
@@ -115,5 +124,14 @@ public class CommentChildService {
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
+    }
+
+    public Member getAuthMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || AnonymousAuthenticationToken.class.
+                isAssignableFrom(authentication.getClass())) {
+            return null;
+        }
+        return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
 }
