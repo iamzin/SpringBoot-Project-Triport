@@ -2,9 +2,10 @@ package com.project.triport.requestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
-public class BoardCommentRequestDto {
-    private String commentContents;
+@Setter
+public class CommentRequestDto {
+    private String contents;
 }

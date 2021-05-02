@@ -36,7 +36,10 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     private Member member; //user의 nickname, profileImgUrl
 
     @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE}) // 일반적으로 CascadeType.All 을 사용
-    private List<BoardCommentParent> BoardCommentParentList = new ArrayList<>(); //양방향 연관관계를 통해 영속성 전이 삭제를 일으키기 위해 설정
+    private List<CommentParent> commentParentList = new ArrayList<>(); //양방향 연관관계를 통해 영속성 전이 삭제를 일으키기 위해 설정
+
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE}) //게시글 삭제되면 좋아요도 연쇄 삭제될 수 있도록
+    private List<BoardLike> boardLikeList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, Member member){
         this.title = boardRequestDto.getTitle();

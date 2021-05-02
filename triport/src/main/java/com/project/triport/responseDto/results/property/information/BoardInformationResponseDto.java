@@ -1,9 +1,11 @@
 package com.project.triport.responseDto.results.property.information;
 
 import com.project.triport.entity.Board;
+import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 
+@Getter
 public class BoardInformationResponseDto extends InformationResponseDto {
 
     // BasicBoard

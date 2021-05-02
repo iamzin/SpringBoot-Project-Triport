@@ -6,15 +6,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class BoardLikeController {
 
     private final BoardLikeService boardLikeService;
 
-    @PostMapping("/api/boards/like/{basicId}")
-    public ResponseDto CreateAndDeleteBoardLike(@PathVariable Long basicId) {
-        return boardLikeService.CreateAndDeleteBoardLike(basicId);
+    @PostMapping("/api/boards/like/{boardId}")
+    public ResponseDto CreateAndDeleteBoardLike(@PathVariable Long boardId) {
+        return boardLikeService.CreateAndDeleteBoardLike(boardId);
     }
 }
