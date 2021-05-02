@@ -1,6 +1,7 @@
 package com.project.triport.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.triport.requestDto.MemberRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,10 +39,25 @@ public class Member {
     private Authority authority;
 
     @Builder
-    public Member(String email, String password, Authority authority) {
+    public Member(String email, String password, String nickname, String profileImgUrl, String grade, Authority authority) {
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
+        this.profileImgUrl = profileImgUrl;
+        this.grade = grade;
         this.authority = authority;
+    }
+
+    public void update(MemberRequestDto memberRequestDto) {
+        this.email = memberRequestDto.getEmail();
+        this.nickname = memberRequestDto.getNickname();
+        this.profileImgUrl = memberRequestDto.getProfileImgUrl();
+        this.grade = memberRequestDto.getGrade();
+    }
+
+    public void updatePassword(MemberRequestDto memberRequestDto) {
+        this.password = memberRequestDto.getPassword();
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.project.triport.controller;
 
+import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +13,22 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/me")
-    public ResponseEntity<MemberResponseDto> getMyMemberInfo() {
-        return ResponseEntity.ok(memberService.getMyInfo());
+    // 확인 필요 (SecurityUtil에서 currentMemberId 왜 못 가져오지?)
+    @GetMapping("/profile")
+    public ResponseEntity<MemberResponseDto> getMemberInfo() {
+        return ResponseEntity.ok(memberService.getMemberInfo());
     }
 
-    @GetMapping("/{email}") // url로 주는 이유?
-    public ResponseEntity<MemberResponseDto> getMemberInfo(@PathVariable String email) {
-        return ResponseEntity.ok(memberService.getMemberInfo(email));
+    @PutMapping("/profile")
+    public ResponseEntity<MemberResponseDto> updateMemberInfo(@RequestBody MemberRequestDto memberRequestDto) {
+        return ResponseEntity.ok(memberService.updateMemberInfo(memberRequestDto));
     }
 
-//    @GetMapping("/email") // url로 주는게 Reuqestbody 보다 안전한건가?
-//    public ResponseEntity<MemberResponseDto> getMemberInfo(@RequestBody MemberRequestDto memberRequestDto) {
-//        return ResponseEntity.ok(memberService.getMemberInfo(memberRequestDto.getEmail()));
-//    }
+    @DeleteMapping("/profile")
+    public ResponseEntity<String> deleteMember() {
+        return ResponseEntity.ok(memberService.deleteMember());
+    }
+
+
+
 }
