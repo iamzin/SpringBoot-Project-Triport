@@ -53,19 +53,19 @@ public class MemberService {
         return "비밀번호 변경이 완료되었습니다.";
     }
 
-    public String sendTempPwd() {
-
-        // Java가 제공하는 랜덤 객체 선언
-        Random random = new Random();
-
-        // random.nextInt() 함수로 난수 생성
-        // checkNum에 난수 생성 결과값 할당
-        // 111111~999999 범위의 숫자를 얻기 위해 nextInt(888888) + 111111
-        int checkNum = random.nextInt(888888) + 111111;
-
-        logger.info("난수 생성: " + checkNum);
-
-
-
-    }
+//    public String sendTempPwd() {
+//
+//        // Java가 제공하는 랜덤 객체 선언
+//        Random random = new Random();
+//
+//        // random.nextInt() 함수로 난수 생성
+//        // checkNum에 난수 생성 결과값 할당
+//        // 111111~999999 범위의 숫자를 얻기 위해 nextInt(888888) + 111111
+//        int checkNum = random.nextInt(888888) + 111111;
+//
+//        logger.info("난수 생성: " + checkNum);
+//
+//
+//
+//    }
 }
