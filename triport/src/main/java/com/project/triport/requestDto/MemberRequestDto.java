@@ -2,6 +2,7 @@ package com.project.triport.requestDto;
 
 import com.project.triport.entity.Authority;
 import com.project.triport.entity.Member;
+import com.project.triport.entity.MemberGrade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ public class MemberRequestDto {
     private String password;
     private String nickname;
     private String profileImgUrl;
-    private String grade;
+    private MemberGrade memberGrade;
 
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
@@ -24,7 +25,7 @@ public class MemberRequestDto {
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
                 .profileImgUrl(profileImgUrl)
-                .grade(grade)
+                .memberGrade(memberGrade)
                 .authority(Authority.ROLE_USER)
                 .build();
     }

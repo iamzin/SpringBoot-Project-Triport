@@ -32,19 +32,20 @@ public class Member {
     @Column(nullable = false)
     private String profileImgUrl;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String grade;
+    private MemberGrade memberGrade;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
     @Builder
-    public Member(String email, String password, String nickname, String profileImgUrl, String grade, Authority authority) {
+    public Member(String email, String password, String nickname, String profileImgUrl, MemberGrade memberGrade, Authority authority) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
-        this.grade = grade;
+        this.memberGrade = memberGrade;
         this.authority = authority;
     }
 
@@ -52,7 +53,7 @@ public class Member {
         this.email = memberRequestDto.getEmail();
         this.nickname = memberRequestDto.getNickname();
         this.profileImgUrl = memberRequestDto.getProfileImgUrl();
-        this.grade = memberRequestDto.getGrade();
+        this.memberGrade = memberRequestDto.getMemberGrade();
     }
 
     public void updatePassword(MemberRequestDto memberRequestDto) {
