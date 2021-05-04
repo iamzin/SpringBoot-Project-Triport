@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final org.slf4j.Logger logger;
+//    private final org.slf4j.Logger logger;
 
     // 로그인한 member email 가져오기
     // 현재 SecurityContext에 있는 member email 가져오기
