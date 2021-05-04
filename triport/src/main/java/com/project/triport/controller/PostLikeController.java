@@ -1,11 +1,9 @@
 package com.project.triport.controller;
 
 
-import com.project.triport.entity.Member;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostLikeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
