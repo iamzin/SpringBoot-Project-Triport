@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.transfer.MultipleFileUpload;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.project.triport.responseDto.ResponseDto;
@@ -28,18 +27,15 @@ public class S3Util {
 
     @Value("${cloud.aws.cloudfront.domain}")
     public String cloudFrontDomainName;
-
     @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
-
     @Value("${cloud.aws.credentials.secretKey}")
     private String secretKey;
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-
     @Value("${cloud.aws.region.static}")
     private String region;
+
 
     @PostConstruct
     public void setS3Client(){
@@ -62,21 +58,17 @@ public class S3Util {
         return new ResponseDto(true,videoUrl,"영상 저장 성공!");
     }
 
-    public void uploadFolder(String filepath){
-        TransferManager xfer_mgr = TransferManagerBuilder.standard().withS3Client(s3Client).build();
+    public ResponseDto uploadFolder(String filepath){
+        TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
         File file = new File(filepath);
         try {
-//            MultipleFileUpload xfer = xfer_mgr.uploadDirectory(bucket,"test3", file, false);
-            xfer_mgr.uploadDirectory(bucket,"test3", file, false);
-//            // loop with Transfer.isDone()
-//            XferMgrProgress.showTransferProgress(xfer);
-//            // or block with Transfer.waitForCompletion()
-//            XferMgrProgress.waitForCompletion(xfer);
+            transferManager.uploadDirectory(bucket,file.getName(), file, false);
+            String videoUrl = "https://" + cloudFrontDomainName + "/" + file.getName() + "/" + file.getName() + ".m3u8";
+            return new ResponseDto(true,videoUrl,"영상 저장 성공!");
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
+            return new ResponseDto(false,"영상 저장 실패");
         }
-//            xfer_mgr.shutdownNow();
     }
-
 }

@@ -5,24 +5,33 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Component
 public class VideoFileUtil {
 
+    @Value("${ffmpeg.ffmpegPath}")
+    private String ffmpegPath;
+    @Value("${ffmpeg.ffprobePath}")
+    private String ffprobePath;
+    @Value("${storage.origin}")
+    private String originStorage;
+    @Value("${storage.encoded}")
+    private String encodedStorage;
+
     private final Path rootLocation;
-
-    private String ffmpegPath = "/usr/local/Cellar/ffmpeg/4.4/bin/ffmpeg";
-    private String ffprobePath = "/usr/local/Cellar/ffmpeg/4.4/bin/ffprobe";
-
     private FFmpeg ffmpeg;
     private FFprobe ffprobe;
 
@@ -45,15 +54,19 @@ public class VideoFileUtil {
         Files.copy(file.getInputStream(), this.rootLocation.resolve(file.getOriginalFilename()));
     }
 
-    public String encodingVideo(MultipartFile file){
+    public String encodingVideo(MultipartFile file) {
+        String randomString = UUID.randomUUID().toString();
+        String encodedDirectory = encodedStorage+randomString;
+        File dir = new File(encodedDirectory);
+        if(!dir.exists()) {
+            dir.mkdir();
+        }
+
         FFmpegBuilder builder = new FFmpegBuilder()
-                .setInput("/Users/son-younhwan/Desktop/영상test/test2/"+file.getOriginalFilename())   // Filename, or a FFmpegProbeResult
+                .setInput(originStorage + file.getOriginalFilename())   // Filename, or a FFmpegProbeResult
                 .overrideOutputFiles(true) // Override the output if it exists
 
-                .addOutput("/Users/son-younhwan/Desktop/영상test/"+file.getName()+"/"+file.getName()+".m3u8")   // Filename for the destination
-//                .setFormat("mp4")        // Format is inferred from filename, or can be set
-//                .setTargetSize(250_000)  // Aim for a 250KB file
-
+                .addOutput(encodedDirectory+"/"+randomString+".m3u8")   // Filename for the destination
                 .disableSubtitle()       // No subtiles
 
                 .setAudioChannels(1)         // Mono audio
@@ -63,7 +76,6 @@ public class VideoFileUtil {
 
                 .setVideoCodec("copy")     // Video using x264
                 .setVideoFrameRate(24, 1)     // at 24 frames per second
-                .setVideoResolution(640, 480) // at 640x480 resolution
 
                 .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
                 .done();
@@ -72,6 +84,14 @@ public class VideoFileUtil {
         // Run a one-pass encode
         executor.createJob(builder).run();
 
-        return "/Users/son-younhwan/Desktop/영상test/"+file.getName();
+        return encodedDirectory;
+    }
+
+    public void cleanStorage() throws IOException {
+        File originDir = new File(originStorage);
+        File encodedDir = new File(encodedStorage);
+
+        FileUtils.cleanDirectory(originDir);
+        FileUtils.cleanDirectory(encodedDir);
     }
 }

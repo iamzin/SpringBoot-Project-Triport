@@ -9,12 +9,10 @@ import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
-import com.project.triport.storage.StorageProperties;
 import com.project.triport.util.S3Util;
 import com.project.triport.util.VideoFileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +30,6 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
-    private final StorageProperties storageProperties;
     private final S3Util s3Util;
     private final VideoFileUtil videoFileUtil;
 
@@ -43,7 +39,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(page-1, 10, sort);
         // 전체 post 리스트 조회
         Slice<Post> postPage;
-        if(keyword.equals("")) {
+        if("".equals(keyword)) {
             postPage = postRepository.findAllBy(pageable);
         } else{
             postPage = postRepository.findByHashtag(keyword,pageable);
@@ -122,15 +118,19 @@ public class PostService {
     }
 
     //     video 저장 메서드
-    public ResponseDto uploadVideo(MultipartFile file){
+    public ResponseDto uploadVideo(MultipartFile file) throws IOException, InterruptedException {
         try {
             videoFileUtil.storeVideo(file);
+
             String ecodedFilePath = videoFileUtil.encodingVideo(file);
-            s3Util.uploadFolder(ecodedFilePath);
-            return new ResponseDto(true,file.getOriginalFilename(),"성고오오옹");
+
+            return s3Util.uploadFolder(ecodedFilePath);
         } catch (Exception e) {
             return new ResponseDto(false,"실패에에에");
         }
+//        finally{
+//            videoFileUtil.cleanStorage();
+//        }
     }
 
     public Member getAuthMember() {

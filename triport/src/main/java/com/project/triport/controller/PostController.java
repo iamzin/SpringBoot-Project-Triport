@@ -53,7 +53,7 @@ public class PostController {
     }
 
     @PostMapping("/api/posts/video")
-    public ResponseDto uploadVideo(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseDto uploadVideo(@RequestParam("file") MultipartFile file) throws IOException, InterruptedException {
         return postService.uploadVideo(file);
     }
 }
