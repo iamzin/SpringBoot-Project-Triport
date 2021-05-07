@@ -7,7 +7,7 @@ public class StorageProperties {
     /**
      * Folder location for storing files
      */
-    private String location = "/Users/son-younhwan/Desktop/test";
+    private String location = "/Users/son-younhwan/Desktop/영상test/test2";
 
     public String getLocation() {
         return location;

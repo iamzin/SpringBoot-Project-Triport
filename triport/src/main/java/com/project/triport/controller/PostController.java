@@ -4,9 +4,12 @@ package com.project.triport.controller;
 import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostService;
+import com.project.triport.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,12 +42,6 @@ public class PostController {
         return postService.createPost(requestDto);
     }
 
-    @PostMapping("/api/posts/video")
-    public ResponseDto storeVideo(@RequestParam("file") MultipartFile file) {
-//        System.out.println("이것은 테스트 입니다. " + test.get("test"));
-        return postService.storeVideo(file);
-    }
-
     @PutMapping("/api/posts/{postId}")
     public ResponseDto updatePost(@RequestBody PostRequestDto requestDto, @PathVariable Long postId) {
         return postService.updatePost(requestDto, postId);
@@ -55,4 +52,8 @@ public class PostController {
         return postService.deletePost(postId);
     }
 
+    @PostMapping("/api/posts/video")
+    public ResponseDto uploadVideo(@RequestParam("file") MultipartFile file) throws IOException {
+        return postService.uploadVideo(file);
+    }
 }

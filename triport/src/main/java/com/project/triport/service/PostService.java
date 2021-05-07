@@ -9,10 +9,12 @@ import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
-import com.project.triport.storage.StorageException;
 import com.project.triport.storage.StorageProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.project.triport.util.S3Util;
+import com.project.triport.util.VideoFileUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,24 +24,18 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
-    private final Path rootLocation;
-
-    @Autowired
-    public PostService(PostRepository postRepository, PostLikeRepository postLikeRepository, StorageProperties properties){
-        this.postRepository = postRepository;
-        this.postLikeRepository = postLikeRepository;
-        this.rootLocation = Paths.get(properties.getLocation());
-    }
+    private final StorageProperties storageProperties;
+    private final S3Util s3Util;
+    private final VideoFileUtil videoFileUtil;
 
     public ResponseDto readPostsAll(int page, String filter, String keyword ){
         // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(10), sort 고정값(DESC))
@@ -91,7 +87,6 @@ public class PostService {
 
     public ResponseDto readPostsMember(){
         Member member = getAuthMember();
-
         List<Post> postList = postRepository.findByMember(member);
         List<ListResponseDto> listResponseDtoList = new ArrayList<>();
         for(Post post : postList){
@@ -104,7 +99,6 @@ public class PostService {
 
     public ResponseDto createPost(PostRequestDto requestDto){
         Member member = getAuthMember();
-
         Post post = new Post(requestDto,member);
         postRepository.save(post);
         return new ResponseDto(true, "포스팅 완료!");
@@ -120,7 +114,6 @@ public class PostService {
     @Transactional
     public ResponseDto updatePost(PostRequestDto requestDto, Long postId){
         Member member = getAuthMember();
-
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
@@ -128,16 +121,15 @@ public class PostService {
         return new ResponseDto(true, "포스트 수정 완료!");
     }
 
-    //
-    public ResponseDto storeVideo(MultipartFile file) {
+    //     video 저장 메서드
+    public ResponseDto uploadVideo(MultipartFile file){
         try {
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
-            }
-            Files.copy(file.getInputStream(), this.rootLocation.resolve(file.getOriginalFilename()));
-            return new ResponseDto(true, "","파일 저장 완료!");
-        } catch (IOException e) {
-            throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
+            videoFileUtil.storeVideo(file);
+            String ecodedFilePath = videoFileUtil.encodingVideo(file);
+            s3Util.uploadFolder(ecodedFilePath);
+            return new ResponseDto(true,file.getOriginalFilename(),"성고오오옹");
+        } catch (Exception e) {
+            return new ResponseDto(false,"실패에에에");
         }
     }
 
