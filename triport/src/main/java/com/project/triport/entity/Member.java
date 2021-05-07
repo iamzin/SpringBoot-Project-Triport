@@ -3,6 +3,7 @@ package com.project.triport.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.triport.requestDto.MemberRequestDto;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
@@ -46,9 +47,11 @@ public class Member {
         this.memberGrade = memberRequestDto.getMemberGrade();
     }
 
-    public void updatePassword(MemberRequestDto memberRequestDto) {
-        this.password = memberRequestDto.getPassword();
-
+    public void updatePassword(PasswordEncoder passwordEncoder, MemberRequestDto memberRequestDto) {
+        this.password = passwordEncoder.encode(memberRequestDto.toString());
     }
 
+    public void updateTmpPassword(PasswordEncoder passwordEncoder, String tmpPwd) {
+        this.password = passwordEncoder.encode(tmpPwd);
+    }
 }
