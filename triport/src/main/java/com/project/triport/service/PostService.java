@@ -9,14 +9,18 @@ import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
+import com.project.triport.util.S3Util;
+import com.project.triport.util.VideoFileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +30,20 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
+    private final S3Util s3Util;
+    private final VideoFileUtil videoFileUtil;
 
-    public ResponseDto readPostsAll(int page, String filter ){
+    public ResponseDto readPostsAll(int page, String filter, String keyword ){
         // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(10), sort 고정값(DESC))
         Sort sort = Sort.by(Sort.Direction.DESC,filter);
         Pageable pageable = PageRequest.of(page-1, 10, sort);
         // 전체 post 리스트 조회
-        Slice<Post> postPage = postRepository.findAllBy(pageable);
+        Slice<Post> postPage;
+        if("".equals(keyword)) {
+            postPage = postRepository.findAllBy(pageable);
+        } else{
+            postPage = postRepository.findByHashtag(keyword,pageable);
+        }
         // 반환 page가 last page인지 확인
         Boolean isLast = postPage.isLast();
         // 필요한 post 정보를 담은 ListResponseDto 를 담기 위한 리스트 생성
@@ -72,9 +83,6 @@ public class PostService {
 
     public ResponseDto readPostsMember(){
         Member member = getAuthMember();
-        if(member == null) {
-            return new ResponseDto(true, "로그인이 필요합니다.");
-        }
         List<Post> postList = postRepository.findByMember(member);
         List<ListResponseDto> listResponseDtoList = new ArrayList<>();
         for(Post post : postList){
@@ -87,9 +95,6 @@ public class PostService {
 
     public ResponseDto createPost(PostRequestDto requestDto){
         Member member = getAuthMember();
-        if(member == null){
-            return new ResponseDto(false, "로그인이 필요합니다.");
-        }
         Post post = new Post(requestDto,member);
         postRepository.save(post);
         return new ResponseDto(true, "포스팅 완료!");
@@ -97,9 +102,7 @@ public class PostService {
 
     public ResponseDto deletePost(Long postId){
         Member member = getAuthMember();
-        if(member == null){
-            return new ResponseDto(false, "로그인이 필요합니다.");
-        }
+
         postRepository.deleteById(postId);
         return new ResponseDto(true, "포스트를 삭제 하였습니다.");
     }
@@ -107,14 +110,27 @@ public class PostService {
     @Transactional
     public ResponseDto updatePost(PostRequestDto requestDto, Long postId){
         Member member = getAuthMember();
-        if(member == null){
-            return new ResponseDto(false, "로그인이 필요합니다.");
-        }
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
         post.update(requestDto);
         return new ResponseDto(true, "포스트 수정 완료!");
+    }
+
+    //     video 저장 메서드
+    public ResponseDto uploadVideo(MultipartFile file) throws IOException, InterruptedException {
+        try {
+            videoFileUtil.storeVideo(file);
+
+            String ecodedFilePath = videoFileUtil.encodingVideo(file);
+
+            return s3Util.uploadFolder(ecodedFilePath);
+        } catch (Exception e) {
+            return new ResponseDto(false,"실패에에에");
+        }
+//        finally{
+//            videoFileUtil.cleanStorage();
+//        }
     }
 
     public Member getAuthMember() {
