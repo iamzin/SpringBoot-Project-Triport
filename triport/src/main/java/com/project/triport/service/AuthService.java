@@ -2,21 +2,27 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.entity.RefreshToken;
-import com.project.triport.jwt.CustomUserDetails;
+import com.project.triport.jwt.JwtFilter;
 import com.project.triport.jwt.TokenProvider;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
 import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.requestDto.TokenRequestDto;
+import com.project.triport.responseDto.MemberInfoResponseDto;
 import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.responseDto.TokenDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +43,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto login(MemberRequestDto memberRequestDto) {
+    public MemberInfoResponseDto login(MemberRequestDto memberRequestDto, HttpServletResponse response) {
         // 1. Login 시 입력한 ID/PW를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(memberRequestDto.getEmail(),memberRequestDto.getPassword());
@@ -45,8 +51,6 @@ public class AuthService {
         // 2. 실제로 비밀번호 검증이 이루어지는 부분
         //    authenticate method가 실행될 때, CustomuserDetailService에서 만들었던 loadUserByUsername method 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         // 3. 인증 정보 authentication을 기반으로 JWT token 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
@@ -59,8 +63,23 @@ public class AuthService {
 
         refreshTokenRepository.save(refreshToken);
 
-        // 5. token 발급
-        return tokenDto;
+        // 5. Header에 token과 만료시간 add
+        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
+        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
+        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+
+        // react가 만료시간 체크 하는 방법:
+        // accessToken 만료하기 1분 전에 로그인 연장하도록 아래와 같이 setTimeout 설정
+        // setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000);
+        // Timeout 되면 onSilentRefresh가 실행되면서, /auth/reissue로 재발급 요청
+
+        // 6. 해당 memberInfo return
+        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
+        );
+
+        // 5. Header에 token 담고, ResponseBody에 memberInfo 담아서 return
+        return new MemberInfoResponseDto(member.getId(), member.getNickname());
     }
 
     @Transactional
