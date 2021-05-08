@@ -2,15 +2,16 @@ package com.project.triport.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.triport.requestDto.MemberRequestDto;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "member")
 public class Member {
 
@@ -39,16 +40,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @Builder
-    public Member(String email, String password, String nickname, String profileImgUrl, MemberGrade memberGrade, Authority authority) {
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.profileImgUrl = profileImgUrl;
-        this.memberGrade = memberGrade;
-        this.authority = authority;
-    }
-
     public void update(MemberRequestDto memberRequestDto) {
         this.email = memberRequestDto.getEmail();
         this.nickname = memberRequestDto.getNickname();
@@ -56,9 +47,11 @@ public class Member {
         this.memberGrade = memberRequestDto.getMemberGrade();
     }
 
-    public void updatePassword(MemberRequestDto memberRequestDto) {
-        this.password = memberRequestDto.getPassword();
-
+    public void updatePassword(PasswordEncoder passwordEncoder, MemberRequestDto memberRequestDto) {
+        this.password = passwordEncoder.encode(memberRequestDto.toString());
     }
 
+    public void updateTmpPassword(PasswordEncoder passwordEncoder, String tmpPwd) {
+        this.password = passwordEncoder.encode(tmpPwd);
+    }
 }

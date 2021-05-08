@@ -58,8 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 나머지는 모두 token 인증 필요
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
+//                .antMatchers("/auth/**").permitAll()
+//                .antMatchers("/api/search/**").permitAll()
+//                .antMatchers("/mail/**").permitAll()
+//                .antMatchers("/static/**").permitAll()
+//                .anyRequest().authenticated()
 
                 // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
                 // Security 최전선에 JwtFilter가 있도록 (?)
