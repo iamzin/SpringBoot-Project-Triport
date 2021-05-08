@@ -65,6 +65,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/static/**").permitAll()
 //                .anyRequest().authenticated()
 
+                // TODO: 빼도 되는지 테스트 필요
+                .and()
+                .cors()
+
                 // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
                 // Security 최전선에 JwtFilter가 있도록 (?)
                 .and()
