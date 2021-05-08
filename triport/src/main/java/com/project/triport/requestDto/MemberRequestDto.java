@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class MemberRequestDto {
     private String email;
     private String password;
+    private String passwordCheck;
     private String nickname;
     private String profileImgUrl;
     private MemberGrade memberGrade;
@@ -24,8 +25,8 @@ public class MemberRequestDto {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
-                .profileImgUrl(profileImgUrl)
-                .memberGrade(memberGrade)
+                .profileImgUrl("profileImgUrl")
+                .memberGrade(MemberGrade.TRAVELER)
                 .authority(Authority.ROLE_USER)
                 .build();
     }

@@ -1,5 +1,7 @@
 package com.project.triport.util;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,6 +11,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class MailHandler {
     private JavaMailSender sender;
@@ -52,10 +55,20 @@ public class MailHandler {
 
     //이미지 삽입
     public void setInline(String contentId, String pathToInline) throws MessagingException, IOException {
-        File file = new ClassPathResource(pathToInline).getFile();
-        FileSystemResource fileSystemResource = new FileSystemResource(file);
+//        File file = new ClassPathResource(pathToInline).getFile();
+//        FileSystemResource fileSystemResource = new FileSystemResource(file);
 
-        messageHelper.addInline(contentId, fileSystemResource);
+        ClassPathResource classPathResource = new ClassPathResource(pathToInline);
+        InputStream inputStream = classPathResource.getInputStream();
+        File file = File.createTempFile("file", ".png");
+
+        try {
+            FileUtils.copyInputStreamToFile(inputStream, file);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
+
+        messageHelper.addInline(contentId, file);
     }
 
     //발송
