@@ -33,6 +33,17 @@ dependencies {
     compile group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+    // io configuration 을 위한 설정정보
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // AWS S3
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1010')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
+
+    // FFmpeg wrapper (컴퓨터에 다운로드 후에 java 프로그램과 연결해주는 라이브러리)
+    // https://mvnrepository.com/artifact/net.bramp.ffmpeg/ffmpeg
+    implementation group: 'net.bramp.ffmpeg', name: 'ffmpeg', version: '0.6.2'
 }
 
 test {
