@@ -65,7 +65,7 @@ public class S3ImageService {
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = requestDto.getImageFile().getOriginalFilename() + "-" + date.format(new Date());
+        String fileName = deleteSpaceFromFileName(requestDto.getImageFile().getOriginalFilename()) + "-" + date.format(new Date());
 
         System.out.println(requestDto.getImageFile().getSize()); // 바이트 단위
 
@@ -105,6 +105,10 @@ public class S3ImageService {
 
     public Boolean limitImgSize(MultipartFile file) {
         return file.getSize() <= 100000; // 100000 바이트 보다 작으면 true 반환
+    }
+
+    public String deleteSpaceFromFileName(String fileName) {
+        return fileName.replace(" ", "+");
     }
 
 }
