@@ -5,6 +5,7 @@ import com.project.triport.repository.MemberRepository;
 import com.project.triport.util.MailHandler;
 import com.project.triport.util.SecurityUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
+//    @Value("${spring.mail.username}")
+//    public String fromMail;
 
     @Transactional
     public String sendTempPwd() {
@@ -35,7 +39,7 @@ public class MailService {
             //받는 사람
             mailHandler.setTo(member.getEmail());
             //보내는 사람
-//            mailHandler.setFrom(System.getProperty("spring.mail.username"));
+//            mailHandler.setFrom(fromMail);
             mailHandler.setFrom("triport.helpdesk@gmail.com");
             //제목
             mailHandler.setSubject("[Triport] 회원님의 임시 비밀번호를 확인해 주세요.");
