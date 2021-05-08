@@ -73,9 +73,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // Security 최전선에 JwtFilter가 있도록 (?)
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
-
-
     }
-
-
 }

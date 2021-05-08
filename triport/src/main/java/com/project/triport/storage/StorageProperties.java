@@ -8,6 +8,7 @@ public class StorageProperties {
      * Folder location for storing files
      */
     private String location = "/home/ubuntu/storage/origin";
+//    private String location = "/Users/son-younhwan/Desktop/videotest/test";
 
     public String getLocation() {
         return location;
