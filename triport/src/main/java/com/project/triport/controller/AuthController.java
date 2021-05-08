@@ -1,7 +1,9 @@
 package com.project.triport.controller;
 
+import com.project.triport.entity.Member;
 import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.requestDto.TokenRequestDto;
+import com.project.triport.responseDto.MemberInfoResponseDto;
 import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.responseDto.TokenDto;
 import com.project.triport.service.AuthService;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -24,8 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody MemberRequestDto memberRequestDto) {
-        return ResponseEntity.ok(authService.login(memberRequestDto));
+    public ResponseEntity<MemberInfoResponseDto> login(@RequestBody MemberRequestDto memberRequestDto, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.login(memberRequestDto, response));
     }
 
     @PostMapping("/reissue")
