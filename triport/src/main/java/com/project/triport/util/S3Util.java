@@ -25,15 +25,15 @@ import java.io.IOException;
 public class S3Util {
     private AmazonS3 s3Client;
 
-    @Value("${cloud.aws.cloudfront.domain}")
-    public String cloudFrontDomainName;
-    @Value("${cloud.aws.credentials.accessKey}")
+    @Value("${cloud.aws.cloudfront.domainSon}")
+    private String cloudFrontDomainName;
+    @Value("${cloud.aws.credentials.accessKeySon}")
     private String accessKey;
-    @Value("${cloud.aws.credentials.secretKey}")
+    @Value("${cloud.aws.credentials.secretKeySon}")
     private String secretKey;
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucketSon}")
     private String bucket;
-    @Value("${cloud.aws.region.static}")
+    @Value("${cloud.aws.region.staticSon}")
     private String region;
 
 
@@ -62,12 +62,16 @@ public class S3Util {
         TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
         File file = new File(filepath);
         try {
-            transferManager.uploadDirectory(bucket,file.getName(), file, false);
+            transferManager.uploadDirectory(bucket,file.getName(), file, false).waitForCompletion();
             String videoUrl = "https://" + cloudFrontDomainName + "/" + file.getName() + "/" + file.getName() + ".m3u8";
+
             return new ResponseDto(true,videoUrl,"영상 저장 성공!");
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
+            return new ResponseDto(false,"영상 저장 실패");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
             return new ResponseDto(false,"영상 저장 실패");
         }
     }

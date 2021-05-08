@@ -126,11 +126,11 @@ public class PostService {
 
             return s3Util.uploadFolder(ecodedFilePath);
         } catch (Exception e) {
-            return new ResponseDto(false,"실패에에에");
+            return new ResponseDto(false,"영상 저장 실패");
         }
-//        finally{
-//            videoFileUtil.cleanStorage();
-//        }
+        finally{
+            videoFileUtil.cleanStorage();
+        }
     }
 
     public Member getAuthMember() {
