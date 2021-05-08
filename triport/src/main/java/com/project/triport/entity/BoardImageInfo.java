@@ -37,12 +37,20 @@ public class BoardImageInfo extends Timestamped {
         this.shouldBeDeleted = true;
     }
 
+    public BoardImageInfo(String tempId, String filePath, Board board) {
+        this.tempId = tempId;
+        this.filePath = filePath;
+        this.shouldBeDeleted = true;
+        this.board = board;
+        board.getBoardImageInfoList().add(this);
+    }
+
     public void updateRelationWithBoard(Board board) {
         this.board = board;
         board.getBoardImageInfoList().add(this);
     }
 
-    public void updateShouldBeDelete() {
-        this.shouldBeDeleted = false;
+    public void updateShouldBeDelete(boolean shouldBeDeleted) {
+        this.shouldBeDeleted = shouldBeDeleted;
     }
 }

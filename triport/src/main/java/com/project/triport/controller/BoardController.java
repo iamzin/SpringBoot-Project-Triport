@@ -8,6 +8,7 @@ import com.project.triport.service.BoardService;
 import com.project.triport.service.S3ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -25,9 +26,9 @@ public class BoardController {
     }
 
     // 게시글 상세 조회
-    @GetMapping("/api/boards/detail/{basicId}")
-    public ResponseDto getBasicBoardDetail(@PathVariable Long basicId) {
-        return boardService.getBoardDetail(basicId);
+    @GetMapping("/api/boards/detail/{boardId}")
+    public ResponseDto getBasicBoardDetail(@PathVariable Long boardId) {
+        return boardService.getBoardDetail(boardId);
     }
 
     // 로그인한 User가 작성한 전체 게시글 리스트 조회
@@ -44,21 +45,27 @@ public class BoardController {
     }
 
     // 게시글 수정
-    @PutMapping("/api/boards/{basicId}")
-    public ResponseDto updateBoard(@PathVariable Long basicId, @RequestBody BoardRequestDto requestDto) {
-        return boardService.updateBoard(basicId, requestDto);
+    @PutMapping("/api/boards/{boardId}")
+    public ResponseDto updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto requestDto) throws IOException {
+        return boardService.updateBoard(boardId, requestDto);
     }
 
     // 게시글 삭제
-    @DeleteMapping("/api/boards/{basicId}")
-    public ResponseDto deleteBasicBoard(@PathVariable Long basicId) throws IOException {
-        return boardService.deleteBoard(basicId);
+    @DeleteMapping("/api/boards/{boardId}")
+    public ResponseDto deleteBasicBoard(@PathVariable Long boardId) throws IOException {
+        return boardService.deleteBoard(boardId);
     }
 
-    // 게시글 이미지 업로드
+    // 신규 게시글 작성 시 이미지 업로드
     @PostMapping("/api/boards/image")
     public ResponseDto uploadImageFromBoard(@ModelAttribute ImageRequestDto requestDto) throws IOException {
         // 리턴값: 클라우드 프론트 이미지 url
-        return s3ImageService.upload(requestDto);
+        return s3ImageService.uploadImageToNewBoard(requestDto);
+    }
+
+    // 기존 게시글 수정 시 이미지 업로드
+    @PostMapping("/api/boards/image/{boardId}")
+    public ResponseDto uploadImageFromUpdatingBoard(@PathVariable Long boardId, MultipartFile imageFile) throws IOException {
+        return s3ImageService.uploadImageToUpdatingBoard(boardId, imageFile);
     }
 }

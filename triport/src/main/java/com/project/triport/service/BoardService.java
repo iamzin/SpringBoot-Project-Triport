@@ -142,6 +142,7 @@ public class BoardService {
 
         // boardImageInfo에 board 연관관계 설정
         for (BoardImageInfo boardImageInfo : boardImageInfoList) {
+            boardImageInfo.updateShouldBeDelete(true); // 이미지 삭제 후에는 게시글 수정 상황을 위해 shouldBeDelete 값을 true로 바꿔놓는다.
             boardImageInfo.updateRelationWithBoard(board); // db 테이블 컬럼 확인 필요!!!
         }
 
@@ -151,7 +152,7 @@ public class BoardService {
 
     //     게시글 수정
     @Transactional
-    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) {
+    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException {
 
         Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")
@@ -163,7 +164,20 @@ public class BoardService {
 
 
         if(member.getId().equals(board.getMember().getId())) {
+
+            // 수정한 게시글에 사용되지 않는 이미지 삭제 (S3와 DB)
+            boardImageInfoService.CompareAndDeleteImage(requestDto.getImageUrlList(), board.getTempId());
+
+            // BoardImageInfoRepository에서 requestDto의 tempId와 일치하는 BoardImageInfo들
+            List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByTempId(requestDto.getTempId());
+
+            // boardImageInfo에 board 연관관계 설정
+            for (BoardImageInfo boardImageInfo : boardImageInfoList) {
+                boardImageInfo.updateShouldBeDelete(true); // 이미지 삭제 후에는 게시글 수정 상황을 위해 shouldBeDelete 값을 true로 바꿔놓는다.
+            }
+
             board.update(requestDto);
+
             return new ResponseDto(true, "Basic 게시글 수정이 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");

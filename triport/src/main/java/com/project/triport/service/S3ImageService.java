@@ -7,8 +7,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.project.triport.entity.Board;
 import com.project.triport.entity.BoardImageInfo;
 import com.project.triport.repository.BoardImageInfoRepository;
+import com.project.triport.repository.BoardRepository;
 import com.project.triport.requestDto.ImageRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.ImageResponseDto;
@@ -21,6 +23,8 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor //원래는 NoArgsContructor
@@ -28,6 +32,7 @@ public class S3ImageService {
 
     private AmazonS3 s3Client;
     private final BoardImageInfoRepository boardImageInfoRepository;
+    private final BoardRepository boardRepository;
 
     // @Value 로 application.yml에 작성한  cloud.aws.credentials의 값들을 가져옴
     @Value("${cloud.aws.credentials.accessKey}")
@@ -59,13 +64,17 @@ public class S3ImageService {
                 .build();
     }
 
-    // 이미지 파일 추가 (수정을 따로 생각할 필요가 없음)
-    public ResponseDto upload(ImageRequestDto requestDto) throws IOException {
+    // 신규 게시글 작성 중 이미지 파일 추가 (수정을 따로 생각할 필요가 없음)
+    public ResponseDto uploadImageToNewBoard(ImageRequestDto requestDto) throws IOException {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
+        if(!restrictImgExtension(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()))) {
+            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
+        }
+
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = deleteSpaceFromFileName(requestDto.getImageFile().getOriginalFilename()) + "-" + date.format(new Date());
+        String fileName = deleteSpaceFromFileName(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename())) + "-" + date.format(new Date());
 
         System.out.println(requestDto.getImageFile().getSize()); // 바이트 단위
 
@@ -86,12 +95,48 @@ public class S3ImageService {
         return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.");
     }
 
-    // 이미지 삭제 (예시)
+    // 기존 게시물 수정 중 이미지 파일 추가
+    public ResponseDto uploadImageToUpdatingBoard(Long boardId, MultipartFile imageFile) throws IOException {
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+        );
+
+        // 기존 게시글의 임시 번호 찾기
+        String tempId = board.getTempId();
+
+        // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
+        SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
+
+        if(!restrictImgExtension(Objects.requireNonNull(imageFile.getOriginalFilename()))) {
+            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
+        }
+
+        //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
+        String fileName = deleteSpaceFromFileName(Objects.requireNonNull(imageFile.getOriginalFilename())) + "-" + date.format(new Date());
+
+        if (!limitImgSize(imageFile)) {
+            throw new IOException("파일 용량 초과!!!");
+        }
+
+        // 파일 업로드 (파일 수정도 똑같이 putObject() 활용)
+        s3Client.putObject(new PutObjectRequest(bucket, fileName, imageFile.getInputStream(), null)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+
+        // ImageInfo 테이블에 이미지 정보 저장
+        BoardImageInfo boardImageInfo = new BoardImageInfo(tempId, fileName, board); //boardId 추가하자
+        boardImageInfoRepository.save(boardImageInfo);
+
+        ImageResponseDto imageResponseDto = new ImageResponseDto(fileName);
+
+        return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.");
+    }
+
+    // 이미지 삭제
     public String deleteImg(String currentFilePath) throws IOException {
-        if ("".equals(currentFilePath) == false && currentFilePath != null) {
+        if (!"".equals(currentFilePath) && currentFilePath != null) {
             boolean isExistObject = s3Client.doesObjectExist(bucket, currentFilePath);
 
-            if (isExistObject == true) {
+            if (isExistObject) {
                 s3Client.deleteObject(bucket, currentFilePath);
                 return "이미지 파일 삭제 완료";
             } else {
@@ -109,6 +154,12 @@ public class S3ImageService {
 
     public String deleteSpaceFromFileName(String fileName) {
         return fileName.replace(" ", "+");
+    }
+
+    public Boolean restrictImgExtension(String fileName) {
+        String extensionPart = fileName.substring(fileName.length() - 4).toLowerCase(Locale.ROOT);
+        System.out.println("extensionPart = " + extensionPart);
+        return extensionPart.equals(".png") || extensionPart.equals(".jpg");
     }
 
 }

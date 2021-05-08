@@ -29,7 +29,7 @@ public class BoardImageInfoService {
             for (ImageResponseDto imageResponseDto : imageUrlList) { //[3,4]
                 String filename = imageResponseDto.getImageFilePath().split("https://" + S3ImageService.CLOUD_FRONT_DOMAIN_NAME + "/")[1];
                 if (boardImageInfo.getFilePath().equals(filename)) {
-                    boardImageInfo.updateShouldBeDelete(); // shouldBeDeleted 값을 false로 바꿈
+                    boardImageInfo.updateShouldBeDelete(false); // shouldBeDeleted 값을 false로 바꿈
                     break;
                 }
             }
