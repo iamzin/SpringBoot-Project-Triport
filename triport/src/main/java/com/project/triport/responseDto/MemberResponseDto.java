@@ -1,6 +1,7 @@
 package com.project.triport.responseDto;
 
 import com.project.triport.entity.Member;
+import com.project.triport.entity.MemberGrade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,10 @@ public class MemberResponseDto {
     private String email;
     private String nickname;
     private String profileImgUrl;
-    private String grade;
+    private MemberGrade grade;
 
     public static MemberResponseDto of(Member member) {
         return new MemberResponseDto(member.getEmail(), member.getNickname(),
-                member.getProfileImgUrl(), member.getGrade());
+                member.getProfileImgUrl(), member.getMemberGrade());
     }
 }
