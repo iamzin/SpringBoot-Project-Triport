@@ -20,6 +20,9 @@ public class Post extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
+    private String videoType;
+
+    @Column(nullable = false)
     private String videoUrl;
 
     @Column(nullable = false)
@@ -32,17 +35,23 @@ public class Post extends Timestamped {
     @JoinColumn(nullable = false)
     private Member member;
 
-    public Post(PostRequestDto requestDto, Member member){
-        this.videoUrl = requestDto.getVideoUrl();
+//    public Post(PostRequestDto requestDto, Member member){
+//        this.videoUrl = requestDto.getVideoUrl();
+//        this.likeNum = 0L;
+//        this.hashtag = requestDto.getHashtag();
+//        this.member = member;
+//    }
+
+    public Post(String videoUrl, List<String> hashtag, Member member){
+        this.videoType = "m3u8";
+        this.videoUrl = videoUrl;
         this.likeNum = 0L;
-        this.hashtag = requestDto.getHashtag();
+        this.hashtag = hashtag;
         this.member = member;
     }
 
     public void update(PostRequestDto requestDto){
-        this.videoUrl = requestDto.getVideoUrl();
         this.hashtag = requestDto.getHashtag();
-
     }
 
     public void plusLikeNum(){

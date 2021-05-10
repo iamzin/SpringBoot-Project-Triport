@@ -54,7 +54,7 @@ public class VideoFileUtil {
         Files.copy(file.getInputStream(), this.rootLocation.resolve(file.getOriginalFilename()));
     }
 
-    public String encodingVideo(MultipartFile file) {
+    public String encodingVideo(String originalFilename) {
         String randomString = UUID.randomUUID().toString();
         String encodedDirectory = encodedStorage+randomString;
         File dir = new File(encodedDirectory);
@@ -63,7 +63,7 @@ public class VideoFileUtil {
         }
 
         FFmpegBuilder builder = new FFmpegBuilder()
-                .setInput(originStorage + file.getOriginalFilename())   // Filename, or a FFmpegProbeResult
+                .setInput(originStorage + originalFilename)   // Filename, or a FFmpegProbeResult
                 .overrideOutputFiles(true) // Override the output if it exists
 
                 .addOutput(encodedDirectory+"/"+randomString+".m3u8")   // Filename for the destination
