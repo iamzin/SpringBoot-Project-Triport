@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 public class PostInformationResponseDto extends InformationResponseDto {
 
+    private String videoType;
     private String videoUrl;
     private List<String> hashtag;
 
@@ -17,6 +18,7 @@ public class PostInformationResponseDto extends InformationResponseDto {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
 
         this.id = post.getId();
+        this.videoType = post.getVideoType();
         this.videoUrl = post.getVideoUrl();
         this.likeNum = post.getLikeNum();
         this.hashtag = post.getHashtag();

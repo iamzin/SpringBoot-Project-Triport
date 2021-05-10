@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.Multipart;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,23 +94,25 @@ public class PostService {
         return new ResponseDto(true,listResponseDtoList,"전체 post 조회 완료");
     }
 
-    public ResponseDto createPost(PostRequestDto requestDto){
-        Member member = getAuthMember();
-        Post post = new Post(requestDto,member);
-        postRepository.save(post);
-        return new ResponseDto(true, "포스팅 완료!");
-    }
+    public ResponseDto createPost(PostRequestDto requestDto) {
+        MultipartFile videoFile = requestDto.getFile();
+        String originalFilename = videoFile.getOriginalFilename();
+        try {
+            videoFileUtil.storeVideo(videoFile);
+            String ecodedFilePath = videoFileUtil.encodingVideo(originalFilename);
+            String videoUrl = s3Util.uploadFolder(ecodedFilePath);
 
-    public ResponseDto deletePost(Long postId){
-        Member member = getAuthMember();
-
-        postRepository.deleteById(postId);
-        return new ResponseDto(true, "포스트를 삭제 하였습니다.");
+            Member member = getAuthMember();
+            Post post = new Post(videoUrl,requestDto.getHashtag(),member);
+            postRepository.save(post);
+            return new ResponseDto(true, "포스팅 완료!");
+        } catch (Exception e) {
+            return new ResponseDto(false, "영상 저장 실패");
+        }
     }
 
     @Transactional
     public ResponseDto updatePost(PostRequestDto requestDto, Long postId){
-        Member member = getAuthMember();
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
@@ -117,20 +120,16 @@ public class PostService {
         return new ResponseDto(true, "포스트 수정 완료!");
     }
 
-    //     video 저장 메서드
-    public ResponseDto uploadVideo(MultipartFile file) throws IOException, InterruptedException {
-        try {
-            videoFileUtil.storeVideo(file);
-
-            String ecodedFilePath = videoFileUtil.encodingVideo(file);
-
-            return s3Util.uploadFolder(ecodedFilePath);
-        } catch (Exception e) {
-            return new ResponseDto(false,"영상 저장 실패");
-        }
-        finally{
-            videoFileUtil.cleanStorage();
-        }
+    public ResponseDto deletePost(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 post 입니다.")
+        );
+        String videoUrl = post.getVideoUrl();
+        String[] tmpArray = videoUrl.split("/");
+        String directory = tmpArray[tmpArray.length - 2];
+        s3Util.deleteFolder(directory);
+        postRepository.deleteById(postId);
+        return new ResponseDto(true, "포스트를 삭제 하였습니다.");
     }
 
     public Member getAuthMember() {
@@ -141,4 +140,46 @@ public class PostService {
         }
         return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
+
+//    post 작성을 통해 영상과 entity를 모두 작성하게되어 모두 수정 필요
+
+//    public ResponseDto createPost(PostRequestDto requestDto){
+//        Member member = getAuthMember();
+//        Post post = new Post(requestDto,member);
+//        postRepository.save(post);
+//        return new ResponseDto(true, "포스팅 완료!");
+//    }
+//
+//    public ResponseDto deletePost(Long postId){
+//        Member member = getAuthMember();
+//
+//        postRepository.deleteById(postId);
+//        return new ResponseDto(true, "포스트를 삭제 하였습니다.");
+//    }
+//
+//    @Transactional
+//    public ResponseDto updatePost(PostRequestDto requestDto, Long postId){
+//        Member member = getAuthMember();
+//        Post post = postRepository.findById(postId).orElseThrow(
+//                () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
+//        );
+//        post.update(requestDto);
+//        return new ResponseDto(true, "포스트 수정 완료!");
+//    }
+
+//     video 저장 메서드
+//    public ResponseDto uploadVideo(MultipartFile file) throws IOException, InterruptedException {
+//        try {
+//            videoFileUtil.storeVideo(file);
+//
+//            String ecodedFilePath = videoFileUtil.encodingVideo(file);
+//
+//            return s3Util.uploadFolder(ecodedFilePath);
+//        } catch (Exception e) {
+//            return new ResponseDto(false,"영상 저장 실패");
+//        }
+//        finally{
+//            videoFileUtil.cleanStorage();
+//        }
+//    }
 }
