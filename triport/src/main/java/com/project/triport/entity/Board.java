@@ -33,9 +33,6 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     @Column(nullable = false)
     private Long commentNum;
 
-    @Column(nullable = false)
-    private String tempId;
-
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -56,7 +53,6 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
         this.address = boardRequestDto.getAddress();
         this.likeNum = 0L;
         this.commentNum = 0L;
-        this.tempId = boardRequestDto.getTempId();
         this.member = member;
     }
 

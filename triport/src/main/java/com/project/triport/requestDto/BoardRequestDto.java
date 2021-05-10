@@ -15,5 +15,4 @@ public class BoardRequestDto {
     private String description;
     private String address;
     private List<ImageResponseDto> imageUrlList;
-    private String tempId;
 }

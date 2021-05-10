@@ -97,9 +97,8 @@ public class BoardService {
 
     // 로그인한 User가 작성한 BasicBoard 리스트 조회 // 페이징 가능성 있음
     public ResponseDto getBoardListCreatedByUser() {
-        // "user": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+        // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
+        Member member = getAuthMember();
 
         List<Board> boardList = boardRepository.findByMember(member);
         List<ListResponseDto> responseDtoList = new ArrayList<>();
@@ -117,24 +116,22 @@ public class BoardService {
     public ResponseDto createBoard(BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
 
         // "member": 현재 로그인한 유저 정보 -> islike 가져오기 위함
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+        Member member = getAuthMember();
 
         Board board = new Board(requestDto, member);
         boardRepository.save(board);
 
         // 저장할 게시글에 사용되지 않는 이미지 삭제 (S3와 DB)
-        boardImageInfoService.CompareAndDeleteImage(requestDto.getImageUrlList(), requestDto.getTempId());
+        boardImageInfoService.CompareAndDeleteImageForCreate(requestDto.getImageUrlList());
 
-        // BoardImageInfoRepository에서 requestDto의 tempId와 일치하는 BoardImageInfo들
-        List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByTempId(requestDto.getTempId());
+        // BoardImageInfoRepository에서 memberId가 현재 사용자 id이고 BoardId가 null인 BoardImageInfo들
+        List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByMemberAndBoardIsNull(member);
 
         // boardImageInfo에 board 연관관계 설정
         for (BoardImageInfo boardImageInfo : boardImageInfoList) {
             boardImageInfo.updateShouldBeDelete(true); // 이미지 삭제 후에는 게시글 수정 상황을 위해 shouldBeDelete 값을 true로 바꿔놓는다.
             boardImageInfo.updateRelationWithBoard(board); // db 테이블 컬럼 확인 필요!!!
         }
-
 
         return new ResponseDto(true, "게시글 작성 완료");
     }
@@ -148,21 +145,20 @@ public class BoardService {
         );
 
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+        Member member = getAuthMember();
 
 
         if(member.getId().equals(board.getMember().getId())) {
 
             // 수정한 게시글에 사용되지 않는 이미지 삭제 (S3와 DB)
-            boardImageInfoService.CompareAndDeleteImage(requestDto.getImageUrlList(), board.getTempId());
+            boardImageInfoService.CompareAndDeleteImageForUpdate(requestDto.getImageUrlList(), board);
 
-            // BoardImageInfoRepository에서 requestDto의 tempId와 일치하는 BoardImageInfo들
-            List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByTempId(requestDto.getTempId());
+            // BoardImageInfoRepository에서 memberId가 현재 사용자의 Id이고 BoardId가 수정중인 게시글 Id인 BoardImageInfo들
+            List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByMemberAndBoard(member,board);
 
-            // boardImageInfo에 board 연관관계 설정
+            // 이미지 삭제 후에는 게시글 수정 상황을 위해 shouldBeDelete 값을 true로 바꿔놓는다.
             for (BoardImageInfo boardImageInfo : boardImageInfoList) {
-                boardImageInfo.updateShouldBeDelete(true); // 이미지 삭제 후에는 게시글 수정 상황을 위해 shouldBeDelete 값을 true로 바꿔놓는다.
+                boardImageInfo.updateShouldBeDelete(true);
             }
 
             board.update(requestDto);
@@ -181,8 +177,7 @@ public class BoardService {
         );
 
 //         "member": 현재 로그인한 유저 정보 -> 게시글 작성자가 맞는지 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+        Member member = getAuthMember();
 
 
         if(member.getId().equals(board.getMember().getId())) {

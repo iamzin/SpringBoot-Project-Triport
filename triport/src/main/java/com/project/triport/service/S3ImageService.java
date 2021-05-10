@@ -9,6 +9,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.project.triport.entity.Board;
 import com.project.triport.entity.BoardImageInfo;
+import com.project.triport.entity.Member;
+import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BoardImageInfoRepository;
 import com.project.triport.repository.BoardRepository;
 import com.project.triport.requestDto.ImageRequestDto;
@@ -17,6 +19,9 @@ import com.project.triport.responseDto.results.ImageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -78,18 +83,22 @@ public class S3ImageService {
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
         String fileName = deleteSpaceFromFileName(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename())) + "-" + date.format(new Date());
 
-        System.out.println(requestDto.getImageFile().getSize()); // 바이트 단위
 
         if (!limitImgSize(requestDto.getImageFile())) {
             throw new IOException("파일 용량 초과!!!");
         }
+
+        // "member": 현재 로그인한 유저 정보
+        Member member = getAuthMember();
+
+        System.out.println("member.getId() = " + member.getId()); // -> null 이 뜬다. 즉 member를 못가져온다.
 
         // 파일 업로드 (파일 수정도 똑같이 putObject() 활용)
         s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         // ImageInfo 테이블에 이미지 정보 저장
-        BoardImageInfo boardImageInfo = new BoardImageInfo(requestDto.getTempId(), fileName);
+        BoardImageInfo boardImageInfo = new BoardImageInfo(member, fileName);
         boardImageInfoRepository.save(boardImageInfo);
 
         ImageResponseDto imageResponseDto = new ImageResponseDto(fileName);
@@ -103,8 +112,7 @@ public class S3ImageService {
                 () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
 
-        // 기존 게시글의 임시 번호 찾기
-        String tempId = board.getTempId();
+        Member member = getAuthMember();
 
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -125,7 +133,7 @@ public class S3ImageService {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         // ImageInfo 테이블에 이미지 정보 저장
-        BoardImageInfo boardImageInfo = new BoardImageInfo(tempId, fileName, board);
+        BoardImageInfo boardImageInfo = new BoardImageInfo(member, fileName, board);
         boardImageInfoRepository.save(boardImageInfo);
 
         ImageResponseDto imageResponseDto = new ImageResponseDto(fileName);
@@ -152,6 +160,15 @@ public class S3ImageService {
 //            System.out.println("이미지 파일 주소가 올바르지 않습니다.");
             return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
         }
+    }
+
+    public Member getAuthMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || AnonymousAuthenticationToken.class.
+                isAssignableFrom(authentication.getClass())) {
+            return null;
+        }
+        return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
 
     public Boolean limitImgSize(MultipartFile file) {

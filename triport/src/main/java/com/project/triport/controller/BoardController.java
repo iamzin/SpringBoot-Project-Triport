@@ -21,13 +21,13 @@ public class BoardController {
     private final S3ImageService s3ImageService;
 
     // Basic 게시글 전체 리스트 조회
-    @GetMapping("/api/boards")
+    @GetMapping("/api/all/boards")
     public ResponseDto getBasicBoardList(@RequestParam int page, @RequestParam String filter, @RequestParam String keyword) {
         return boardService.getBoardList(page, filter, keyword);
     }
 
     // 게시글 상세 조회
-    @GetMapping("/api/boards/detail/{boardId}")
+    @GetMapping("/api/all/boards/detail/{boardId}")
     public ResponseDto getBasicBoardDetail(@PathVariable Long boardId) {
         return boardService.getBoardDetail(boardId);
     }

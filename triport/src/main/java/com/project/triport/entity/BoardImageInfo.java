@@ -14,10 +14,6 @@ public class BoardImageInfo extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 게시글 임시 번호
-    @Column(nullable = false)
-    private String tempId;
-
     // s3 이미지 파일 경로 (Key) (Cloudfront 아니고 s3)
     @Column(nullable = false)
     private String filePath;
@@ -26,21 +22,25 @@ public class BoardImageInfo extends Timestamped {
     @Column(nullable = false)
     private Boolean shouldBeDeleted;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     // 게시글 fk
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 
-    public BoardImageInfo(String tempId, String filePath) {
-        this.tempId = tempId;
+    public BoardImageInfo(Member member, String filePath) {
+        this.member = member;
         this.filePath = filePath;
         this.shouldBeDeleted = true;
     }
 
-    public BoardImageInfo(String tempId, String filePath, Board board) {
-        this.tempId = tempId;
+    public BoardImageInfo(Member member, String filePath, Board board) {
         this.filePath = filePath;
         this.shouldBeDeleted = true;
+        this.member = member;
         this.board = board;
         board.getBoardImageInfoList().add(this);
     }

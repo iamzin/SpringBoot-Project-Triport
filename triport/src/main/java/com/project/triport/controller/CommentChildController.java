@@ -13,7 +13,7 @@ public class CommentChildController {
     private final CommentChildService commentChildService;
 
     // Comment Child 리스트 조회(페이징 처리)
-    @GetMapping("/api/boards/comments/children/{commentParentId}")
+    @GetMapping("/api/all/boards/comments/children/{commentParentId}")
     public ResponseDto getBoardCommentChildList(@PathVariable Long commentParentId, @RequestParam int page) {
         return commentChildService.getPagedCommentChildList(commentParentId, page);
     }
