@@ -16,6 +16,7 @@ import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.ImageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor //원래는 NoArgsContructor
@@ -123,7 +125,7 @@ public class S3ImageService {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         // ImageInfo 테이블에 이미지 정보 저장
-        BoardImageInfo boardImageInfo = new BoardImageInfo(tempId, fileName, board); //boardId 추가하자
+        BoardImageInfo boardImageInfo = new BoardImageInfo(tempId, fileName, board);
         boardImageInfoRepository.save(boardImageInfo);
 
         ImageResponseDto imageResponseDto = new ImageResponseDto(fileName);
@@ -132,19 +134,23 @@ public class S3ImageService {
     }
 
     // 이미지 삭제
-    public String deleteImg(String currentFilePath) throws IOException {
+    @Async
+    public CompletableFuture<String> deleteImg(String currentFilePath) throws IOException {
         if (!"".equals(currentFilePath) && currentFilePath != null) {
             boolean isExistObject = s3Client.doesObjectExist(bucket, currentFilePath);
 
             if (isExistObject) {
                 s3Client.deleteObject(bucket, currentFilePath);
-                return "이미지 파일 삭제 완료";
+//                System.out.println("이미지 파일 삭제 완료");
+                return CompletableFuture.completedFuture("이미지 파일 삭제 완료");
             } else {
-                return "해당 이미지 파일이 존재하지 않습니다.";
+//                System.out.println("해당 이미지 파일이 존재하지 않습니다.");
+                return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
             }
 
         } else {
-            return "해당 이미지 파일이 존재하지 않습니다.";
+//            System.out.println("이미지 파일 주소가 올바르지 않습니다.");
+            return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
         }
     }
 

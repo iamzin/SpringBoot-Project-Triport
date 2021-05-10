@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class BoardImageInfoService {
     // Repository에서 tempId와 ImageUrl로 찾은 칼럼들의 shouldBeDeleted 값을 false로 바꾼다.
     // Repository에서 tempId로 찾은 칼럼들 가운데 shouldBeDeleted 값이 true인 칼럼을 삭제하고, S3에서도 삭제한다.
     @Transactional
-    public void CompareAndDeleteImage(List<ImageResponseDto> imageUrlList, String tempId) throws IOException {
+    public void CompareAndDeleteImage(List<ImageResponseDto> imageUrlList, String tempId) throws IOException, ExecutionException, InterruptedException {
         List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByTempId(tempId);
 
         // Repository에서 tempId와 ImageUrl로 찾은 칼럼들의 shouldBeDeleted 값을 false로 바꾼다. O(n^2)
@@ -38,7 +40,8 @@ public class BoardImageInfoService {
         // Repository에서 tempId로 찾은 칼럼들 가운데 shouldBeDeleted 값이 true인 칼럼을 삭제하고, S3에서도 삭제한다.
         List<BoardImageInfo> shouldBeDeletedBoardImageInfoList = boardImageInfoRepository.findByTempIdEqualsAndShouldBeDeletedEquals(tempId, true);
         for (BoardImageInfo boardImageInfo : shouldBeDeletedBoardImageInfoList) {
-            s3ImageService.deleteImg(boardImageInfo.getFilePath()); // S3에서 삭제
+            CompletableFuture<String> page1 = s3ImageService.deleteImg(boardImageInfo.getFilePath()); // S3에서 삭제
+            System.out.println(page1.get());
             boardImageInfoRepository.delete(boardImageInfo); // 테이블에서 삭제
         }
 //        boardImageInfoRepository.deleteByTempIdEqualsAndShouldBeDeletedEquals(tempId, true); // 테이블에서 칼럼 삭제

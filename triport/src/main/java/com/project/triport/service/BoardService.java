@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
     private final BoardImageInfoRepository boardImageInfoRepository;
-    private final CommentParentService commentParentService;
     private final BoardImageInfoService boardImageInfoService;
 
     // Basic 게시글 전체 리스트 조회 -> 페이징 //User는 Authentication으로 수정해야됨
@@ -82,17 +82,6 @@ public class BoardService {
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
         Member member = getAuthMember();
 
-
-        // "commentList": 현재 게시글의 comment 리스트
-        List<CommentParent> commentParentList = commentParentService.getCommentList(board.getId());
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-
-        // comment 리스트 -> comment DTO 로 변경
-        for (CommentParent commentParent : commentParentList) {
-            CommentResponseDto commentResponseDto = new CommentResponseDto(commentParent);
-            commentResponseDtoList.add(commentResponseDto);
-        }
-
         // isLike 로그인/비로그인 구분
         boolean isLike = false;
 
@@ -100,7 +89,7 @@ public class BoardService {
             isLike = boardLikeRepository.existsByBoardAndMember(board, member); //Member는 현재 로그인한 멤버로 변경해야됨
         }
 
-        DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike, commentResponseDtoList); // user 파리미터는 현재 로그인한 User로 변경되야함
+        DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike); // user 파리미터는 현재 로그인한 User로 변경되야함
 
         return new ResponseDto(true, detailResponseDto,"특정 게시글 조회에 성공하였습니다."); //detailResponseDto
     }
@@ -125,7 +114,7 @@ public class BoardService {
 
     //     게시글 작성
     @Transactional
-    public ResponseDto createBoard(BoardRequestDto requestDto) throws IOException {
+    public ResponseDto createBoard(BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
 
         // "member": 현재 로그인한 유저 정보 -> islike 가져오기 위함
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -152,7 +141,7 @@ public class BoardService {
 
     //     게시글 수정
     @Transactional
-    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException {
+    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
 
         Board board = boardRepository.findById(basicId).orElseThrow(
                 () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")

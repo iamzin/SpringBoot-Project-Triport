@@ -13,6 +13,7 @@ import java.util.List;
 public class BoardRequestDto {
     private String title;
     private String description;
+    private String address;
     private List<ImageResponseDto> imageUrlList;
     private String tempId;
 }

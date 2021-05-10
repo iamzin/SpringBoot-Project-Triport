@@ -18,8 +18,6 @@ public class DetailResponseDto {
 
     private InformationResponseDto information;
     private AuthorResponseDto author;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<CommentResponseDto> commentList;
     private AccessUserResponseDto member;
 
     public DetailResponseDto(Post post, Boolean isLike){
@@ -28,10 +26,9 @@ public class DetailResponseDto {
         this.member = new AccessUserResponseDto(isLike);
     }
 
-    public DetailResponseDto(Board board, Boolean isLike, List<CommentResponseDto> commentResponseDtoList) {
+    public DetailResponseDto(Board board, Boolean isLike) {
         this.information = new BoardInformationResponseDto(board);
         this.author = new AuthorResponseDto(board);
         this.member = new AccessUserResponseDto(isLike);
-        this.commentList = commentResponseDtoList;
     }
 }
