@@ -40,7 +40,7 @@ public class PostController {
     }
 
     @PostMapping("/api/posts")
-    public ResponseDto createPost(@ModelAttribute PostRequestDto requestDto){
+    public ResponseDto createPost(@ModelAttribute PostRequestDto requestDto) throws IOException {
         return postService.createPost(requestDto);
     }
 

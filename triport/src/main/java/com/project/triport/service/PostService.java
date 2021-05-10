@@ -94,7 +94,7 @@ public class PostService {
         return new ResponseDto(true,listResponseDtoList,"전체 post 조회 완료");
     }
 
-    public ResponseDto createPost(PostRequestDto requestDto) {
+    public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
         MultipartFile videoFile = requestDto.getFile();
         String originalFilename = videoFile.getOriginalFilename();
         try {
@@ -108,6 +108,9 @@ public class PostService {
             return new ResponseDto(true, "포스팅 완료!");
         } catch (Exception e) {
             return new ResponseDto(false, "영상 저장 실패");
+        }
+        finally{
+            videoFileUtil.cleanStorage();
         }
     }
 
