@@ -1,4 +1,4 @@
-package com.project.triport.exception;
+package com.project.triport.validation;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

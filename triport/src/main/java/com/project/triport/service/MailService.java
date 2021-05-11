@@ -3,7 +3,7 @@ package com.project.triport.service;
 import com.project.triport.entity.Member;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.requestDto.MailRequestDto;
-import com.project.triport.requestDto.MemberRequestDto;
+import com.project.triport.responseDto.MailResponseDto;
 import com.project.triport.util.MailHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,7 +25,7 @@ public class MailService {
 //    public String fromMail;
 
     @Transactional
-    public String sendTempPwd(MailRequestDto mailRequestDto) {
+    public MailResponseDto sendTempPwd(MailRequestDto mailRequestDto) {
 
         Member member = memberRepository.findByEmail(mailRequestDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("입력하신 이메일로 가입된 사용자가 없습니다."));
@@ -60,7 +60,7 @@ public class MailService {
             e.printStackTrace();
         }
 
-        return "회원님의 이메일로 임시 비밀번호를 발송하였습니다.";
+        return new MailResponseDto("회원님의 이메일로 임시 비밀번호를 발송하였습니다.");
     }
 
     public String generateTempPwd() {
