@@ -56,9 +56,7 @@ public class PostService {
             boolean isMembers = false;
             if (member != null) {
                 isLike = postLikeRepository.existsByPostAndMember(post, member);
-                if (post.getMember().equals(member)) {
-                    isMembers = true;
-                }
+                isMembers = post.getMember().equals(member);
             }
             ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
             listResponseDtoList.add(listResponseDto);
@@ -78,9 +76,7 @@ public class PostService {
             if (member != null) {
                 // 접근 Member의 좋아요 상태를 확인한다.
                 isLike = postLikeRepository.existsByPostAndMember(post, member);
-                if (post.getMember().equals(member)) {
-                    isMembers = true;
-                }
+                isMembers = post.getMember().equals(member);
             }
             // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다..
             DetailResponseDto detailResponseDto = new DetailResponseDto(post, isLike, isMembers);
@@ -96,7 +92,8 @@ public class PostService {
         List<ListResponseDto> listResponseDtoList = new ArrayList<>();
         for (Post post : postList) {
             boolean isLike = postLikeRepository.existsByPostAndMember(post, member);
-            ListResponseDto listResponseDto = new ListResponseDto(post, isLike);
+            boolean isMembers = post.getMember().equals(member);
+            ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
             listResponseDtoList.add(listResponseDto);
         }
         return new ResponseDto(true, listResponseDtoList, "전체 post 조회 완료");

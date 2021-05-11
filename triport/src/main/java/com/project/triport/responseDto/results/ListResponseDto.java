@@ -15,12 +15,6 @@ public class ListResponseDto {
     private AuthorResponseDto author;
     private AccessMemberResponseDto member;
 
-    public ListResponseDto(Post post, Boolean isLike) {
-        this.information = new PostInformationResponseDto(post);
-        this.author = new AuthorResponseDto(post);
-        this.member = new AccessMemberResponseDto(isLike);
-    }
-
     public ListResponseDto(Board board, Boolean isLike) {
         this.information = new BoardInformationResponseDto(board);
         this.author = new AuthorResponseDto(board);
