@@ -41,11 +41,11 @@ public class VideoFileUtil {
     }
 
     @PostConstruct
-    public void init(){
-        try{
+    public void init() {
+        try {
             ffmpeg = new FFmpeg(ffmpegPath);
             ffprobe = new FFprobe(ffprobePath);
-        }catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -56,9 +56,9 @@ public class VideoFileUtil {
 
     public String encodingVideo(String originalFilename) {
         String randomString = UUID.randomUUID().toString();
-        String encodedDirectory = encodedStorage+randomString;
+        String encodedDirectory = encodedStorage + randomString;
         File dir = new File(encodedDirectory);
-        if(!dir.exists()) {
+        if (!dir.exists()) {
             dir.mkdir();
         }
 
@@ -66,7 +66,7 @@ public class VideoFileUtil {
                 .setInput(originStorage + originalFilename)   // Filename, or a FFmpegProbeResult
                 .overrideOutputFiles(true) // Override the output if it exists
 
-                .addOutput(encodedDirectory+"/"+randomString+".m3u8")   // Filename for the destination
+                .addOutput(encodedDirectory + "/" + randomString + ".m3u8")   // Filename for the destination
                 .disableSubtitle()       // No subtiles
 
                 .setAudioChannels(1)         // Mono audio

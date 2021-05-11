@@ -20,7 +20,7 @@ public class BoardInformationResponseDto extends InformationResponseDto {
     private String thumbNailUrl;
     private Long commentNum;
 
-    public BoardInformationResponseDto(Board board){
+    public BoardInformationResponseDto(Board board) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
 
         this.id = board.getId();

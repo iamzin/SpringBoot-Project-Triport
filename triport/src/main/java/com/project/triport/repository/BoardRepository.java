@@ -14,5 +14,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findByMember(Member member);
 
-    Slice<Board> findByTitleContainingOrDescriptionContaining(String title, String desciption , Pageable pageable);
+    Slice<Board> findByTitleContainingOrDescriptionContaining(String title, String desciption, Pageable pageable);
 }

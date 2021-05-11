@@ -22,7 +22,7 @@ public class PostLike {
     @JoinColumn
     private Post post;
 
-    public PostLike(Post post, Member member){
+    public PostLike(Post post, Member member) {
         this.member = member;
         this.post = post;
     }

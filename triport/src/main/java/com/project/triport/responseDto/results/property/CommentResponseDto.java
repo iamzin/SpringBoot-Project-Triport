@@ -15,7 +15,7 @@ public class CommentResponseDto {
     private Long likeNum;
     private String modifiedAt;
 
-    public CommentResponseDto(CommentParent commentParent){
+    public CommentResponseDto(CommentParent commentParent) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
         this.id = commentParent.getId();
         this.nickname = commentParent.getMember().getNickname();
@@ -25,7 +25,7 @@ public class CommentResponseDto {
         this.modifiedAt = commentParent.getModifiedAt().format(formatter);
     }
 
-    public CommentResponseDto(CommentChild commentChild){
+    public CommentResponseDto(CommentChild commentChild) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
         this.id = commentChild.getId();
         this.nickname = commentChild.getMember().getNickname();

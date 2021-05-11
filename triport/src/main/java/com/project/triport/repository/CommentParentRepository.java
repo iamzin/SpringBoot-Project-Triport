@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CommentParentRepository extends JpaRepository<CommentParent,Long> {
+public interface CommentParentRepository extends JpaRepository<CommentParent, Long> {
 
     Slice<CommentParent> findByBoard(Board board, Pageable pageable);
 

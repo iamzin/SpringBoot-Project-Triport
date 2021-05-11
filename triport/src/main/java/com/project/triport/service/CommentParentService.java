@@ -45,10 +45,10 @@ public class CommentParentService {
         Member member = getAuthMember();
 
         // page 관련 request 설정
-        PageRequest pageRequest = PageRequest.of(page-1,5);
+        PageRequest pageRequest = PageRequest.of(page - 1, 5);
 
         // 페이징 처리된 BoardCommentParent 리스트 조회
-        Slice<CommentParent> BoardCommentPage = commentParentRepository.findByBoard(board,pageRequest);
+        Slice<CommentParent> BoardCommentPage = commentParentRepository.findByBoard(board, pageRequest);
 
         // 마지막 페이지 여부 설정
         Boolean isLast = BoardCommentPage.isLast();
@@ -63,11 +63,11 @@ public class CommentParentService {
             if (member != null) {
                 isLike = commentParentLikeRepository.existsByCommentParentAndMember(commentParent, member);
             }
-            CommentListResponseDto responseDto = new CommentListResponseDto(commentParent,isLike);
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentParent, isLike);
             responseDtoList.add(responseDto);
         }
 
-        return new ResponseDto(true, responseDtoList, "해당 Basic 게시글의 댓글 페이징 리스트 조회에 성공하였습니다.",isLast);
+        return new ResponseDto(true, responseDtoList, "해당 Basic 게시글의 댓글 페이징 리스트 조회에 성공하였습니다.", isLast);
     }
 
     // BoardCommentParent 작성
@@ -100,7 +100,7 @@ public class CommentParentService {
         Member member = getAuthMember();
 
         // 댓글 작성자가 맞는지 검증
-        if(member.getId().equals(commentParent.getMember().getId())) {
+        if (member.getId().equals(commentParent.getMember().getId())) {
             commentParent.update(requestDto);
             return new ResponseDto(true, "댓글 수정이 완료되었습니다.");
         } else {
@@ -118,7 +118,7 @@ public class CommentParentService {
         Member member = getAuthMember();
 
         // 댓글 작성자가 맞는지 검증
-        if(member.getId().equals(commentParent.getMember().getId())) {
+        if (member.getId().equals(commentParent.getMember().getId())) {
             commentParentRepository.deleteById(commentParentId);
             commentParent.getBoard().updateCommentNum(-1);
             return new ResponseDto(true, "댓글 삭제가 완료되었습니다.");

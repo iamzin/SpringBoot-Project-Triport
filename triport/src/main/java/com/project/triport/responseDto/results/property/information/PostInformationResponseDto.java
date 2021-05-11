@@ -14,7 +14,7 @@ public class PostInformationResponseDto extends InformationResponseDto {
     private String videoUrl;
     private List<String> hashtag;
 
-    public PostInformationResponseDto(Post post){
+    public PostInformationResponseDto(Post post) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
 
         this.id = post.getId();

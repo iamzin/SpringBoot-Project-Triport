@@ -15,7 +15,7 @@ public class CommentParentController {
     // Comment Parent 리스트 조회(페이징 처리)
     @GetMapping("/api/all/boards/comments/parents/{boardId}")
     public ResponseDto getBoardCommentList(@PathVariable Long boardId, @RequestParam int page) {
-        return commentParentService.getPagedCommentParentList(boardId,page);
+        return commentParentService.getPagedCommentParentList(boardId, page);
     }
 
     // Comment Parent 작성

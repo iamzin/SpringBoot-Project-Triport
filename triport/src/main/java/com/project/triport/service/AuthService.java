@@ -42,7 +42,7 @@ public class AuthService {
     public MemberInfoResponseDto login(MemberRequestDto memberRequestDto, HttpServletResponse response) {
         // 1. Login 시 입력한 ID/PW를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(memberRequestDto.getEmail(),memberRequestDto.getPassword());
+                new UsernamePasswordAuthenticationToken(memberRequestDto.getEmail(), memberRequestDto.getPassword());
 
         // 2. 실제로 비밀번호 검증이 이루어지는 부분
         //    authenticate method가 실행될 때, CustomuserDetailService에서 만들었던 loadUserByUsername method 실행

@@ -47,7 +47,7 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE}) //게시글 삭제되면 좋아요도 연쇄 삭제될 수 있도록
     private List<BoardImageInfo> boardImageInfoList = new ArrayList<>();
 
-    public Board(BoardRequestDto boardRequestDto, Member member){
+    public Board(BoardRequestDto boardRequestDto, Member member) {
         this.title = boardRequestDto.getTitle();
         this.description = boardRequestDto.getDescription();
         this.address = boardRequestDto.getAddress();

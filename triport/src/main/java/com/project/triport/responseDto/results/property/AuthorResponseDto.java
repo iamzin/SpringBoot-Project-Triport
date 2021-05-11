@@ -12,12 +12,12 @@ public class AuthorResponseDto {
     private String nickname; // email 주소(id)
     private String profileImgUrl; // http://15.165.205.40/profiles/img1.png
 
-    public AuthorResponseDto(Post post){
+    public AuthorResponseDto(Post post) {
         this.nickname = post.getMember().getNickname();
         this.profileImgUrl = post.getMember().getProfileImgUrl();
     }
 
-    public AuthorResponseDto(Board board){
+    public AuthorResponseDto(Board board) {
         this.nickname = board.getMember().getNickname(); //nickname
         this.profileImgUrl = board.getMember().getProfileImgUrl(); //profileImgUrl
     }

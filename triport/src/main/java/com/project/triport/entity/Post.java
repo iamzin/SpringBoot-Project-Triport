@@ -42,7 +42,7 @@ public class Post extends Timestamped {
 //        this.member = member;
 //    }
 
-    public Post(String videoUrl, List<String> hashtag, Member member){
+    public Post(String videoUrl, List<String> hashtag, Member member) {
         this.videoType = "m3u8";
         this.videoUrl = videoUrl;
         this.likeNum = 0L;
@@ -50,15 +50,15 @@ public class Post extends Timestamped {
         this.member = member;
     }
 
-    public void update(PostRequestDto requestDto){
+    public void update(PostRequestDto requestDto) {
         this.hashtag = requestDto.getHashtag();
     }
 
-    public void plusLikeNum(){
+    public void plusLikeNum() {
         this.likeNum++;
     }
 
-    public void minusLikeNum(){
+    public void minusLikeNum() {
         this.likeNum--;
     }
 }

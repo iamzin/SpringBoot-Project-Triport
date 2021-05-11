@@ -44,7 +44,7 @@ public class CommentChildService {
         Member member = getAuthMember();
 
         // page 관련 request 설정
-        PageRequest pageRequest = PageRequest.of(page-1,5);
+        PageRequest pageRequest = PageRequest.of(page - 1, 5);
 
         // 페이징 처리된 BoardCommentChild 리스트 조회
         Slice<CommentChild> boardCommentChildPage = commentChildRepository.findByCommentParent(commentParent, pageRequest);
@@ -61,7 +61,7 @@ public class CommentChildService {
             if (member != null) {
                 isLike = commentChildLikeRepository.existsByCommentChildAndMember(commentChild, member);
             }
-            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild,isLike);
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike);
             responseDtoList.add(responseDto);
         }
 
@@ -98,7 +98,7 @@ public class CommentChildService {
         Member member = getAuthMember();
 
         // 답글 작성자가 맞는지 검증
-        if(member.getId().equals(commentChild.getMember().getId())) {
+        if (member.getId().equals(commentChild.getMember().getId())) {
             commentChild.update(requestDto);
             return new ResponseDto(true, "답글 수정이 완료되었습니다.");
         } else {
@@ -118,7 +118,7 @@ public class CommentChildService {
         Member member = getAuthMember();
 
         // 답글 작성자가 맞는지 검증
-        if(member.getId().equals(commentChild.getMember().getId())) {
+        if (member.getId().equals(commentChild.getMember().getId())) {
             commentChildRepository.deleteById(commentChildId);
             return new ResponseDto(true, "답글 삭제가 완료되었습니다.");
         } else {

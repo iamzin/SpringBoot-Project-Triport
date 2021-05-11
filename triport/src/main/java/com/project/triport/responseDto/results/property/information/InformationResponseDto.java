@@ -7,7 +7,7 @@ public class InformationResponseDto {
     protected Long id;
     protected Long likeNum; // Like 총 개수
     protected String modifiedAt; // "2021-04-24T16:25:30.013"
-                                 // "yyyy-MM-dd kk:mm"
+    // "yyyy-MM-dd kk:mm"
 }
 
 //    PostInformation

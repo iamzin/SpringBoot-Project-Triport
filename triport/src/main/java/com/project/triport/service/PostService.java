@@ -34,16 +34,16 @@ public class PostService {
     private final S3Util s3Util;
     private final VideoFileUtil videoFileUtil;
 
-    public ResponseDto readPostsAll(int page, String filter, String keyword ){
-        // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(10), sort 고정값(DESC))
-        Sort sort = Sort.by(Sort.Direction.DESC,filter);
-        Pageable pageable = PageRequest.of(page-1, 12, sort);
+    public ResponseDto readPostsAll(int page, String filter, String keyword) {
+        // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(12), sort 고정값(DESC))
+        Sort sort = Sort.by(Sort.Direction.DESC, filter);
+        Pageable pageable = PageRequest.of(page - 1, 12, sort);
         // 전체 post 리스트 조회
         Slice<Post> postPage;
-        if("".equals(keyword)) {
+        if ("".equals(keyword)) {
             postPage = postRepository.findAllBy(pageable);
-        } else{
-            postPage = postRepository.findByHashtag(keyword,pageable);
+        } else {
+            postPage = postRepository.findByHashtag(keyword, pageable);
         }
         // 반환 page가 last page인지 확인
         Boolean isLast = postPage.isLast();
@@ -51,18 +51,22 @@ public class PostService {
         List<ListResponseDto> listResponseDtoList = new ArrayList<>();
         // post와 member 정보를 통해 ListResponseDto에 필요한 정보를 기입(생성자 사용)
         Member member = getAuthMember();
-        for(Post post : postPage){
+        for (Post post : postPage) {
             boolean isLike = false;
-            if(member != null){
-                isLike = postLikeRepository.existsByPostAndMember(post,member);
+            boolean isMembers = false;
+            if (member != null) {
+                isLike = postLikeRepository.existsByPostAndMember(post, member);
+                if (post.getMember().equals(member)) {
+                    isMembers = true;
+                }
             }
-            ListResponseDto listResponseDto = new ListResponseDto(post,isLike);
+            ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
             listResponseDtoList.add(listResponseDto);
         }
-        return new ResponseDto(true,listResponseDtoList,"전체 post 조회 완료",isLast);
+        return new ResponseDto(true, listResponseDtoList, "전체 post 조회 완료", isLast);
     }
 
-    public ResponseDto readPost(Long postId){
+    public ResponseDto readPost(Long postId) {
         try {
             // DetailPost 불러온다.
             Post post = postRepository.findById(postId).orElseThrow(
@@ -70,28 +74,32 @@ public class PostService {
             );
             Member member = getAuthMember();
             boolean isLike = false;
-            if(member != null) {
+            boolean isMembers = false;
+            if (member != null) {
                 // 접근 Member의 좋아요 상태를 확인한다.
                 isLike = postLikeRepository.existsByPostAndMember(post, member);
+                if (post.getMember().equals(member)) {
+                    isMembers = true;
+                }
             }
             // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다..
-            DetailResponseDto detailResponseDto = new DetailResponseDto(post, isLike);
+            DetailResponseDto detailResponseDto = new DetailResponseDto(post, isLike, isMembers);
             return new ResponseDto(true, detailResponseDto, "post detail 불러오기 성공");
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return new ResponseDto(false, e.getMessage());
         }
     }
 
-    public ResponseDto readPostsMember(){
+    public ResponseDto readPostsMember() {
         Member member = getAuthMember();
         List<Post> postList = postRepository.findByMember(member);
         List<ListResponseDto> listResponseDtoList = new ArrayList<>();
-        for(Post post : postList){
+        for (Post post : postList) {
             boolean isLike = postLikeRepository.existsByPostAndMember(post, member);
-            ListResponseDto listResponseDto = new ListResponseDto(post,isLike);
+            ListResponseDto listResponseDto = new ListResponseDto(post, isLike);
             listResponseDtoList.add(listResponseDto);
         }
-        return new ResponseDto(true,listResponseDtoList,"전체 post 조회 완료");
+        return new ResponseDto(true, listResponseDtoList, "전체 post 조회 완료");
     }
 
     public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
@@ -103,28 +111,29 @@ public class PostService {
         String originalFilename = videoFile.getOriginalFilename();
         try {
             videoFileUtil.storeVideo(videoFile);
-            System.out.println("video 임시 저장 완료");
+//            System.out.println("video 임시 저장 완료");
             String ecodedFilePath = videoFileUtil.encodingVideo(originalFilename);
-            System.out.println("video 인코딩 및 임시 저장 완료");
+//            System.out.println("video 인코딩 및 임시 저장 완료");
             String videoUrl = s3Util.uploadFolder(ecodedFilePath);
-            System.out.println("인코딩 video S3 upload 완료");
+//            System.out.println("인코딩 video S3 upload 완료");
 
             Member member = getAuthMember();
-            Post post = new Post(videoUrl,requestDto.getHashtag(),member);
-            System.out.println("DB 저장을 위한 Post 객체 생성 완료");
+            Post post = new Post(videoUrl, requestDto.getHashtag(), member);
+//            System.out.println("DB 저장을 위한 Post 객체 생성 완료");
             postRepository.save(post);
-            System.out.println("Post 객체 DB 저장 완료");
+//            System.out.println("Post 객체 DB 저장 완료");
             return new ResponseDto(true, "포스팅 완료!");
+        } catch (IOException e) {
+            return new ResponseDto(false, "영상 저장 실패(IO)");
         } catch (Exception e) {
-            return new ResponseDto(false, "영상 저장 실패");
-        }
-        finally{
+            return new ResponseDto(false, "영상 저장 실패(IO 외 Exception)");
+        } finally {
             videoFileUtil.cleanStorage();
         }
     }
 
     @Transactional
-    public ResponseDto updatePost(PostRequestDto requestDto, Long postId){
+    public ResponseDto updatePost(PostRequestDto requestDto, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
@@ -132,7 +141,7 @@ public class PostService {
         return new ResponseDto(true, "포스트 수정 완료!");
     }
 
-    public ResponseDto deletePost(Long postId){
+    public ResponseDto deletePost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 post 입니다.")
         );

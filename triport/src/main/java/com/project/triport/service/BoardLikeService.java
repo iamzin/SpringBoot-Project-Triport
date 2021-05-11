@@ -32,8 +32,8 @@ public class BoardLikeService {
 
         boolean isExist = boardLikeRepository.existsByBoardAndMember(board, member);
 
-        if(isExist) {
-            boardLikeRepository.deleteByBoardAndMember(board,member);
+        if (isExist) {
+            boardLikeRepository.deleteByBoardAndMember(board, member);
             board.updateLikeNum(-1);
             return new ResponseDto(true, "Basic 게시글 좋아요 취소");
         } else {

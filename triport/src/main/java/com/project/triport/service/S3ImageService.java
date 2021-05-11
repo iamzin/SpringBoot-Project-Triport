@@ -76,7 +76,7 @@ public class S3ImageService {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
-        if(!restrictImgExtension(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()))) {
+        if (!restrictImgExtension(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()))) {
             throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
         }
 
@@ -119,7 +119,7 @@ public class S3ImageService {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
-        if(!restrictImgExtension(Objects.requireNonNull(imageFile.getOriginalFilename()))) {
+        if (!restrictImgExtension(Objects.requireNonNull(imageFile.getOriginalFilename()))) {
             throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
         }
 

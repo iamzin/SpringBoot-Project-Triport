@@ -23,20 +23,20 @@ public class PostLikeService {
     private final PostRepository postRepository;
 
     @Transactional
-    public ResponseDto creatDeletePostLike(Long postId){
+    public ResponseDto creatDeletePostLike(Long postId) {
         Member member = getAuthMember();
-        if(member == null){
+        if (member == null) {
             return new ResponseDto(false, "로그인이 필요합니다.");
         }
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 post 입니다.")
         );
         boolean isExist = postLikeRepository.existsByPostAndMember(post, member);
-        if(isExist){
+        if (isExist) {
             postLikeRepository.deleteByPostAndMember(post, member);
             post.plusLikeNum();
             return new ResponseDto(true, "좋아요 취소");
-        }else{
+        } else {
             PostLike postLike = new PostLike(post, member);
             postLikeRepository.save(postLike);
             post.minusLikeNum();

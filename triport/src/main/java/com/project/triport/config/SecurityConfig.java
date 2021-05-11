@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-                // CSRF 설정 Disable
+        // CSRF 설정 Disable
         http.csrf().disable()
 
                 // exception handlingd에 직접 만든 401, 403 class 추가

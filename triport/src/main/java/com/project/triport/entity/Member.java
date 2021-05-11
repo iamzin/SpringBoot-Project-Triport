@@ -16,7 +16,6 @@ import javax.persistence.*;
 public class Member {
 
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

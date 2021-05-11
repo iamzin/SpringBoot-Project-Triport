@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-public class CommentChild extends Timestamped{
+public class CommentChild extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
