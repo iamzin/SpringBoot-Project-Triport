@@ -81,7 +81,7 @@ public class S3ImageService {
         }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = deleteSpaceFromFileName(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename())) + "-" + date.format(new Date());
+        String fileName = requestDto.getImageFile().getOriginalFilename() + "-" + date.format(new Date());
 
 
         if (!limitImgSize(requestDto.getImageFile())) {
@@ -97,11 +97,13 @@ public class S3ImageService {
         s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
+        String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triport-image.s3.ap-northeast-2.amazonaws.com/")[1];
+
         // ImageInfo 테이블에 이미지 정보 저장
-        BoardImageInfo boardImageInfo = new BoardImageInfo(member, fileName);
+        BoardImageInfo boardImageInfo = new BoardImageInfo(member, filePath);
         boardImageInfoRepository.save(boardImageInfo);
 
-        ImageResponseDto imageResponseDto = new ImageResponseDto(fileName);
+        ImageResponseDto imageResponseDto = new ImageResponseDto(filePath);
 
         return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.");
     }
@@ -122,7 +124,7 @@ public class S3ImageService {
         }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = deleteSpaceFromFileName(Objects.requireNonNull(imageFile.getOriginalFilename())) + "-" + date.format(new Date());
+        String fileName = imageFile.getOriginalFilename() + "-" + date.format(new Date());
 
         if (!limitImgSize(imageFile)) {
             throw new IOException("파일 용량 초과!!!");
@@ -132,11 +134,13 @@ public class S3ImageService {
         s3Client.putObject(new PutObjectRequest(bucket, fileName, imageFile.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
+        String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triport-image.s3.ap-northeast-2.amazonaws.com/")[1];
+
         // ImageInfo 테이블에 이미지 정보 저장
-        BoardImageInfo boardImageInfo = new BoardImageInfo(member, fileName, board);
+        BoardImageInfo boardImageInfo = new BoardImageInfo(member, filePath, board);
         boardImageInfoRepository.save(boardImageInfo);
 
-        ImageResponseDto imageResponseDto = new ImageResponseDto(fileName);
+        ImageResponseDto imageResponseDto = new ImageResponseDto(filePath);
 
         return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.");
     }

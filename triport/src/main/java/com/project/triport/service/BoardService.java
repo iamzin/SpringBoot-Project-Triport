@@ -42,11 +42,20 @@ public class BoardService {
         // 로그인한 멤버의 authentication
         Member member = getAuthMember();
 
-        // page 관련 request 설정
-        PageRequest pageRequest = PageRequest.of(page-1,10, Sort.by(Sort.Direction.DESC, filter));
+        // 첫번째 페이지는 size=20, 두번째 페이지부터는 size=5로 만들기
+        int size = 0;
+        int pageNum = 0;
 
-        // 페이징 처리된 Board 리스트 조회
-//        Slice<Board> BoardSlice = boardRepository.findBy(pageRequest);
+        if(page-1 == 0) {
+            size = 20;
+        } else if (page-1 >= 1) {
+            pageNum = 2 + page;
+            size = 5;
+        }
+
+        // page 관련 request 설정
+        PageRequest pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter));
+
 
         // 페이징 처리된 검색 결과 Board 리스트 조회
         Slice<Board> BoardSliceSearched = boardRepository.findByTitleContainingOrDescriptionContaining(keyword, keyword, pageRequest);

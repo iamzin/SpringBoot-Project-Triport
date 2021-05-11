@@ -27,7 +27,7 @@ public class DetailResponseDto {
     }
 
     public DetailResponseDto(Board board, Boolean isLike) {
-        this.information = new BoardInformationResponseDto(board);
+        this.information = new BoardInformationResponseDto(board, board.getAddress());
         this.author = new AuthorResponseDto(board);
         this.member = new AccessUserResponseDto(isLike);
     }

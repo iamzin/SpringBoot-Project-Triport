@@ -33,14 +33,6 @@ public class CommentParentService {
     private final CommentParentRepository commentParentRepository;
     private final CommentParentLikeRepository commentParentLikeRepository;
 
-    //BasicBoard 상세 페이지 전체 Comment 조회
-    public List<CommentParent> getCommentList(Long basicId) {
-        Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글 정보가 없습니다.")
-        );
-        return commentParentRepository.findByBoard(board);
-    }
-
     //Board 상세 페이지 전체 Comment 페이징 조회
     public ResponseDto getPagedCommentParentList(Long boardId, int page) {
 
