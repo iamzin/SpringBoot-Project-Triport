@@ -56,7 +56,7 @@ public class PostService {
             boolean isMembers = false;
             if (member != null) {
                 isLike = postLikeRepository.existsByPostAndMember(post, member);
-                isMembers = post.getMember().equals(member);
+                isMembers = post.getMember().getId().equals(member.getId());
             }
             ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
             listResponseDtoList.add(listResponseDto);
@@ -76,7 +76,7 @@ public class PostService {
             if (member != null) {
                 // 접근 Member의 좋아요 상태를 확인한다.
                 isLike = postLikeRepository.existsByPostAndMember(post, member);
-                isMembers = post.getMember().equals(member);
+                isMembers = post.getMember().getId().equals(member.getId());
             }
             // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다..
             DetailResponseDto detailResponseDto = new DetailResponseDto(post, isLike, isMembers);
@@ -92,7 +92,7 @@ public class PostService {
         List<ListResponseDto> listResponseDtoList = new ArrayList<>();
         for (Post post : postList) {
             boolean isLike = postLikeRepository.existsByPostAndMember(post, member);
-            boolean isMembers = post.getMember().equals(member);
+            boolean isMembers = post.getMember().getId().equals(member.getId());
             ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
             listResponseDtoList.add(listResponseDto);
         }
@@ -104,8 +104,11 @@ public class PostService {
 //        Post post = new Post("asdf",requestDto.getHashtag(),member);
 //        postRepository.save(post);
 //        return new ResponseDto(true, "해시태그 저장 완료!");
+//        System.out.println("파일 정의");
         MultipartFile videoFile = requestDto.getFile();
+//        System.out.println("이름 꺼내기");
         String originalFilename = videoFile.getOriginalFilename();
+//        System.out.println("originalFilename = " + originalFilename);
         try {
             videoFileUtil.storeVideo(videoFile);
 //            System.out.println("video 임시 저장 완료");
