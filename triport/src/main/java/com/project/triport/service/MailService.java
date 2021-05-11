@@ -25,9 +25,9 @@ public class MailService {
 //    public String fromMail;
 
     @Transactional
-    public String sendTempPwd() {
+    public String sendTempPwd(String email) {
 
-        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
 
         String tmpPwd = generateTempPwd();

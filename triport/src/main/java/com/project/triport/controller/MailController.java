@@ -1,5 +1,6 @@
 package com.project.triport.controller;
 
+import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,8 @@ public class MailController {
     private final MailService mailService;
 
     @PostMapping("/reset/password")
-    public String sendTempPwd() {
-        return mailService.sendTempPwd();
+    public String sendTempPwd(@RequestBody String email) {
+        return mailService.sendTempPwd(email);
     }
 
 //    @PutMapping("/reset/password")
