@@ -16,12 +16,6 @@ public class DetailResponseDto {
     private AuthorResponseDto author;
     private AccessMemberResponseDto member;
 
-    public DetailResponseDto(Board board, Boolean isLike) {
-        this.information = new BoardInformationResponseDto(board, board.getAddress());
-        this.author = new AuthorResponseDto(board);
-        this.member = new AccessMemberResponseDto(isLike);
-    }
-
     public DetailResponseDto(Post post, Boolean isLike, Boolean isMember) {
         this.information = new PostInformationResponseDto(post);
         this.author = new AuthorResponseDto(post);
@@ -29,7 +23,7 @@ public class DetailResponseDto {
     }
 
     public DetailResponseDto(Board board, Boolean isLike, Boolean isMember) {
-        this.information = new BoardInformationResponseDto(board);
+        this.information = new BoardInformationResponseDto(board, board.getAddress());
         this.author = new AuthorResponseDto(board);
         this.member = new AccessMemberResponseDto(isLike, isMember);
     }

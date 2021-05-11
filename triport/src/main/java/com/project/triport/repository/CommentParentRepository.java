@@ -12,5 +12,4 @@ public interface CommentParentRepository extends JpaRepository<CommentParent, Lo
 
     Slice<CommentParent> findByBoard(Board board, Pageable pageable);
 
-    List<CommentParent> findByBoard(Board board);
 }

@@ -58,14 +58,16 @@ public class CommentChildService {
         // 페이징된 BoardCommentChild 리스트를 Dto로 변환
         for (CommentChild commentChild : boardCommentChildPage) {
             boolean isLike = false;
+            boolean isMembers = false;
             if (member != null) {
                 isLike = commentChildLikeRepository.existsByCommentChildAndMember(commentChild, member);
+                isMembers = commentChild.getMember().getId().equals(member.getId());
             }
-            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike);
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike, isMembers);
             responseDtoList.add(responseDto);
         }
 
-        return new ResponseDto(true, responseDtoList, "해당 댓글의 답글 페이징 리스트 조회에 성공하였습니다.", isLast);
+        return new ResponseDto(true, responseDtoList, "해당 댓글의 대댓글 조회에 성공하였습니다.", isLast);
     }
 
     // BoardCommentChild 작성
@@ -83,7 +85,7 @@ public class CommentChildService {
         System.out.println("boardCommentChild.getContents() = " + commentChild.getContents());
         commentChildRepository.save(commentChild);
 
-        return new ResponseDto(true, "답글 작성이 완료되었습니다.");
+        return new ResponseDto(true, "대댓글 작성이 완료되었습니다.");
     }
 
     // BasicCommentChild 수정
@@ -91,7 +93,7 @@ public class CommentChildService {
     public ResponseDto updateCommentChild(Long commentChildId, CommentRequestDto requestDto) {
         CommentChild commentChild = commentChildRepository.findById(commentChildId)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("해당 답글이 존재하지 않습니다.")
+                        () -> new IllegalArgumentException("해당 대댓글이 존재하지 않습니다.")
                 );
 
         // "member": 현재 로그인한 유저 정보
@@ -100,7 +102,7 @@ public class CommentChildService {
         // 답글 작성자가 맞는지 검증
         if (member.getId().equals(commentChild.getMember().getId())) {
             commentChild.update(requestDto);
-            return new ResponseDto(true, "답글 수정이 완료되었습니다.");
+            return new ResponseDto(true, "대댓글 수정이 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
@@ -120,7 +122,7 @@ public class CommentChildService {
         // 답글 작성자가 맞는지 검증
         if (member.getId().equals(commentChild.getMember().getId())) {
             commentChildRepository.deleteById(commentChildId);
-            return new ResponseDto(true, "답글 삭제가 완료되었습니다.");
+            return new ResponseDto(true, "대댓글 삭제가 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }

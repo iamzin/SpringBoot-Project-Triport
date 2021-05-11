@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentParentLikeRepository extends JpaRepository<CommentParentLike, Long> {
+
     boolean existsByCommentParentAndMember(CommentParent commentParent, Member member);
 
     void deleteByCommentParentAndMember(CommentParent commentParent, Member member);

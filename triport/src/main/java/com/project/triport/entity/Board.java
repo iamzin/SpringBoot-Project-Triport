@@ -33,18 +33,17 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     @Column(nullable = false)
     private Long commentNum;
 
-
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member; //user의 nickname, profileImgUrl
+    private Member member;
 
-    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE}) // 일반적으로 CascadeType.All 을 사용
-    private List<CommentParent> commentParentList = new ArrayList<>(); //양방향 연관관계를 통해 영속성 전이 삭제를 일으키기 위해 설정
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE})
+    private List<CommentParent> commentParentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE}) //게시글 삭제되면 좋아요도 연쇄 삭제될 수 있도록
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE})
     private List<BoardLike> boardLikeList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE}) //게시글 삭제되면 좋아요도 연쇄 삭제될 수 있도록
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE})
     private List<BoardImageInfo> boardImageInfoList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, Member member) {

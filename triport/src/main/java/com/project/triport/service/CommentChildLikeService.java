@@ -23,7 +23,7 @@ public class CommentChildLikeService {
     public ResponseDto CreateAndDeleteCommentChildLike(Long commentChildId) {
         CommentChild commentChild = commentChildRepository.findById(commentChildId)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("해당 답글 정보가 없습니다.")
+                        () -> new IllegalArgumentException("해당 대댓글 정보가 없습니다.")
                 );
 
         // "member": 현재 로그인한 유저 정보
@@ -35,12 +35,12 @@ public class CommentChildLikeService {
         if (isExist) {
             commentChildLikeRepository.deleteByCommentChildAndMember(commentChild, member);
             commentChild.updateLikeNum(-1);
-            return new ResponseDto(true, "답글 좋아요 취소");
+            return new ResponseDto(true, "대댓글 좋아요 취소가 완료되었습니다.");
         } else {
             CommentChildLike commentChildLike = new CommentChildLike(commentChild, member);
             commentChildLikeRepository.save(commentChildLike);
             commentChild.updateLikeNum(+1);
-            return new ResponseDto(true, "답글 좋아요 추가");
+            return new ResponseDto(true, "대댓글 좋아요 추가가 완료되었습니다.");
         }
     }
 }
