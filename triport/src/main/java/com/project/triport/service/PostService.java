@@ -37,7 +37,7 @@ public class PostService {
     public ResponseDto readPostsAll(int page, String filter, String keyword ){
         // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(10), sort 고정값(DESC))
         Sort sort = Sort.by(Sort.Direction.DESC,filter);
-        Pageable pageable = PageRequest.of(page-1, 10, sort);
+        Pageable pageable = PageRequest.of(page-1, 12, sort);
         // 전체 post 리스트 조회
         Slice<Post> postPage;
         if("".equals(keyword)) {
@@ -95,16 +95,25 @@ public class PostService {
     }
 
     public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
+//        Member member = getAuthMember();
+//        Post post = new Post("asdf",requestDto.getHashtag(),member);
+//        postRepository.save(post);
+//        return new ResponseDto(true, "해시태그 저장 완료!");
         MultipartFile videoFile = requestDto.getFile();
         String originalFilename = videoFile.getOriginalFilename();
         try {
             videoFileUtil.storeVideo(videoFile);
+            System.out.println("video 임시 저장 완료");
             String ecodedFilePath = videoFileUtil.encodingVideo(originalFilename);
+            System.out.println("video 인코딩 및 임시 저장 완료");
             String videoUrl = s3Util.uploadFolder(ecodedFilePath);
+            System.out.println("인코딩 video S3 upload 완료");
 
             Member member = getAuthMember();
             Post post = new Post(videoUrl,requestDto.getHashtag(),member);
+            System.out.println("DB 저장을 위한 Post 객체 생성 완료");
             postRepository.save(post);
+            System.out.println("Post 객체 DB 저장 완료");
             return new ResponseDto(true, "포스팅 완료!");
         } catch (Exception e) {
             return new ResponseDto(false, "영상 저장 실패");

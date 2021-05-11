@@ -20,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     // 로그인 불필요 항목
-    @GetMapping("/api/search/posts")
+    @GetMapping("/api/all/posts")
     public ResponseDto readPostsAll(
             @RequestParam int page,
             @RequestParam String filter,
@@ -28,7 +28,7 @@ public class PostController {
         return postService.readPostsAll(page, filter, keyword);
     }
 
-    @GetMapping("/api/search/posts/detail/{postId}")
+    @GetMapping("/api/all/posts/detail/{postId}")
     public ResponseDto readPost(@PathVariable Long postId) {
         return postService.readPost(postId);
     }
