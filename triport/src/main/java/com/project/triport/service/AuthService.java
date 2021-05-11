@@ -2,7 +2,6 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.entity.RefreshToken;
-import com.project.triport.jwt.JwtFilter;
 import com.project.triport.jwt.TokenProvider;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
@@ -12,9 +11,6 @@ import com.project.triport.responseDto.MemberInfoResponseDto;
 import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.responseDto.TokenDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;

@@ -58,12 +58,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 나머지는 모두 token 인증 필요
                 .and()
                 .authorizeRequests()
-                .anyRequest().permitAll()
-//                .antMatchers("/auth/**").permitAll()
-//                .antMatchers("/api/search/**").permitAll()
-//                .antMatchers("/mail/**").permitAll()
-//                .antMatchers("/static/**").permitAll()
-//                .anyRequest().authenticated()
+                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/api/all/**").permitAll()
+                .antMatchers("/mail/**").permitAll()
+                .antMatchers("/static/**").permitAll()
+                .anyRequest().authenticated()
 
                 // TODO: 빼도 되는지 테스트 필요
                 .and()

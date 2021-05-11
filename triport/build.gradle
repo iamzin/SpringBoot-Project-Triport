@@ -30,9 +30,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
+    // 로그인을 위한 JWT 관련 설정
     compile group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+    // 회원가입 정보 확인을 위한 validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // io configuration 을 위한 설정정보
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
