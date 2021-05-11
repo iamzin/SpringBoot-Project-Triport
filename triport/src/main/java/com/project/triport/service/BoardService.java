@@ -36,7 +36,7 @@ public class BoardService {
     private final BoardImageInfoRepository boardImageInfoRepository;
     private final BoardImageInfoService boardImageInfoService;
 
-    // Basic 게시글 전체 리스트 조회 -> 페이징 //User는 Authentication으로 수정해야됨
+    // Basic 게시글 전체 리스트 조회 -> 페이징
     public ResponseDto getBoardList(int page, String filter, String keyword) {
 
         // 로그인한 멤버의 authentication
@@ -53,7 +53,7 @@ public class BoardService {
             size = 5;
         }
 
-        // page 관련 request 설정
+        // page 관련 PageRequest 설정
         PageRequest pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter));
 
 
@@ -72,7 +72,7 @@ public class BoardService {
             boolean isLike = false;
             boolean isMembers = false;
             if(member != null) { // 비로그인 상황
-                isLike = boardLikeRepository.existsByBoardAndMember(board, member); //Member는 현재 로그인한 멤버로 변경해야됨
+                isLike = boardLikeRepository.existsByBoardAndMember(board, member);
                 isMembers = board.getMember().getId().equals(member.getId());
             }
             ListResponseDto responseDto = new ListResponseDto(board, isLike, isMembers);
@@ -98,17 +98,17 @@ public class BoardService {
         boolean isMembers = false;
 
         if(member != null) {
-            isLike = boardLikeRepository.existsByBoardAndMember(board, member); //Member는 현재 로그인한 멤버로 변경해야됨
+            isLike = boardLikeRepository.existsByBoardAndMember(board, member);
             isMembers = board.getMember().getId().equals(member.getId());
         }
 
-        DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike, isMembers); // user 파리미터는 현재 로그인한 User로 변경되야함
+        DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike, isMembers);
 
-        return new ResponseDto(true, detailResponseDto,"특정 게시글 조회에 성공하였습니다."); //detailResponseDto
+        return new ResponseDto(true, detailResponseDto,"특정 게시글 조회에 성공하였습니다.");
     }
 
 
-    // 로그인한 User가 작성한 BasicBoard 리스트 조회 // 페이징 가능성 있음
+    // 로그인한 Member가 작성한 Board 리스트 조회 // 페이징 가능성 있음
     public ResponseDto getBoardListCreatedByUser() {
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
         Member member = getAuthMember();
@@ -116,20 +116,20 @@ public class BoardService {
         List<Board> boardList = boardRepository.findByMember(member);
         List<ListResponseDto> responseDtoList = new ArrayList<>();
         for (Board board : boardList) {
-            boolean isLike = boardLikeRepository.existsByBoardAndMember(board, member); //User는 현재 로그인한 유저로 변경해야됨
+            boolean isLike = boardLikeRepository.existsByBoardAndMember(board, member);
             boolean isMembers = board.getMember().getId().equals(member.getId());
             ListResponseDto responseDto = new ListResponseDto(board, isLike, isMembers);
             responseDtoList.add(responseDto);
         }
-        return new ResponseDto(true, responseDtoList, "User가 작성한 전체 Basic 게시글 조회에 성공하였습니다.");
+        return new ResponseDto(true, responseDtoList, "해당 Member가 작성한 전체 게시글 조회에 성공하였습니다.");
     }
 
 
-    //     게시글 작성
+    // 게시글 작성
     @Transactional
     public ResponseDto createBoard(BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
 
-        // "member": 현재 로그인한 유저 정보 -> islike 가져오기 위함
+        // "member": 현재 로그인한 유저 정보
         Member member = getAuthMember();
 
         Board board = new Board(requestDto, member);
@@ -144,18 +144,18 @@ public class BoardService {
         // boardImageInfo에 board 연관관계 설정
         for (BoardImageInfo boardImageInfo : boardImageInfoList) {
             boardImageInfo.updateShouldBeDelete(true); // 이미지 삭제 후에는 게시글 수정 상황을 위해 shouldBeDelete 값을 true로 바꿔놓는다.
-            boardImageInfo.updateRelationWithBoard(board); // db 테이블 컬럼 확인 필요!!!
+            boardImageInfo.updateRelationWithBoard(board);
         }
 
-        return new ResponseDto(true, "게시글 작성 완료");
+        return new ResponseDto(true, "게시글이 작성되었습니다.");
     }
 
-    //     게시글 수정
+    // 게시글 수정
     @Transactional
     public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
 
         Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
 
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
@@ -177,7 +177,7 @@ public class BoardService {
 
             board.update(requestDto);
 
-            return new ResponseDto(true, "Basic 게시글 수정이 완료되었습니다.");
+            return new ResponseDto(true, "게시글이 수정되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
@@ -187,17 +187,17 @@ public class BoardService {
     public ResponseDto deleteBoard(Long basicId) throws IOException {
 
         Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new IllegalArgumentException("해당 Basic 게시글이 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
 
-//         "member": 현재 로그인한 유저 정보 -> 게시글 작성자가 맞는지 검증
+        // "member": 현재 로그인한 유저 정보  -> 게시글 작성자가 맞는지 검증
         Member member = getAuthMember();
 
 
         if(member.getId().equals(board.getMember().getId())) {
             boardImageInfoService.deleteImageFromS3(board); // s3에서 이미지 파일 삭제
             boardRepository.deleteById(basicId);
-            return new ResponseDto(true, "Basic 게시글 삭제가 완료되었습니다.");
+            return new ResponseDto(true, "게시글이 삭제되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }

@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-@RequiredArgsConstructor //원래는 NoArgsContructor
+@RequiredArgsConstructor
 public class S3ImageService {
 
     private AmazonS3 s3Client;
@@ -71,7 +71,7 @@ public class S3ImageService {
                 .build();
     }
 
-    // 신규 게시글 작성 중 이미지 파일 추가 (수정을 따로 생각할 필요가 없음)
+    // 신규 게시글 작성 중 이미지 파일 추가
     public ResponseDto uploadImageToNewBoard(ImageRequestDto requestDto) throws IOException {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -91,9 +91,7 @@ public class S3ImageService {
         // "member": 현재 로그인한 유저 정보
         Member member = getAuthMember();
 
-        System.out.println("member.getId() = " + member.getId()); // -> null 이 뜬다. 즉 member를 못가져온다.
-
-        // 파일 업로드 (파일 수정도 똑같이 putObject() 활용)
+        // 파일 업로드
         s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
@@ -130,7 +128,7 @@ public class S3ImageService {
             throw new IOException("파일 용량 초과!!!");
         }
 
-        // 파일 업로드 (파일 수정도 똑같이 putObject() 활용)
+        // 파일 업로드
         s3Client.putObject(new PutObjectRequest(bucket, fileName, imageFile.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
@@ -153,15 +151,12 @@ public class S3ImageService {
 
             if (isExistObject) {
                 s3Client.deleteObject(bucket, currentFilePath);
-//                System.out.println("이미지 파일 삭제 완료");
                 return CompletableFuture.completedFuture("이미지 파일 삭제 완료");
             } else {
-//                System.out.println("해당 이미지 파일이 존재하지 않습니다.");
                 return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
             }
 
         } else {
-//            System.out.println("이미지 파일 주소가 올바르지 않습니다.");
             return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
         }
     }
@@ -177,10 +172,6 @@ public class S3ImageService {
 
     public Boolean limitImgSize(MultipartFile file) {
         return file.getSize() <= 100000; // 100000 바이트 보다 작으면 true 반환
-    }
-
-    public String deleteSpaceFromFileName(String fileName) {
-        return fileName.replace(" ", "+");
     }
 
     public Boolean restrictImgExtension(String fileName) {

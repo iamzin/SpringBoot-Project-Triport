@@ -1,6 +1,5 @@
 package com.project.triport.requestDto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

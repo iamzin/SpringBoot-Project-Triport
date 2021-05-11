@@ -27,8 +27,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentParentService {
 
-    //진행 필요 사항: 댓글 좋아요(islike) 필요 -> 구현 완료
-
     private final BoardRepository boardRepository;
     private final CommentParentRepository commentParentRepository;
     private final CommentParentLikeRepository commentParentLikeRepository;
@@ -36,7 +34,7 @@ public class CommentParentService {
     //Board 상세 페이지 전체 Comment 페이징 조회
     public ResponseDto getPagedCommentParentList(Long boardId, int page) {
 
-        // DB에서 해당 BasicBoard 조회
+        // DB에서 해당 Board 조회
         Board board = boardRepository.findById(boardId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
@@ -48,16 +46,16 @@ public class CommentParentService {
         PageRequest pageRequest = PageRequest.of(page - 1, 5);
 
         // 페이징 처리된 BoardCommentParent 리스트 조회
-        Slice<CommentParent> BoardCommentPage = commentParentRepository.findByBoard(board, pageRequest);
+        Slice<CommentParent> BoardCommentParentPage = commentParentRepository.findByBoard(board, pageRequest);
 
         // 마지막 페이지 여부 설정
-        Boolean isLast = BoardCommentPage.isLast();
+        Boolean isLast = BoardCommentParentPage.isLast();
 
         // Response의 results에 담길 DtoList 객체 생성
         List<CommentListResponseDto> responseDtoList = new ArrayList<>();
 
-        // 페이징된 BasicBoardComment 리스트를 Dto로 변환
-        for (CommentParent commentParent : BoardCommentPage) {
+        // 페이징된 CommentParent 리스트를 Dto로 변환
+        for (CommentParent commentParent : BoardCommentParentPage) {
             // 로그인한 멤버의 댓글 좋아요 여부 파악
             boolean isLike = false;
             boolean isMembers = false;
@@ -69,7 +67,7 @@ public class CommentParentService {
             responseDtoList.add(responseDto);
         }
 
-        return new ResponseDto(true, responseDtoList, "해당 Basic 게시글의 댓글 페이징 리스트 조회에 성공하였습니다.", isLast);
+        return new ResponseDto(true, responseDtoList, "해당 게시글의 댓글 조회에 성공하였습니다.", isLast);
     }
 
     // BoardCommentParent 작성

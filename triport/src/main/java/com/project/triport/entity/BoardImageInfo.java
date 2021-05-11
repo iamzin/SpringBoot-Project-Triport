@@ -14,7 +14,7 @@ public class BoardImageInfo extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // s3 이미지 파일 경로 (Key) (Cloudfront 아니고 s3)
+    // s3 이미지 파일 경로 (Key)
     @Column(nullable = false)
     private String filePath;
 
@@ -26,7 +26,6 @@ public class BoardImageInfo extends Timestamped {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // 게시글 fk
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;

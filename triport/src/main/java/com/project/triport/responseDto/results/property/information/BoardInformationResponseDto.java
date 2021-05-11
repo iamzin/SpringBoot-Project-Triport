@@ -2,7 +2,6 @@ package com.project.triport.responseDto.results.property.information;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.triport.entity.Board;
-import com.project.triport.entity.BoardImageInfo;
 import com.project.triport.service.S3ImageService;
 import lombok.Getter;
 

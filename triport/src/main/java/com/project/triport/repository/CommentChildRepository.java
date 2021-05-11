@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentChildRepository extends JpaRepository<CommentChild, Long> {
-    Slice<CommentChild> findByCommentParent(CommentParent commentParent, Pageable pageable);
 
+    Slice<CommentChild> findByCommentParent(CommentParent commentParent, Pageable pageable);
 
 }
