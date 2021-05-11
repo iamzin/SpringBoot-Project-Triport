@@ -2,10 +2,10 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.repository.MemberRepository;
+import com.project.triport.requestDto.MailRequestDto;
+import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.util.MailHandler;
-import com.project.triport.util.SecurityUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,10 +25,10 @@ public class MailService {
 //    public String fromMail;
 
     @Transactional
-    public String sendTempPwd(String email) {
+    public String sendTempPwd(MailRequestDto mailRequestDto) {
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
+        Member member = memberRepository.findByEmail(mailRequestDto.getEmail())
+                .orElseThrow(() -> new RuntimeException("입력하신 이메일로 가입된 사용자가 없습니다."));
 
         String tmpPwd = generateTempPwd();
         member.updateTmpPassword(passwordEncoder, tmpPwd);
