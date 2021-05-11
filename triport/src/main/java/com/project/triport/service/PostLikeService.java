@@ -7,6 +7,7 @@ import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.responseDto.ResponseDto;
+import com.project.triport.responseDto.results.DetailResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,14 +35,20 @@ public class PostLikeService {
         boolean isExist = postLikeRepository.existsByPostAndMember(post, member);
         if (isExist) {
             postLikeRepository.deleteByPostAndMember(post, member);
-            post.plusLikeNum();
-            return new ResponseDto(true, "좋아요 취소");
+            post.minusLikeNum();
+            return new ResponseDto(true,makeResponseDto(post,member),"좋아요 취소");
         } else {
             PostLike postLike = new PostLike(post, member);
             postLikeRepository.save(postLike);
-            post.minusLikeNum();
-            return new ResponseDto(true, "좋아요 완료");
+            post.plusLikeNum();
+            return new ResponseDto(true,makeResponseDto(post,member),"좋아요 완료");
         }
+    }
+
+    public DetailResponseDto makeResponseDto(Post post, Member member){
+        boolean isLike = postLikeRepository.existsByPostAndMember(post, member);
+        boolean isMembers = post.getMember().getId().equals(member.getId());
+        return new DetailResponseDto(post, isLike, isMembers);
     }
 
     public Member getAuthMember() {
