@@ -58,10 +58,12 @@ public class CommentChildService {
         // 페이징된 BoardCommentChild 리스트를 Dto로 변환
         for (CommentChild commentChild : boardCommentChildPage) {
             boolean isLike = false;
+            boolean isMembers = false;
             if (member != null) {
                 isLike = commentChildLikeRepository.existsByCommentChildAndMember(commentChild, member);
+                isMembers = commentChild.getMember().getId().equals(member.getId());
             }
-            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike);
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike, isMembers);
             responseDtoList.add(responseDto);
         }
 

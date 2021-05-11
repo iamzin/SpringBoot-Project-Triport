@@ -60,10 +60,12 @@ public class CommentParentService {
         for (CommentParent commentParent : BoardCommentPage) {
             // 로그인한 멤버의 댓글 좋아요 여부 파악
             boolean isLike = false;
+            boolean isMembers = false;
             if (member != null) {
                 isLike = commentParentLikeRepository.existsByCommentParentAndMember(commentParent, member);
+                isMembers = commentParent.getMember().getId().equals(member.getId());
             }
-            CommentListResponseDto responseDto = new CommentListResponseDto(commentParent, isLike);
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentParent, isLike, isMembers);
             responseDtoList.add(responseDto);
         }
 

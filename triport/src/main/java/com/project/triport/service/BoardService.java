@@ -70,10 +70,12 @@ public class BoardService {
         // 페이징된 BasicBoard 리스트를 Dto로 변환
         for (Board board : BoardSliceSearched) {
             boolean isLike = false;
+            boolean isMembers = false;
             if(member != null) { // 비로그인 상황
                 isLike = boardLikeRepository.existsByBoardAndMember(board, member); //Member는 현재 로그인한 멤버로 변경해야됨
+                isMembers = board.getMember().getId().equals(member.getId());
             }
-            ListResponseDto responseDto = new ListResponseDto(board, isLike);
+            ListResponseDto responseDto = new ListResponseDto(board, isLike, isMembers);
             responseDtoList.add(responseDto);
         }
 
@@ -93,12 +95,14 @@ public class BoardService {
 
         // isLike 로그인/비로그인 구분
         boolean isLike = false;
+        boolean isMembers = false;
 
         if(member != null) {
             isLike = boardLikeRepository.existsByBoardAndMember(board, member); //Member는 현재 로그인한 멤버로 변경해야됨
+            isMembers = board.getMember().getId().equals(member.getId());
         }
 
-        DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike); // user 파리미터는 현재 로그인한 User로 변경되야함
+        DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike, isMembers); // user 파리미터는 현재 로그인한 User로 변경되야함
 
         return new ResponseDto(true, detailResponseDto,"특정 게시글 조회에 성공하였습니다."); //detailResponseDto
     }
@@ -112,8 +116,9 @@ public class BoardService {
         List<Board> boardList = boardRepository.findByMember(member);
         List<ListResponseDto> responseDtoList = new ArrayList<>();
         for (Board board : boardList) {
-            Boolean isLike = boardLikeRepository.existsByBoardAndMember(board, member); //User는 현재 로그인한 유저로 변경해야됨
-            ListResponseDto responseDto = new ListResponseDto(board, isLike);
+            boolean isLike = boardLikeRepository.existsByBoardAndMember(board, member); //User는 현재 로그인한 유저로 변경해야됨
+            boolean isMembers = board.getMember().getId().equals(member.getId());
+            ListResponseDto responseDto = new ListResponseDto(board, isLike, isMembers);
             responseDtoList.add(responseDto);
         }
         return new ResponseDto(true, responseDtoList, "User가 작성한 전체 Basic 게시글 조회에 성공하였습니다.");

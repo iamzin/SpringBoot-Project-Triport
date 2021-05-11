@@ -17,15 +17,15 @@ public class CommentListResponseDto {
     private AuthorResponseDto author;
     private AccessMemberResponseDto user;
 
-    public CommentListResponseDto(CommentParent commentParent, Boolean isLike) {
+    public CommentListResponseDto(CommentParent commentParent, Boolean isLike, Boolean isMembers) {
         this.commentParent = new CommentResponseDto(commentParent);
         this.author = new AuthorResponseDto(commentParent);
-        this.user = new AccessMemberResponseDto(isLike);
+        this.user = new AccessMemberResponseDto(isLike, isMembers);
     }
 
-    public CommentListResponseDto(CommentChild commentChild, Boolean isLike) {
+    public CommentListResponseDto(CommentChild commentChild, Boolean isLike, Boolean isMembers) {
         this.commentChild = new CommentResponseDto(commentChild);
         this.author = new AuthorResponseDto(commentChild);
-        this.user = new AccessMemberResponseDto(isLike);
+        this.user = new AccessMemberResponseDto(isLike, isMembers);
     }
 }
