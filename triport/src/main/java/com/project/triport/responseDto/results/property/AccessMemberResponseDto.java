@@ -10,10 +10,6 @@ public class AccessMemberResponseDto {
     private Boolean isMembers;
     private Boolean isLike; // 열람하는 member가 좋아요 했으면 true 아니면 false
 
-    public AccessMemberResponseDto(boolean isLike) {
-        this.isLike = isLike;
-    }
-
     public AccessMemberResponseDto(boolean isLike, boolean isMembers) {
         this.isLike = isLike;
         this.isMembers = isMembers;

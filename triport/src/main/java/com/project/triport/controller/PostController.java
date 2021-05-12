@@ -1,17 +1,14 @@
 package com.project.triport.controller;
 
 
-import com.project.triport.requestDto.ImageRequestDto;
 import com.project.triport.requestDto.PostRequestDto;
+import com.project.triport.requestDto.VideoUrlRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,8 +42,8 @@ public class PostController {
     }
 
     @PutMapping("/api/posts/{postId}")
-    public ResponseDto updatePost(@RequestBody PostRequestDto requestDto, @PathVariable Long postId) {
-        return postService.updatePost(requestDto, postId);
+    public ResponseDto updatePost(@PathVariable Long postId,@RequestBody PostRequestDto requestDto) {
+        return postService.updatePost(postId, requestDto);
     }
 
     @DeleteMapping("/api/posts/{postId}")
@@ -54,30 +51,9 @@ public class PostController {
         return postService.deletePost(postId);
     }
 
-//    @PostMapping("/api/posts/test")
-//    public void testAPI(){
-//        postService.testPost();
-//    }
+    @PostMapping("/api/posts/video")
+    public void updateUrl(@RequestBody VideoUrlRequestDto requestDto){
+        postService.updateUrl(requestDto);
+    }
 
-//    @PostMapping("/api/posts/video")
-//    public ResponseDto uploadVideo(@RequestParam("file") MultipartFile file) throws IOException, InterruptedException {
-//        return postService.uploadVideo(file);
-//    }
-
-//    post 작성을 통해 영상과 entity를 모두 작성하게되어 모두 수정 필요
-
-//    @PostMapping("/api/posts")
-//    public ResponseDto createPost(@RequestBody PostRequestDto requestDto) {
-//        return postService.createPost(requestDto);
-//    }
-//
-//    @PutMapping("/api/posts/{postId}")
-//    public ResponseDto updatePost(@RequestBody PostRequestDto requestDto, @PathVariable Long postId) {
-//        return postService.updatePost(requestDto, postId);
-//    }
-//
-//    @DeleteMapping("/api/posts/{postId}")
-//    public ResponseDto deletePost(@PathVariable Long postId) {
-//        return postService.deletePost(postId);
-//    }
 }

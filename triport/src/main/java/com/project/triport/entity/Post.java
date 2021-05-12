@@ -1,6 +1,7 @@
 package com.project.triport.entity;
 
 import com.project.triport.requestDto.PostRequestDto;
+import com.project.triport.requestDto.VideoUrlRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -43,7 +44,7 @@ public class Post extends Timestamped {
 //    }
 
     public Post(String videoUrl, List<String> hashtag, Member member) {
-        this.videoType = "m3u8";
+        this.videoType = "mp4";
         this.videoUrl = videoUrl;
         this.likeNum = 0L;
         this.hashtag = hashtag;
@@ -52,6 +53,10 @@ public class Post extends Timestamped {
 
     public void update(PostRequestDto requestDto) {
         this.hashtag = requestDto.getHashtag();
+    }
+
+    public void updateUrl(VideoUrlRequestDto requestDto) {
+        this.videoUrl = requestDto.getVideoUrl();
     }
 
     public void plusLikeNum() {

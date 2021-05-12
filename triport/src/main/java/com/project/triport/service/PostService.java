@@ -6,6 +6,7 @@ import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.requestDto.PostRequestDto;
+import com.project.triport.requestDto.VideoUrlRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
@@ -115,7 +116,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseDto updatePost(PostRequestDto requestDto, Long postId) {
+    public ResponseDto updatePost(Long postId, PostRequestDto requestDto) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
@@ -133,6 +134,14 @@ public class PostService {
         s3Util.deleteFolder(directory);
         postRepository.deleteById(postId);
         return new ResponseDto(true, "포스트를 삭제 하였습니다.");
+    }
+
+    @Transactional
+    public void updateUrl(VideoUrlRequestDto requestDto) {
+        Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(
+                () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
+        );
+        post.updateUrl(requestDto);
     }
 
     public Member getAuthMember() {
