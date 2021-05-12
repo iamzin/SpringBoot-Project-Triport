@@ -1,5 +1,6 @@
 package com.project.triport.responseDto.results.property;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.triport.entity.CommentChild;
 import com.project.triport.entity.CommentParent;
 import lombok.Getter;
@@ -13,6 +14,8 @@ public class CommentResponseDto {
     private String profileImgUrl;
     private String contents;
     private Long likeNum;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long commentChildNum;
     private String modifiedAt;
 
     public CommentResponseDto(CommentParent commentParent) {
@@ -22,6 +25,7 @@ public class CommentResponseDto {
         this.profileImgUrl = commentParent.getMember().getProfileImgUrl();
         this.contents = commentParent.getContents();
         this.likeNum = commentParent.getLikeNum();
+        this.commentChildNum = commentParent.getCommentChildNum();
         this.modifiedAt = commentParent.getModifiedAt().format(formatter);
     }
 

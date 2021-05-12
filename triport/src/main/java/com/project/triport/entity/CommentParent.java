@@ -22,6 +22,9 @@ public class CommentParent extends Timestamped {
     @Column(nullable = false)
     private Long likeNum;
 
+    @Column(nullable = false)
+    private Long commentChildNum;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -39,6 +42,7 @@ public class CommentParent extends Timestamped {
     public CommentParent(CommentRequestDto commentRequestDto, Board board, Member member) {
         this.contents = commentRequestDto.getContents();
         this.likeNum = 0L;
+        this.commentChildNum = 0L;
         this.board = board;
         board.getCommentParentList().add(this);
         this.member = member;
@@ -50,5 +54,9 @@ public class CommentParent extends Timestamped {
 
     public void updateLikeNum(int count) {
         this.likeNum += count;
+    }
+
+    public void updateCommentChildNum(int count) {
+        this.commentChildNum += count;
     }
 }

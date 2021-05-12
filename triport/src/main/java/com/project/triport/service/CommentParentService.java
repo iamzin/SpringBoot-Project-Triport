@@ -81,12 +81,17 @@ public class CommentParentService {
         Member member = getAuthMember();
 
         CommentParent commentParent = new CommentParent(requestDto, board, member);
-        System.out.println("boardCommentParent.getContents() = " + commentParent.getContents());
+
         commentParentRepository.save(commentParent);
 
         board.updateCommentNum(1);
 
-        return new ResponseDto(true, "댓글 작성이 완료되었습니다.");
+        boolean isLike = commentParentLikeRepository.existsByCommentParentAndMember(commentParent, member);
+        boolean isMembers = commentParent.getMember().getId().equals(member.getId());
+
+        CommentListResponseDto responseDto = new CommentListResponseDto(commentParent, isLike, isMembers);
+
+        return new ResponseDto(true, responseDto,"댓글 작성이 완료되었습니다.");
     }
 
     // Board Comment 수정
@@ -102,7 +107,13 @@ public class CommentParentService {
         // 댓글 작성자가 맞는지 검증
         if (member.getId().equals(commentParent.getMember().getId())) {
             commentParent.update(requestDto);
-            return new ResponseDto(true, "댓글 수정이 완료되었습니다.");
+
+            boolean isLike = commentParentLikeRepository.existsByCommentParentAndMember(commentParent, member);
+            boolean isMembers = commentParent.getMember().getId().equals(member.getId());
+
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentParent, isLike, isMembers);
+
+            return new ResponseDto(true, responseDto, "댓글 수정이 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }

@@ -71,6 +71,7 @@ public class CommentChildService {
     }
 
     // BoardCommentChild 작성
+    @Transactional
     public ResponseDto createCommentChild(Long commentParentId, CommentRequestDto requestDto) {
         // DB에서 해당 BoardCommentParent 조회
         CommentParent commentParent = commentParentRepository.findById(commentParentId)
@@ -82,10 +83,17 @@ public class CommentChildService {
         Member member = getAuthMember();
 
         CommentChild commentChild = new CommentChild(requestDto, commentParent, member);
-        System.out.println("boardCommentChild.getContents() = " + commentChild.getContents());
+
         commentChildRepository.save(commentChild);
 
-        return new ResponseDto(true, "대댓글 작성이 완료되었습니다.");
+        commentParent.updateCommentChildNum(1);
+
+        boolean isLike = commentChildLikeRepository.existsByCommentChildAndMember(commentChild, member);
+        boolean isMembers = commentChild.getMember().getId().equals(member.getId());
+
+        CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike, isMembers);
+
+        return new ResponseDto(true, responseDto,"대댓글 작성이 완료되었습니다.");
     }
 
     // BasicCommentChild 수정
@@ -102,7 +110,13 @@ public class CommentChildService {
         // 답글 작성자가 맞는지 검증
         if (member.getId().equals(commentChild.getMember().getId())) {
             commentChild.update(requestDto);
-            return new ResponseDto(true, "대댓글 수정이 완료되었습니다.");
+
+            boolean isLike = commentChildLikeRepository.existsByCommentChildAndMember(commentChild, member);
+            boolean isMembers = commentChild.getMember().getId().equals(member.getId());
+
+            CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike, isMembers);
+
+            return new ResponseDto(true, responseDto,"대댓글 작성이 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
@@ -122,6 +136,7 @@ public class CommentChildService {
         // 답글 작성자가 맞는지 검증
         if (member.getId().equals(commentChild.getMember().getId())) {
             commentChildRepository.deleteById(commentChildId);
+            commentChild.getCommentParent().updateCommentChildNum(-1);
             return new ResponseDto(true, "대댓글 삭제가 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
