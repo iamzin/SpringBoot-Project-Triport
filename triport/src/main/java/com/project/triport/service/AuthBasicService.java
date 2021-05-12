@@ -119,8 +119,6 @@ public class AuthBasicService {
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다.")); // TODO: front로 로그인이 필요함을 return
 
-        System.out.println("refreshToken = " + refreshToken);
-        
         // 4. Refresh Token이 일치하는지 확인
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Token의 user 정보가 일치하지 않습나다."); // Refresh Token이 일치하지 않습니다.

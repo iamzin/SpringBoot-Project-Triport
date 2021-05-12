@@ -14,18 +14,13 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "refresh_token")
-public class RefreshToken extends Timestamped {
+public class RefreshToken {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
-//    @Column(nullable = false)
     @Id
-    @Column(columnDefinition = "varchar(200)")
+    @Column(nullable = false, columnDefinition = "varchar(200)")
     private String email;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String value;
 
     public void updateValue(String token) {
