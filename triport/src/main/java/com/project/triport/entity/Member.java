@@ -19,8 +19,8 @@ public class Member extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(nullable = true)
-//    private Long kakaoId;
+    @Column(nullable = true)
+    private Long kakaoId;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -42,17 +42,21 @@ public class Member extends Timestamped {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-//    public Member fromKakaoMember() {
-//        return Member.builder()
-//                .kakaoId(kakaoId)
-//                .email(email)
-//                .password(password)
-//                .nickname(nickname)
-//                .profileImgUrl("https://i.ibb.co/MDKhN7F/kakao-11.jpg")
-//                .memberGrade(MemberGrade.TRAVELER)
-//                .authority(Authority.ROLE_USER)
-//                .build();
-//    }
+    public Member KakaoLoginMember(Long kakaoId, String email, String password, String nickname, String profileImgUrl) {
+        return Member.builder()
+                .kakaoId(kakaoId)
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .profileImgUrl(profileImgUrl)
+                .memberGrade(MemberGrade.TRAVELER)
+                .authority(Authority.ROLE_USER)
+                .build();
+    }
+
+    public void updateKakoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
 
     public void update(MemberRequestDto memberRequestDto) {
         this.email = memberRequestDto.getEmail();

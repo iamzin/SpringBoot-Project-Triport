@@ -39,28 +39,6 @@ public class AuthBasicService {
         return MemberResponseDto.of(memberRepository.save(member));
     }
 
-    public MemberInfoResponseDto tokenToHeaders(Authentication authentication,
-            TokenDto tokenDto, HttpServletResponse response) {
-
-        // 5. Header에 token과 만료시간 add
-        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
-        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
-        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
-
-        // react가 만료시간 체크 하는 방법:
-        // accessToken 만료하기 1분 전에 로그인 연장하도록 아래와 같이 setTimeout 설정
-        // setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000);
-        // Timeout 되면 onSilentRefresh가 실행되면서, /auth/reissue로 재발급 요청
-
-        // 6. 해당 memberInfo return
-        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
-        );
-
-        // 5. Header에 token 담고, ResponseBody에 memberInfo 담아서 return
-        return new MemberInfoResponseDto(member.getId(), member.getNickname());
-    }
-
     // 기본 로그인
     @Transactional
     public MemberInfoResponseDto login(MemberRequestDto memberRequestDto, HttpServletResponse response) {
@@ -82,29 +60,12 @@ public class AuthBasicService {
                 .build();
 
         refreshTokenRepository.save(refreshToken);
-//
-//        // 5. Header에 token과 만료시간 add
-//        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
-//        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
-//        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
-//
-//        // react가 만료시간 체크 하는 방법:
-//        // accessToken 만료하기 1분 전에 로그인 연장하도록 아래와 같이 setTimeout 설정
-//        // setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000);
-//        // Timeout 되면 onSilentRefresh가 실행되면서, /auth/reissue로 재발급 요청
-//
-//        // 6. 해당 memberInfo return
-//        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
-//                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
-//        );
-//
-//        // 5. Header에 token 담고, ResponseBody에 memberInfo 담아서 return
-//        return new MemberInfoResponseDto(member.getId(), member.getNickname());
 
+        // 5. header에 token 담고, memberInfo return
         return tokenToHeaders(authentication, tokenDto, response);
     }
 
-    // 기본 token 재발급
+    // 기본 access, refresh token 재발급
     @Transactional
     public MemberInfoResponseDto reissue(TokenRequestDto tokenRequestDto, HttpServletResponse response) {
         // 1. Refresh Token 검증
@@ -129,20 +90,31 @@ public class AuthBasicService {
 
         // 6. Refresh Token 저장소 정보 업데이트
         refreshToken.updateValue(tokenDto.getRefreshToken());
-//
-//        // 7. Header에 token과 만료시간 add
-//        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
-//        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
-//        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
-//
-//        // 8. 해당 memberInfo return
-//        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
-//                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
-//        );
-//
-//        // 9. Header에 token 담고, ResponseBody에 memberInfo 담아서
-//        return new MemberInfoResponseDto(member.getId(), member.getNickname());
 
+        // 7. header에 token 담고, memberInfo return
         return tokenToHeaders(authentication, tokenDto, response);
+    }
+
+    // access, refresh token header에 담기
+    public MemberInfoResponseDto tokenToHeaders(Authentication authentication,
+                                                TokenDto tokenDto, HttpServletResponse response) {
+
+        // Header에 token과 만료시간 add
+        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
+        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
+        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+
+        // react가 만료시간 체크 하는 방법:
+        // accessToken 만료하기 1분 전에 로그인 연장하도록 아래와 같이 setTimeout 설정
+        // setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000);
+        // Timeout 되면 onSilentRefresh가 실행되면서, /auth/reissue로 재발급 요청
+
+        // 해당 memberInfo return
+        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
+        );
+
+        // ResponseBody에 memberInfo 담아서 return
+        return new MemberInfoResponseDto(member.getId(), member.getNickname());
     }
 }
