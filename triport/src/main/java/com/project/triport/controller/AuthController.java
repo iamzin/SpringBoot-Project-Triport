@@ -7,7 +7,6 @@ import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.responseDto.TokenDto;
 import com.project.triport.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

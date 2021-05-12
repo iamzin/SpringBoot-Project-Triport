@@ -34,8 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
         // CSRF 설정 Disable
         http.csrf().disable()
+
 
                 // exception handlingd에 직접 만든 401, 403 class 추가
                 .exceptionHandling()
@@ -47,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .frameOptions()
                 .sameOrigin()
+
 
                 // Spring Security는 기본적으로 session 사용
                 // but 본 로직에서는 session을 사용하지 않으므로 STATELESS 처리
@@ -63,10 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/mail/**").permitAll()
                 .antMatchers("/static/**").permitAll()
                 .anyRequest().authenticated()
-
-                // TODO: 빼도 되는지 테스트 필요
-                .and()
-                .cors()
 
                 // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
                 // Security 최전선에 JwtFilter가 있도록 (?)

@@ -11,12 +11,12 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
         config.addAllowedOriginPattern("*");
         config.addAllowedOrigin("http://**");
-        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
         config.addAllowedMethod("*");
-        // POST(Simple Request) 요청은 디폴트 Header 값 말고는 access 불가
+        config.addAllowedHeader("*");
+        // POST(Simple Request) 요청은 auto-generated Header 값 (= 기본 Header들) 말고는 access 불가
         // 따라서 추가 Header들을 Client가 볼 수 있도록 설정해야 함
         config.addExposedHeader("Access-Token");
         config.addExposedHeader("Refresh-Token");
