@@ -40,8 +40,7 @@ public class AuthBasicService {
     }
 
     public MemberInfoResponseDto tokenToHeaders(Authentication authentication,
-            TokenDto tokenDto, RefreshToken refreshToken, HttpServletResponse response) {
-        refreshTokenRepository.save(refreshToken);
+            TokenDto tokenDto, HttpServletResponse response) {
 
         // 5. Header에 token과 만료시간 add
         response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
@@ -82,7 +81,7 @@ public class AuthBasicService {
                 .value(tokenDto.getRefreshToken())
                 .build();
 
-//        refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.save(refreshToken);
 //
 //        // 5. Header에 token과 만료시간 add
 //        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
@@ -102,7 +101,7 @@ public class AuthBasicService {
 //        // 5. Header에 token 담고, ResponseBody에 memberInfo 담아서 return
 //        return new MemberInfoResponseDto(member.getId(), member.getNickname());
 
-        return tokenToHeaders(authentication, tokenDto, refreshToken, response);
+        return tokenToHeaders(authentication, tokenDto, response);
     }
 
     // 기본 token 재발급
@@ -120,6 +119,8 @@ public class AuthBasicService {
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다.")); // TODO: front로 로그인이 필요함을 return
 
+        System.out.println("refreshToken = " + refreshToken);
+        
         // 4. Refresh Token이 일치하는지 확인
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Token의 user 정보가 일치하지 않습나다."); // Refresh Token이 일치하지 않습니다.
@@ -129,8 +130,7 @@ public class AuthBasicService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         // 6. Refresh Token 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-//        refreshTokenRepository.save(newRefreshToken);
+        refreshToken.updateValue(tokenDto.getRefreshToken());
 //
 //        // 7. Header에 token과 만료시간 add
 //        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
@@ -145,6 +145,6 @@ public class AuthBasicService {
 //        // 9. Header에 token 담고, ResponseBody에 memberInfo 담아서
 //        return new MemberInfoResponseDto(member.getId(), member.getNickname());
 
-        return tokenToHeaders(authentication, tokenDto, newRefreshToken, response);
+        return tokenToHeaders(authentication, tokenDto, response);
     }
 }

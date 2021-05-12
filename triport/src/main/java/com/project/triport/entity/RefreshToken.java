@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -15,19 +16,20 @@ import javax.persistence.*;
 @Table(name = "refresh_token")
 public class RefreshToken extends Timestamped {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
+    @Id
+    @Column(columnDefinition = "varchar(200)")
     private String email;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String value;
 
-    public RefreshToken updateValue(String token) {
+    public void updateValue(String token) {
         this.value = token;
-        return this;
     }
 //
 //    public RefreshToken(String email, String value) {
