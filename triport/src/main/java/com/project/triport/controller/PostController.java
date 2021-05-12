@@ -54,6 +54,11 @@ public class PostController {
         return postService.deletePost(postId);
     }
 
+//    @PostMapping("/api/posts/test")
+//    public void testAPI(){
+//        postService.testPost();
+//    }
+
 //    @PostMapping("/api/posts/video")
 //    public ResponseDto uploadVideo(@RequestParam("file") MultipartFile file) throws IOException, InterruptedException {
 //        return postService.uploadVideo(file);

@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Component
 @NoArgsConstructor
@@ -52,15 +53,17 @@ public class S3Util {
                 .build();
     }
 
-    public ResponseDto upload(MultipartFile file) throws IOException {
-        String fileName = file.getOriginalFilename();
+    public String upload(MultipartFile file) throws IOException {
+        String randomString = UUID.randomUUID().toString();
+
+        String fileName = randomString + "/" + randomString + ".mp4";
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         String videoUrl = "https://" + cloudFrontDomainName + "/" + fileName;
 
-        return new ResponseDto(true, videoUrl, "영상 저장 성공!");
+        return videoUrl;
     }
 
     public String uploadFolder(String filepath) throws AmazonServiceException, InterruptedException {
@@ -89,6 +92,7 @@ public class S3Util {
                 keys.add(new KeyVersion(directory + '/' + directory + i + "." + "ts"));
             }
             keys.add(new KeyVersion(directory + '/' + directory + ".m3u8"));
+            keys.add(new KeyVersion(directory + '/' + directory + ".mp4"));
 
             // 삭제 요청할 양식을 만듬
             DeleteObjectsRequest multiObjectDeleteRequest = new DeleteObjectsRequest(bucket)
@@ -98,8 +102,8 @@ public class S3Util {
             // 요청 양식을 이용해 삭제 진행
             DeleteObjectsResult delObjRes = s3Client.deleteObjects(multiObjectDeleteRequest);
             int successfulDeletes = delObjRes.getDeletedObjects().size();
-            for (int i = 0; i < 6; i++) {
-                System.out.println(keys.get(i).getKey());
+            for (KeyVersion key : keys) {
+                System.out.println(key.getKey());
             }
             System.out.println("directory = " + directory);
             System.out.println(successfulDeletes + " objects successfully deleted.");
