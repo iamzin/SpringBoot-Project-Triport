@@ -22,13 +22,14 @@ import javax.servlet.http.HttpServletResponse;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthBasicService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    // 기본 회원가입
     @Transactional
     public MemberResponseDto signup(MemberRequestDto memberRequestDto) {
         if (memberRepository.existsByEmail(memberRequestDto.getEmail()))
@@ -38,25 +39,8 @@ public class AuthService {
         return MemberResponseDto.of(memberRepository.save(member));
     }
 
-    @Transactional
-    public MemberInfoResponseDto login(MemberRequestDto memberRequestDto, HttpServletResponse response) {
-        // 1. Login 시 입력한 ID/PW를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(memberRequestDto.getEmail(), memberRequestDto.getPassword());
-
-        // 2. 실제로 비밀번호 검증이 이루어지는 부분
-        //    authenticate method가 실행될 때, CustomuserDetailService에서 만들었던 loadUserByUsername method 실행
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // 3. 인증 정보 authentication을 기반으로 JWT token 생성
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .email(authentication.getName())
-                .value(tokenDto.getRefreshToken())
-                .build();
-
+    public MemberInfoResponseDto tokenToHeaders(Authentication authentication,
+            TokenDto tokenDto, RefreshToken refreshToken, HttpServletResponse response) {
         refreshTokenRepository.save(refreshToken);
 
         // 5. Header에 token과 만료시간 add
@@ -78,8 +62,52 @@ public class AuthService {
         return new MemberInfoResponseDto(member.getId(), member.getNickname());
     }
 
+    // 기본 로그인
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+    public MemberInfoResponseDto login(MemberRequestDto memberRequestDto, HttpServletResponse response) {
+        // 1. Login 시 입력한 ID/PW를 기반으로 AuthenticationToken 생성
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(memberRequestDto.getEmail(), memberRequestDto.getPassword());
+
+        // 2. 실제로 비밀번호 검증이 이루어지는 부분
+        //    authenticate method가 실행될 때, CustomuserDetailService에서 만들었던 loadUserByUsername method 실행
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        // 3. 인증 정보 authentication을 기반으로 JWT token 생성
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        // 4. RefreshToken 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .email(authentication.getName())
+                .value(tokenDto.getRefreshToken())
+                .build();
+
+//        refreshTokenRepository.save(refreshToken);
+//
+//        // 5. Header에 token과 만료시간 add
+//        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
+//        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
+//        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+//
+//        // react가 만료시간 체크 하는 방법:
+//        // accessToken 만료하기 1분 전에 로그인 연장하도록 아래와 같이 setTimeout 설정
+//        // setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000);
+//        // Timeout 되면 onSilentRefresh가 실행되면서, /auth/reissue로 재발급 요청
+//
+//        // 6. 해당 memberInfo return
+//        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
+//                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
+//        );
+//
+//        // 5. Header에 token 담고, ResponseBody에 memberInfo 담아서 return
+//        return new MemberInfoResponseDto(member.getId(), member.getNickname());
+
+        return tokenToHeaders(authentication, tokenDto, refreshToken, response);
+    }
+
+    // 기본 token 재발급
+    @Transactional
+    public MemberInfoResponseDto reissue(TokenRequestDto tokenRequestDto, HttpServletResponse response) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
@@ -102,9 +130,21 @@ public class AuthService {
 
         // 6. Refresh Token 저장소 정보 업데이트
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-        refreshTokenRepository.save(newRefreshToken);
+//        refreshTokenRepository.save(newRefreshToken);
+//
+//        // 7. Header에 token과 만료시간 add
+//        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
+//        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
+//        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+//
+//        // 8. 해당 memberInfo return
+//        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
+//                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
+//        );
+//
+//        // 9. Header에 token 담고, ResponseBody에 memberInfo 담아서
+//        return new MemberInfoResponseDto(member.getId(), member.getNickname());
 
-        // 7. token 발급
-        return tokenDto;
+        return tokenToHeaders(authentication, tokenDto, newRefreshToken, response);
     }
 }
