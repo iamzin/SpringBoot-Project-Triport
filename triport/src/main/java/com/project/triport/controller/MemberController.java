@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
 
-    // 확인 필요 (SecurityUtil에서 currentMemberId 왜 못 가져오지?)
     @GetMapping("/profile")
     public ResponseEntity<MemberResponseDto> getMemberInfo() {
         return ResponseEntity.ok(memberService.getMemberInfo());

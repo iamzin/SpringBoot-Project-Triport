@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "refresh_token")
-public class RefreshToken {
+public class RefreshToken extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +29,9 @@ public class RefreshToken {
         this.value = token;
         return this;
     }
+//
+//    public RefreshToken(String email, String value) {
+//        this.email = email;
+//        this.value = value;
+//    }
 }

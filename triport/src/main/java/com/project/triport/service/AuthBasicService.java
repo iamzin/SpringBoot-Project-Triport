@@ -118,7 +118,7 @@ public class AuthBasicService {
 
         // 3. Refresh Token 저장소에서 Member ID를 기반으로 Refresh Token 값 가져오기
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
+                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다.")); // TODO: front로 로그인이 필요함을 return
 
         // 4. Refresh Token이 일치하는지 확인
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {

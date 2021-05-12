@@ -1,5 +1,7 @@
 package com.project.triport.jwt;
 
+import com.project.triport.entity.RefreshToken;
+import com.project.triport.repository.RefreshTokenRepository;
 import com.project.triport.responseDto.TokenDto;
 import com.project.triport.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 

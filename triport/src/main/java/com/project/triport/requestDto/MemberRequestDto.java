@@ -41,6 +41,7 @@ public class MemberRequestDto {
 
     private MemberGrade memberGrade;
 
+    // TODO: password encoding -> Service에서 처리하도록 변경
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .email(email)

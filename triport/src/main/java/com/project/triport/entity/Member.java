@@ -13,11 +13,14 @@ import javax.persistence.*;
 @AllArgsConstructor // @Builder를 쓰기 때문에 필수
 @Builder
 @Table(name = "member")
-public class Member {
+public class Member extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+//    @Column(nullable = true)
+//    private Long kakaoId;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -38,6 +41,18 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+//    public Member fromKakaoMember() {
+//        return Member.builder()
+//                .kakaoId(kakaoId)
+//                .email(email)
+//                .password(password)
+//                .nickname(nickname)
+//                .profileImgUrl("https://i.ibb.co/MDKhN7F/kakao-11.jpg")
+//                .memberGrade(MemberGrade.TRAVELER)
+//                .authority(Authority.ROLE_USER)
+//                .build();
+//    }
 
     public void update(MemberRequestDto memberRequestDto) {
         this.email = memberRequestDto.getEmail();
