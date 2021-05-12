@@ -20,12 +20,4 @@ public class MailController {
         return ResponseEntity.ok(mailService.sendTempPwd(mailRequestDto));
     }
 
-//    @PutMapping("/reset/password")
-//    public void
-//
-//    @GetMapping()
-//    public String dispMail() {
-//        return "mail";
-//    }
-
 }

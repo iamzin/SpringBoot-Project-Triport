@@ -9,8 +9,8 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // @Builder를 쓰기 때문에 필수
+@AllArgsConstructor // @Builder를 쓰기 때문에 필수
 @Builder
 @Table(name = "member")
 public class Member {
