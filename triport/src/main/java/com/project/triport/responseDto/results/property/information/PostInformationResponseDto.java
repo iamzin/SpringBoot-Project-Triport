@@ -12,6 +12,7 @@ public class PostInformationResponseDto extends InformationResponseDto {
 
     private String videoType;
     private String videoUrl;
+    private Boolean posPlay;
     private List<String> hashtag;
 
     public PostInformationResponseDto(Post post) {
@@ -20,6 +21,7 @@ public class PostInformationResponseDto extends InformationResponseDto {
         this.id = post.getId();
         this.videoType = post.getVideoType();
         this.videoUrl = post.getVideoUrl();
+        this.posPlay = post.getPosPlay();
         this.likeNum = post.getLikeNum();
         this.hashtag = post.getHashtag();
         this.modifiedAt = post.getModifiedAt().format(formatter);

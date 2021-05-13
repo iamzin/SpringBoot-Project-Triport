@@ -7,7 +7,9 @@ import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.annotation.MultipartConfig;
 import java.io.IOException;
 
 @RestController
@@ -55,5 +57,4 @@ public class PostController {
     public void updateUrl(@RequestBody VideoUrlDto requestDto){
         postService.updateUrl(requestDto);
     }
-
 }
