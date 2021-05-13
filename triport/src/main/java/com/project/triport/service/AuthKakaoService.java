@@ -36,6 +36,7 @@ public class AuthKakaoService {
     private final KakaoOAuth2 kakaoOAuth2;
     private @Value("${kakao.secret}")
     String kakaoKey;
+    private final CustomUserDetailsService customUserDetailsService;
 
     // Kakao 로그인
     @Transactional
@@ -77,12 +78,15 @@ public class AuthKakaoService {
 
         // 강제 로그인 처리
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
-        UserDetails principal = new org.springframework.security.core.userdetails.User(
-                String.valueOf(kakaoUser.getId()),
-                kakaoUser.getPassword(),
-                Collections.singleton(grantedAuthority));
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(kakaoUser.getEmail());
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
+//        UserDetails principal = new org.springframework.security.core.userdetails.User(
+//                String.valueOf(kakaoUser.getId()),
+//                kakaoUser.getPassword(),
+//                Collections.singleton(grantedAuthority));
+
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoUser.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
