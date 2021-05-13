@@ -42,6 +42,18 @@ public class Member extends Timestamped {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
+    // TODO: password encoding -> Service에서 처리하도록 변경
+    public Member toMember(MemberRequestDto memberRequestDto, PasswordEncoder passwordEncoder) {
+        return Member.builder()
+                .email(memberRequestDto.getEmail())
+                .password(passwordEncoder.encode(memberRequestDto.getPassword()))
+                .nickname(memberRequestDto.getNickname())
+                .profileImgUrl("https://i.ibb.co/MDKhN7F/kakao-11.jpg")
+                .memberGrade(MemberGrade.TRAVELER)
+                .authority(Authority.ROLE_USER)
+                .build();
+    }
+
     public Member KakaoLoginMember(Long kakaoId, String email, String password, String nickname, String profileImgUrl) {
         return Member.builder()
                 .kakaoId(kakaoId)
@@ -58,18 +70,14 @@ public class Member extends Timestamped {
         this.kakaoId = kakaoId;
     }
 
-    public void update(MemberRequestDto memberRequestDto) {
+    public void updateMember(MemberRequestDto memberRequestDto, PasswordEncoder passwordEncoder) {
         this.email = memberRequestDto.getEmail();
+        this.password = passwordEncoder.encode(memberRequestDto.getNewPassword());
         this.nickname = memberRequestDto.getNickname();
         this.profileImgUrl = memberRequestDto.getProfileImgUrl();
-        this.memberGrade = memberRequestDto.getMemberGrade();
     }
 
-    public void updatePassword(PasswordEncoder passwordEncoder, MemberRequestDto memberRequestDto) {
-        this.password = passwordEncoder.encode(memberRequestDto.toString());
-    }
-
-    public void updateTmpPassword(PasswordEncoder passwordEncoder, String tmpPwd) {
+    public void updateTmpPassword(String tmpPwd, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(tmpPwd);
     }
 }
