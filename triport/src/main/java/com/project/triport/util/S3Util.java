@@ -1,7 +1,6 @@
 package com.project.triport.util;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -12,16 +11,12 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.DeleteObjectsResult;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
-import com.project.triport.responseDto.ResponseDto;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -56,33 +51,33 @@ public class S3Util {
     public String upload(MultipartFile file) throws IOException {
         String randomString = UUID.randomUUID().toString();
 
-        String fileName = randomString + "/" + randomString + ".mp4";
+        String fileName = "video/" + randomString + "/" + randomString + ".mp4";
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
-        String videoUrl = "https://" + cloudFrontDomainName + "/" + fileName;
+        String videoUrl = "https://" + cloudFrontDomainName + "/video/" + fileName;
 
         return videoUrl;
     }
 
-    public String uploadFolder(String filepath) throws AmazonServiceException, InterruptedException {
-        TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
-        File file = new File(filepath);
-        try {
-            transferManager.uploadDirectory(bucket, file.getName(), file, false).waitForCompletion();
-            String videoUrl = "https://" + cloudFrontDomainName + "/" + file.getName() + "/" + file.getName() + ".m3u8";
-            return videoUrl;
-        } catch (AmazonServiceException e) {
-            System.err.println(e.getErrorMessage());
-            System.exit(1);
-            ;
-            throw e;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
+//    public String uploadFolder(String filepath) throws AmazonServiceException, InterruptedException {
+//        TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
+//        File file = new File(filepath);
+//        try {
+//            transferManager.uploadDirectory(bucket, file.getName(), file, false).waitForCompletion();
+//            String videoUrl = "https://" + cloudFrontDomainName + "/" + file.getName() + "/" + file.getName() + ".m3u8";
+//            return videoUrl;
+//        } catch (AmazonServiceException e) {
+//            System.err.println(e.getErrorMessage());
+//            System.exit(1);
+//            ;
+//            throw e;
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//            throw e;
+//        }
+//    }
 
     public void deleteFolder(String directory) {
         try {
