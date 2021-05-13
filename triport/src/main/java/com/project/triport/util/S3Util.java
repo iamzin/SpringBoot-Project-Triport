@@ -1,5 +1,6 @@
 package com.project.triport.util;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -52,37 +53,19 @@ public class S3Util {
                 .build();
     }
 
-    public String upload(String filepath) throws IOException, AmazonServiceException, InterruptedException {
+    public String upload(String filepath) throws IOException, AmazonServiceException {
         TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
         File file = new File(filepath);
         String randomString = UUID.randomUUID().toString();
         String filename = "video/" + randomString + "/" + randomString + ".mp4";
         try {
             transferManager.upload(bucket, filename, file).waitForCompletion();
-        } finally{
-            transferManager.shutdownNow();
+        } catch (AmazonClientException | InterruptedException e) {
+            e.printStackTrace();
         }
         String videoUrl = "https://" + cloudFrontDomainName + "/" + filename;
         return videoUrl;
     }
-
-//    public String uploadFolder(String filepath) throws AmazonServiceException, InterruptedException {
-//        TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
-//        File file = new File(filepath);
-//        try {
-//            transferManager.uploadDirectory(bucket, file.getName(), file, false).waitForCompletion();
-//            String videoUrl = "https://" + cloudFrontDomainName + "/" + file.getName() + "/" + file.getName() + ".m3u8";
-//            return videoUrl;
-//        } catch (AmazonServiceException e) {
-//            System.err.println(e.getErrorMessage());
-//            System.exit(1);
-//            ;
-//            throw e;
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//            throw e;
-//        }
-//    }
 
     public void deleteFolder(String directory) {
         try {
