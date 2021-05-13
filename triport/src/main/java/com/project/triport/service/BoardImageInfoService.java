@@ -76,7 +76,7 @@ public class BoardImageInfoService {
     public void CompareAndChangeShouldBeDelete(List<ImageResponseDto> imageUrlList, List<BoardImageInfo> boardImageInfoList) {
         for (BoardImageInfo boardImageInfo : boardImageInfoList) {
             for (ImageResponseDto imageResponseDto : imageUrlList) {
-                String filename = imageResponseDto.getImageFilePath().split("https://" + S3ImageService.CLOUD_FRONT_DOMAIN_NAME + "/")[1];
+                String filename = imageResponseDto.getImageFilePath().split("https://" + S3ImageService.CLOUD_FRONT_DOMAIN_NAME + "/image/")[1];
                 if (boardImageInfo.getFilePath().equals(filename)) {
                     boardImageInfo.updateShouldBeDelete(false); // shouldBeDeleted 값을 false로 바꿈
                     break;

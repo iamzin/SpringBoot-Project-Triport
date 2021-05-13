@@ -55,7 +55,7 @@ public class S3ImageService {
     private String region;
 
     // 클라우드 프론트 도메인 주소
-    public static final String CLOUD_FRONT_DOMAIN_NAME = "d1lq37d4y8t66p.cloudfront.net";
+    public static final String CLOUD_FRONT_DOMAIN_NAME = "d1nogx3a73keco.cloudfront.net";
 
     // DI가 이뤄진 후 초기화를 수행하는 매서드, AmazonS3ClientBuilder를 통해 S3 Client를 가져올때 '자격증명'이 필요함
     // '자격증명' = "AccessKey' + 'SecretKey'
@@ -81,7 +81,7 @@ public class S3ImageService {
 //        }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = "image/" + requestDto.getImageFile().getOriginalFilename() + "-" + date.format(new Date());
+        String fileName = "image/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()));
 
 
         if (!limitImgSize(requestDto.getImageFile())) {
@@ -95,7 +95,7 @@ public class S3ImageService {
         s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
-        String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triport-image.s3.ap-northeast-2.amazonaws.com/")[1];
+        String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/image/")[1];
 
         // ImageInfo 테이블에 이미지 정보 저장
         BoardImageInfo boardImageInfo = new BoardImageInfo(member, filePath);
@@ -122,7 +122,7 @@ public class S3ImageService {
 //        }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = "image/" + imageFile.getOriginalFilename() + "-" + date.format(new Date());
+        String fileName = "image/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(Objects.requireNonNull(imageFile.getOriginalFilename()));
 
         if (!limitImgSize(imageFile)) {
             throw new IOException("파일 용량 초과!!!");
@@ -132,7 +132,7 @@ public class S3ImageService {
         s3Client.putObject(new PutObjectRequest(bucket, fileName, imageFile.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
-        String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triport-image.s3.ap-northeast-2.amazonaws.com/")[1];
+        String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/image/")[1];
 
         // ImageInfo 테이블에 이미지 정보 저장
         BoardImageInfo boardImageInfo = new BoardImageInfo(member, filePath, board);
@@ -147,10 +147,10 @@ public class S3ImageService {
     @Async
     public CompletableFuture<String> deleteImg(String currentFilePath) throws IOException {
         if (!"".equals(currentFilePath) && currentFilePath != null) {
-            boolean isExistObject = s3Client.doesObjectExist(bucket, currentFilePath);
+            boolean isExistObject = s3Client.doesObjectExist(bucket, "image/"+currentFilePath);
 
             if (isExistObject) {
-                s3Client.deleteObject(bucket, currentFilePath);
+                s3Client.deleteObject(bucket, "image/"+currentFilePath);
                 return CompletableFuture.completedFuture("이미지 파일 삭제 완료");
             } else {
                 return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
@@ -179,5 +179,9 @@ public class S3ImageService {
 //        System.out.println("extensionPart = " + extensionPart);
 //        return extensionPart.equals(".png") || extensionPart.equals(".jpg");
 //    }
+
+    public String deleteSpaceFromFileName(String fileName) {
+        return fileName.replace(" ", "_");
+    }
 
 }
