@@ -11,12 +11,16 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.DeleteObjectsResult;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.Upload;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -48,16 +52,17 @@ public class S3Util {
                 .build();
     }
 
-    public String upload(MultipartFile file) throws IOException {
+    public String upload(String filepath) throws IOException, AmazonServiceException, InterruptedException {
+        TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
+        File file = new File(filepath);
         String randomString = UUID.randomUUID().toString();
-
-        String fileName = "video/" + randomString + "/" + randomString + ".mp4";
-
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-
-        String videoUrl = "https://" + cloudFrontDomainName + "/video/" + fileName;
-
+        String filename = "video/" + randomString + "/" + randomString + ".mp4";
+        try {
+            transferManager.upload(bucket, filename, file).waitForCompletion();
+        } finally{
+            transferManager.shutdownNow();
+        }
+        String videoUrl = "https://" + cloudFrontDomainName + "/" + filename;
         return videoUrl;
     }
 

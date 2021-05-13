@@ -11,7 +11,9 @@ import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
 import com.project.triport.util.APIUtil;
+import com.project.triport.util.VideoProbeResult;
 import com.project.triport.util.S3Util;
+import com.project.triport.util.VideoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -33,6 +35,8 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final S3Util s3Util;
     private final APIUtil apiUtil;
+
+    private final VideoUtil videoUtil;
 
 
     public ResponseDto readPostsAll(int page, String filter, String keyword) {
@@ -104,10 +108,18 @@ public class PostService {
         MultipartFile videoFile = requestDto.getFile();
 
         try {
-            String videoUrl = s3Util.upload(videoFile);
+            String filepath = videoUtil.storeVideo(videoFile);
+
+            VideoProbeResult probeResult = videoUtil.probe(filepath);
+
+            if (probeResult.getDuration() > 10) {
+                return new ResponseDto(false, "10초 이내의 영상만 업로드 가능합니다.");
+            }
+
+            String videoUrl = s3Util.upload(filepath);
 
             Member member = getAuthMember();
-            Post post = new Post(videoUrl, requestDto.getHashtag(), member);
+            Post post = new Post(videoUrl, probeResult.getPosPlay(), requestDto.getHashtag(), member);
 
             postRepository.save(post);
 
@@ -158,7 +170,6 @@ public class PostService {
         }
         return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
-
 
 //    public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
 //        MultipartFile videoFile = requestDto.getFile();

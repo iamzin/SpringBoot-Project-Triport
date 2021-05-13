@@ -49,6 +49,10 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 
+    // FFmpeg wrapper (컴퓨터에 다운로드 후에 java 프로그램과 연결해주는 라이브러리)
+    // https://mvnrepository.com/artifact/net.bramp.ffmpeg/ffmpeg
+    implementation group: 'net.bramp.ffmpeg', name: 'ffmpeg', version: '0.6.2'
+
     // JSON Library
     // https://mvnrepository.com/artifact/org.json/json
     implementation group: 'org.json', name: 'json', version: '20160810'

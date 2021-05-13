@@ -26,6 +26,9 @@ public class Post extends Timestamped {
     private String videoUrl;
 
     @Column(nullable = false)
+    private Boolean posPlay;
+
+    @Column(nullable = false)
     private Long likeNum;
 
     @ElementCollection
@@ -42,9 +45,10 @@ public class Post extends Timestamped {
 //        this.member = member;
 //    }
 
-    public Post(String videoUrl, List<String> hashtag, Member member) {
+    public Post(String videoUrl, boolean posPlay, List<String> hashtag, Member member) {
         this.videoType = "mp4";
         this.videoUrl = videoUrl;
+        this.posPlay = posPlay;
         this.likeNum = 0L;
         this.hashtag = hashtag;
         this.member = member;
@@ -56,6 +60,7 @@ public class Post extends Timestamped {
 
     public void updateUrl(VideoUrlDto requestDto) {
         this.videoType = "m3u8";
+        this.posPlay = true;
         this.videoUrl = requestDto.getVideoUrl();
     }
 
