@@ -9,7 +9,6 @@ import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.TokenDto;
-import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;;
@@ -20,7 +19,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -31,12 +29,9 @@ public class AuthKakaoService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final AuthBasicService authBasicService;
     private final MemberRepository memberRepository;
     private final KakaoOAuth2 kakaoOAuth2;
-    private @Value("${kakao.secret}")
-    String kakaoKey;
-    private final CustomUserDetailsService customUserDetailsService;
+    private @Value("${kakao.secret}") String kakaoKey;
 
     // Kakao 로그인
 //    @Transactional
