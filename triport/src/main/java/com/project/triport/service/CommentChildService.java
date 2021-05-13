@@ -116,7 +116,7 @@ public class CommentChildService {
 
             CommentListResponseDto responseDto = new CommentListResponseDto(commentChild, isLike, isMembers);
 
-            return new ResponseDto(true, responseDto,"대댓글 작성이 완료되었습니다.");
+            return new ResponseDto(true, responseDto,"대댓글 수정이 완료되었습니다.");
         } else {
             return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
@@ -127,7 +127,7 @@ public class CommentChildService {
     public ResponseDto deleteCommentChild(Long commentChildId) {
         CommentChild commentChild = commentChildRepository.findById(commentChildId)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("해당 답글이 존재하지 않습니다.")
+                        () -> new IllegalArgumentException("해당 대댓글이 존재하지 않습니다.")
                 );
 
         // "member": 현재 로그인한 유저 정보
