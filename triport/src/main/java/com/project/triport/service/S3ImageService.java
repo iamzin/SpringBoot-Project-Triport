@@ -76,12 +76,12 @@ public class S3ImageService {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
-        if (!restrictImgExtension(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()))) {
-            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
-        }
+//        if (!restrictImgExtension(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()))) {
+//            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
+//        }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = requestDto.getImageFile().getOriginalFilename() + "-" + date.format(new Date());
+        String fileName = "image/" + requestDto.getImageFile().getOriginalFilename() + "-" + date.format(new Date());
 
 
         if (!limitImgSize(requestDto.getImageFile())) {
@@ -117,12 +117,12 @@ public class S3ImageService {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
-        if (!restrictImgExtension(Objects.requireNonNull(imageFile.getOriginalFilename()))) {
-            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
-        }
+//        if (!restrictImgExtension(Objects.requireNonNull(imageFile.getOriginalFilename()))) {
+//            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
+//        }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
-        String fileName = imageFile.getOriginalFilename() + "-" + date.format(new Date());
+        String fileName = "image/" + imageFile.getOriginalFilename() + "-" + date.format(new Date());
 
         if (!limitImgSize(imageFile)) {
             throw new IOException("파일 용량 초과!!!");
@@ -171,13 +171,13 @@ public class S3ImageService {
     }
 
     public Boolean limitImgSize(MultipartFile file) {
-        return file.getSize() <= 100000; // 100000 바이트 보다 작으면 true 반환
+        return file.getSize() <= 20000000; // 20MB 보다 작으면 true 반환
     }
 
-    public Boolean restrictImgExtension(String fileName) {
-        String extensionPart = fileName.substring(fileName.length() - 4).toLowerCase(Locale.ROOT);
-        System.out.println("extensionPart = " + extensionPart);
-        return extensionPart.equals(".png") || extensionPart.equals(".jpg");
-    }
+//    public Boolean restrictImgExtension(String fileName) {
+//        String extensionPart = fileName.substring(fileName.length() - 4).toLowerCase(Locale.ROOT);
+//        System.out.println("extensionPart = " + extensionPart);
+//        return extensionPart.equals(".png") || extensionPart.equals(".jpg");
+//    }
 
 }
