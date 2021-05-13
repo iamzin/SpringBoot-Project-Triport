@@ -6,6 +6,7 @@ import com.project.triport.requestDto.MailRequestDto;
 import com.project.triport.responseDto.MailResponseDto;
 import com.project.triport.util.MailHandler;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,9 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+//    private @Value("${spring.mail.username}") String fromMail;
 
-//    @Value("${spring.mail.username}")
-//    public String fromMail;
-
+    // 임시 비밀번호 발송
     @Transactional
     public MailResponseDto sendTempPwd(MailRequestDto mailRequestDto) {
 
@@ -36,14 +36,13 @@ public class MailService {
         try {
             MailHandler mailHandler = new MailHandler(mailSender);
 
-            //받는 사람
+            // 받는 사람
             mailHandler.setTo(member.getEmail());
-            //보내는 사람
-//            mailHandler.setFrom(fromMail);
             mailHandler.setFrom("triport.helpdesk@gmail.com");
-            //제목
+            // 제목
             mailHandler.setSubject("[Triport] 회원님의 임시 비밀번호를 확인해 주세요.");
-            //HTML Layout
+            // HTML Layout
+            // TODO: 별도 method로 분리
             String htmlContent = "<img src='cid:tripper_with_logo' style='width:300px'> <br> <br>" +
                     "<p> 안녕하세요, 여행의 설레임 Triport✈️ 입니다! <br>" +
                     "아래의 임시 비밀번호로 로그인하여 주시기 바랍니다. <br> <br>" +
@@ -51,7 +50,7 @@ public class MailService {
                     "로그인 후, 반드시 비밀번호를 변경하여 주세요.😊 <br>" +
                     "이용해주셔서 감사합니다~!♥️ <p> <br> <br>";
             mailHandler.setText(htmlContent, true);
-            //이미지 삽입
+            // 이미지 삽입
             mailHandler.setInline("tripper_with_logo", "static/tripper_with_logo.png");
 
             mailHandler.send();
@@ -63,6 +62,7 @@ public class MailService {
         return new MailResponseDto("회원님의 이메일로 임시 비밀번호를 발송하였습니다.");
     }
 
+    // 랜덤 영문자+숫자 생성
     public String generateTempPwd() {
 
         int leftLimit = 48; // numeral '0'

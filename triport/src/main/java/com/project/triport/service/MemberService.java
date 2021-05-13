@@ -20,17 +20,21 @@ public class MemberService {
     // 로그인한 member email 가져오기
     // 현재 SecurityContext에 있는 member email 가져오기
     @Transactional(readOnly = true)
-    public MemberResponseDto getMemberInfo() {
+    public MemberResponseDto getMember() {
         return memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .map(MemberResponseDto::of)
+                .map(MemberResponseDto::of) // TODO: map 장단점 확인
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보가 없습니다."));
+        // memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
+        //      .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보가 없습니다."));
+        // return MemberResponseDto.of(member);
     }
 
-    public MemberResponseDto updateMemberInfo(MemberRequestDto memberRequestDto) {
+    public MemberResponseDto updateMember(MemberRequestDto memberRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
+        );
 
-        member.update(memberRequestDto);
+        member.updateMember(memberRequestDto, passwordEncoder);
         return MemberResponseDto.of(member);
     }
 
@@ -40,13 +44,5 @@ public class MemberService {
 
         memberRepository.delete(member);
         return "회원탈퇴가 완료되었습니다.";
-    }
-
-    public String updatePassword(MemberRequestDto memberRequestDto) {
-        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
-
-        member.updatePassword(passwordEncoder, memberRequestDto);
-        return "비밀번호 변경이 완료되었습니다.";
     }
 }

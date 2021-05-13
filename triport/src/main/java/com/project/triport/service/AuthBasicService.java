@@ -35,7 +35,7 @@ public class AuthBasicService {
         if (memberRepository.existsByEmail(memberRequestDto.getEmail()))
             throw new RuntimeException("이미 가입되어 있는 email 입니다.");
 
-        Member member = memberRequestDto.toMember(passwordEncoder);
+        Member member = new Member().toMember(memberRequestDto, passwordEncoder);
         return MemberResponseDto.of(memberRepository.save(member));
     }
 

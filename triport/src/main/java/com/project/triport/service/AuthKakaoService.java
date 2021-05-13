@@ -60,7 +60,7 @@ public class AuthKakaoService {
                 // Member profileImgUrl == kakao profile_image_url
                 String profileImgUrl = kakaoProfileImgUrl;
 
-                kakaoUser = kakaoUser.KakaoLoginMember(kakaoId, email, password, nickname, profileImgUrl);
+                kakaoUser.KakaoLoginMember(kakaoId, email, password, nickname, profileImgUrl);
                 memberRepository.save(kakaoUser);
             }
         }

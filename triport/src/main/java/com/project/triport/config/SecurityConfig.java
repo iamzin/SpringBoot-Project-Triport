@@ -72,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/all/**").permitAll()
                 .antMatchers("/mail/**").permitAll()
                 .antMatchers("/static/**").permitAll()
+                // TODO: TODO: Trils encoding server ip에서 요청하는 uri permit 처리 필요
                 .anyRequest().authenticated()
 
                 // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
