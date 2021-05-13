@@ -109,9 +109,9 @@ public class PostService {
             Member member = getAuthMember();
             Post post = new Post(videoUrl, requestDto.getHashtag(), member);
 
-            apiUtil.encodingFile(post);
-
             postRepository.save(post);
+
+            apiUtil.encodingFile(post);
 
             return new ResponseDto(true, "포스팅 완료!");
         } catch (IOException e) {
