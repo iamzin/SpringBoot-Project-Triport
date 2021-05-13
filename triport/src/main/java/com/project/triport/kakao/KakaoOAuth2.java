@@ -30,7 +30,7 @@ public class KakaoOAuth2 {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "${kakao.rest-api.key}");
-        params.add("redirect_uri", "http://localhost:8080/auth/kakao/callback");
+        params.add("redirect_uri", "http://13.209.8.146/auth/kakao/callback");
         params.add("code", authorizedCode);
 
         // HttpHeader와 HttpBody를 하나의 Object에 담기
@@ -56,7 +56,7 @@ public class KakaoOAuth2 {
     private KakaoUserInfo getUserInfoByToken(String accessToken) {
         // HttpHeader Object 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer" + "accessToken");
+        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // HttpHeader와 HttpBody를 하나의 Object에 담기
