@@ -76,19 +76,13 @@ public class AuthKakaoService {
         }
 
         // 강제 로그인 처리
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
-
-        UserDetails principal = new org.springframework.security.core.userdetails.User(
-                String.valueOf(kakaoUser.getId()),
-                kakaoUser.getPassword(),
-                Collections.singleton(grantedAuthority));
-
+//        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
 //        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoUser.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 

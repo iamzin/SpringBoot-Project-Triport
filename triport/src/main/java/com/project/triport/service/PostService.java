@@ -129,7 +129,7 @@ public class PostService {
         } catch (IOException e) {
             return new ResponseDto(false, "영상 저장 실패(IO)");
         } catch (Exception e) {
-            return new ResponseDto(false, "영상 저장 실패(IO 외 Exception)");
+            return new ResponseDto(false, e.getMessage());
         }
     }
 
@@ -170,31 +170,4 @@ public class PostService {
         }
         return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
-
-//    public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
-//        MultipartFile videoFile = requestDto.getFile();
-//
-//        String originalFilename = videoFile.getOriginalFilename();
-//
-//        try {
-//            videoFileUtil.storeVideo(videoFile);
-//
-//            String ecodedFilePath = videoFileUtil.encodingVideo(originalFilename);
-//
-//            String videoUrl = s3Util.uploadFolder(ecodedFilePath);
-//
-//            Member member = getAuthMember();
-//            Post post = new Post(videoUrl, requestDto.getHashtag(), member);
-//
-//            postRepository.save(post);
-//
-//            return new ResponseDto(true, "포스팅 완료!");
-//        } catch (IOException e) {
-//            return new ResponseDto(false, "영상 저장 실패(IO)");
-//        } catch (Exception e) {
-//            return new ResponseDto(false, "영상 저장 실패(IO 외 Exception)");
-//        } finally {
-//            videoFileUtil.cleanStorage();
-//        }
-//    }
 }
