@@ -30,6 +30,7 @@ public class KakaoOAuth2 {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "${kakao.rest-api.key}");
+//        params.add("redirect_uri", "http://13.209.8.146/auth/kakao/callback");
         params.add("redirect_uri", "http://13.209.8.146/auth/kakao/callback");
         params.add("code", authorizedCode);
 
