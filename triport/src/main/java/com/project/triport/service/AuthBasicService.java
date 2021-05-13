@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static com.project.triport.responseDto.MemberResponseDto.of;
+
 @Service
 @RequiredArgsConstructor
 public class AuthBasicService {
@@ -38,7 +40,7 @@ public class AuthBasicService {
         }
 
         Member member = new Member().toMember(memberRequestDto, passwordEncoder);
-        MemberResponseDto.of(memberRepository.save(member));
+        of(memberRepository.save(member));
         return new ResponseDto(true, "회원가입 성공하였습니다.");
     }
 
