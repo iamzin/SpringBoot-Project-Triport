@@ -39,7 +39,7 @@ public class AuthKakaoService {
     private final CustomUserDetailsService customUserDetailsService;
 
     // Kakao 로그인
-    @Transactional
+//    @Transactional
     public ResponseDto kakaoLogin(String authorizedCode, HttpServletResponse response) {
         // Kakao OAuth2를 통해 Kako 사용자 정보 조회
         KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
@@ -77,8 +77,8 @@ public class AuthKakaoService {
         }
 
         // 강제 로그인 처리
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(kakaoUser.getEmail());
+//        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
+//        UserDetails userDetails = customUserDetailsService.loadUserByUsername(kakaoUser.getEmail());
 
 //        UserDetails principal = new org.springframework.security.core.userdetails.User(
 //                String.valueOf(kakaoUser.getId()),
@@ -86,8 +86,11 @@ public class AuthKakaoService {
 //                Collections.singleton(grantedAuthority));
 
 //        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
-        Authentication authentication = new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoUser.getPassword());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoUser.getPassword());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
         RefreshToken refreshToken = RefreshToken.builder()
