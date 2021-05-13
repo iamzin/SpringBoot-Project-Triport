@@ -14,14 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -34,30 +30,29 @@ public class AuthKakaoService {
     private @Value("${kakao.secret}") String kakaoKey;
 
     // Kakao 로그인
-//    @Transactional
+    @Transactional
     public ResponseDto kakaoLogin(String authorizedCode, HttpServletResponse response) {
         // Kakao OAuth2를 통해 Kako 사용자 정보 조회
         KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
         Long kakaoId = userInfo.getId();
-        System.out.println("kakaoId = " + kakaoId);
         String kakaoEmail = userInfo.getEmail();
-        System.out.println("kakaoEmail = " + kakaoEmail);
         String kakaoNickname = userInfo.getNickname();
-        System.out.println("kakaoNickname = " + kakaoNickname);
         String kakaoProfileImgUrl = userInfo.getProfileImgUrl();
-        System.out.println("kakaoProfileImgUrl = " + kakaoProfileImgUrl);
 
         // DB에 중복된 Kakao Id가 있는지 확인
         Member kakaoUser = memberRepository.findByKakaoId(kakaoId)
                 .orElse(null);
 
         if (kakaoUser == null) {
-            // Kakao email과 동일한 email의 Member 있는지 확인
-            Member sameEmailMember = memberRepository.findByEmail(kakaoEmail).orElse(null);
-            if (sameEmailMember != null) {
-                kakaoUser = sameEmailMember;
-                // Kakao email과 동일한 email의 회원이 있는 경우
-                // KakaoId 필드 업데이트
+            Member sameMember = null;
+            if (kakaoEmail.equals(memberRepository.findByEmail(kakaoEmail))) {
+                sameMember = memberRepository.findByEmail(kakaoEmail).orElseThrow(
+                        () -> new IllegalArgumentException("kakaoMember email을 찾을 수 없습니다.")
+                );
+            }
+
+            if (kakaoUser != null) {
+                kakaoUser = sameMember;
                 kakaoUser.updateKakoId(kakaoId);
             } else {
                 // Kakao 정보로 회원가입
@@ -71,7 +66,6 @@ public class AuthKakaoService {
                 String profileImgUrl = kakaoProfileImgUrl;
 
                 kakaoUser.KakaoLoginMember(kakaoId, email, password, nickname, profileImgUrl);
-                memberRepository.save(kakaoUser);
             }
         }
 
