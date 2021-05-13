@@ -1,13 +1,12 @@
 package com.project.triport.entity;
 
 import com.project.triport.requestDto.PostRequestDto;
-import com.project.triport.requestDto.VideoUrlRequestDto;
+import com.project.triport.requestDto.VideoUrlDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -55,7 +54,8 @@ public class Post extends Timestamped {
         this.hashtag = requestDto.getHashtag();
     }
 
-    public void updateUrl(VideoUrlRequestDto requestDto) {
+    public void updateUrl(VideoUrlDto requestDto) {
+        this.videoType = "m3u8";
         this.videoUrl = requestDto.getVideoUrl();
     }
 

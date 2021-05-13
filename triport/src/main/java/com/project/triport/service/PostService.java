@@ -6,10 +6,11 @@ import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.requestDto.PostRequestDto;
-import com.project.triport.requestDto.VideoUrlRequestDto;
+import com.project.triport.requestDto.VideoUrlDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
+import com.project.triport.util.APIUtil;
 import com.project.triport.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -31,6 +32,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final S3Util s3Util;
+    private final APIUtil apiUtil;
+
 
     public ResponseDto readPostsAll(int page, String filter, String keyword) {
         // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(12), sort 고정값(DESC))
@@ -106,7 +109,10 @@ public class PostService {
             Member member = getAuthMember();
             Post post = new Post(videoUrl, requestDto.getHashtag(), member);
 
+            apiUtil.encodingFile(post);
+
             postRepository.save(post);
+
             return new ResponseDto(true, "포스팅 완료!");
         } catch (IOException e) {
             return new ResponseDto(false, "영상 저장 실패(IO)");
@@ -137,7 +143,7 @@ public class PostService {
     }
 
     @Transactional
-    public void updateUrl(VideoUrlRequestDto requestDto) {
+    public void updateUrl(VideoUrlDto requestDto) {
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );

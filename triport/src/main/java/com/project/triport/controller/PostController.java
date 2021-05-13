@@ -2,7 +2,7 @@ package com.project.triport.controller;
 
 
 import com.project.triport.requestDto.PostRequestDto;
-import com.project.triport.requestDto.VideoUrlRequestDto;
+import com.project.triport.requestDto.VideoUrlDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +51,8 @@ public class PostController {
         return postService.deletePost(postId);
     }
 
-    @PostMapping("/api/posts/video")
-    public void updateUrl(@RequestBody VideoUrlRequestDto requestDto){
+    @PostMapping("/api/all/posts/video")
+    public void updateUrl(@RequestBody VideoUrlDto requestDto){
         postService.updateUrl(requestDto);
     }
 
