@@ -171,7 +171,7 @@ public class S3ImageService {
     }
 
     public Boolean limitImgSize(MultipartFile file) {
-        return file.getSize() <= 20000000; // 20MB 보다 작으면 true 반환
+        return file.getSize() <= 10000000; // 10MB 보다 작으면 true 반환
     }
 
 //    public Boolean restrictImgExtension(String fileName) {
