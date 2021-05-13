@@ -2,7 +2,8 @@ package com.project.triport.controller;
 
 import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.requestDto.TokenRequestDto;
-import com.project.triport.responseDto.MemberInfoResponseDto;
+import com.project.triport.responseDto.ResponseDto;
+import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
 import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.service.AuthBasicService;
 import lombok.RequiredArgsConstructor;
@@ -20,21 +21,21 @@ public class AuthBasicController {
 
     // 기본 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<MemberResponseDto> signup(@RequestBody @Valid MemberRequestDto memberRequestDto) {
+    public ResponseEntity<ResponseDto> signup(@RequestBody @Valid MemberRequestDto memberRequestDto) {
         return ResponseEntity.ok(authBasicService.signup(memberRequestDto));
     }
 
     // 기본 로그인
     @PostMapping("/login")
-    public ResponseEntity<MemberInfoResponseDto> login(@RequestBody MemberRequestDto memberRequestDto,
-                                                       HttpServletResponse response) {
+    public ResponseEntity<ResponseDto> login(@RequestBody MemberRequestDto memberRequestDto,
+                                                              HttpServletResponse response) {
         return ResponseEntity.ok(authBasicService.login(memberRequestDto, response));
     }
 
     // 기본 token 재발급
     @PostMapping("/reissue")
-    public ResponseEntity<MemberInfoResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto,
-                                                         HttpServletResponse response) {
+    public ResponseEntity<ResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto,
+                                                                HttpServletResponse response) {
         return ResponseEntity.ok(authBasicService.reissue(tokenRequestDto, response));
     }
 }

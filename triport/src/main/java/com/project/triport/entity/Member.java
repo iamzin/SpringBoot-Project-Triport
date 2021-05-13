@@ -39,6 +39,7 @@ public class Member extends Timestamped {
     @Column(nullable = false)
     private MemberGrade memberGrade;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
@@ -71,7 +72,6 @@ public class Member extends Timestamped {
     }
 
     public void updateMember(MemberRequestDto memberRequestDto, PasswordEncoder passwordEncoder) {
-        this.email = memberRequestDto.getEmail();
         this.password = passwordEncoder.encode(memberRequestDto.getNewPassword());
         this.nickname = memberRequestDto.getNickname();
         this.profileImgUrl = memberRequestDto.getProfileImgUrl();

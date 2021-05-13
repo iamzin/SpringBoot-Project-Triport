@@ -21,6 +21,8 @@ public class MemberRequestDto {
     @Email(message = "올바른 이메일 주소를 입력해 주세요.")
     private String email;
 
+    private String rawPassword;
+
 //    @NotBlank(message = "비밀번호를 입력해 주세요.")
 //    @Size(min = 8, max = 20, message = "비밀번호는 8-20자 이내로 입력해 주세요.")
 //    @Pattern(regexp = "^.*(?=^.{8,20}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#*]).*$",
@@ -56,15 +58,4 @@ public class MemberRequestDto {
 
     private MemberGrade memberGrade;
 
-//    // TODO: password encoding -> Service에서 처리하도록 변경
-//    public Member toMember(PasswordEncoder passwordEncoder) {
-//        return Member.builder()
-//                .email(email)
-//                .password(passwordEncoder.encode(password))
-//                .nickname(nickname)
-//                .profileImgUrl("https://i.ibb.co/MDKhN7F/kakao-11.jpg")
-//                .memberGrade(MemberGrade.TRAVELER)
-//                .authority(Authority.ROLE_USER)
-//                .build();
-//    }
 }
