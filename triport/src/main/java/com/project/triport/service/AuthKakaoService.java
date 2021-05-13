@@ -26,7 +26,7 @@ public class AuthKakaoService {
     private final AuthBasicService authBasicService;
     private final MemberRepository memberRepository;
     private final KakaoOAuth2 kakaoOAuth2;
-    private final @Value("${kakao.secret}") String kakaoKey;
+    private @Value("${kakao.secret}") String kakaoKey;
 
     // Kakao 로그인
     public void kakaoLogin(String authorizedCode, HttpServletResponse response) {
