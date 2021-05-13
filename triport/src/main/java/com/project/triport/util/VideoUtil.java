@@ -31,7 +31,6 @@ public class VideoUtil {
     private String temporaryStorage;
 
     private final Path rootLocation;
-    private FFmpeg ffmpeg;
     private FFprobe ffprobe;
 
     @Autowired
@@ -42,7 +41,6 @@ public class VideoUtil {
     @PostConstruct
     public void init() {
         try {
-            ffmpeg = new FFmpeg(ffmpegPath);
             ffprobe = new FFprobe(ffprobePath);
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,10 +61,9 @@ public class VideoUtil {
         double duration = format.duration;
 
         boolean posPlay = false;
-        for (int i = 0; i < 2; i++){
-            FFmpegStream stream = probeResult.getStreams().get(i);
-            if(stream.codec_type == FFmpegStream.CodecType.VIDEO){
-                posPlay = Boolean.parseBoolean(stream.is_avc);
+        for (FFmpegStream ffmpegStream : probeResult.getStreams()){
+            if(ffmpegStream.codec_type == FFmpegStream.CodecType.VIDEO){
+                posPlay = Boolean.parseBoolean(ffmpegStream.is_avc);
             }
         }
         return new VideoProbeResult(duration, posPlay);
