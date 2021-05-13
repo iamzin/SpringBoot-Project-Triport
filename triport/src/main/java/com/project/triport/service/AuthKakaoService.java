@@ -44,9 +44,13 @@ public class AuthKakaoService {
         // Kakao OAuth2를 통해 Kako 사용자 정보 조회
         KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
         Long kakaoId = userInfo.getId();
+        System.out.println("kakaoId = " + kakaoId);
         String kakaoEmail = userInfo.getEmail();
+        System.out.println("kakaoEmail = " + kakaoEmail);
         String kakaoNickname = userInfo.getNickname();
+        System.out.println("kakaoNickname = " + kakaoNickname);
         String kakaoProfileImgUrl = userInfo.getProfileImgUrl();
+        System.out.println("kakaoProfileImgUrl = " + kakaoProfileImgUrl);
 
         // DB에 중복된 Kakao Id가 있는지 확인
         Member kakaoUser = memberRepository.findByKakaoId(kakaoId)
@@ -77,29 +81,28 @@ public class AuthKakaoService {
         }
 
         // 강제 로그인 처리
-//        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
-//        UserDetails userDetails = customUserDetailsService.loadUserByUsername(kakaoUser.getEmail());
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
 
-//        UserDetails principal = new org.springframework.security.core.userdetails.User(
-//                String.valueOf(kakaoUser.getId()),
-//                kakaoUser.getPassword(),
-//                Collections.singleton(grantedAuthority));
+        UserDetails principal = new org.springframework.security.core.userdetails.User(
+                String.valueOf(kakaoUser.getId()),
+                kakaoUser.getPassword(),
+                Collections.singleton(grantedAuthority));
 
 //        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoUser.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
         RefreshToken refreshToken = RefreshToken.builder()
                 .email(authentication.getName())
                 .value(tokenDto.getRefreshToken())
                 .build();
 
         refreshTokenRepository.save(refreshToken);
-//        return authBasicService.tokenToHeaders(authentication, tokenDto, response);
 
         // Header에 token과 만료시간 add
         response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
@@ -114,7 +117,7 @@ public class AuthKakaoService {
         // 해당 memberInfo return
 
         // ResponseBody에 memberInfo 담아서 return
-        new MemberInformationResponseDto(kakaoUser);
+//        new MemberInformationResponseDto(kakaoUser);
         return new ResponseDto(true, kakaoUser, "사용자 token 발급을 성공하였습니다.");
     }
 }
