@@ -77,7 +77,8 @@ public class KakaoOAuth2 {
         // TODO: 이메일 제공 동의하지 않을 경우 랜덤 값 적용 (nullable = false니까)
         String email = body.getJSONObject("kakao_account").getString("email");
         String nickname = body.getJSONObject("properties").getString("nickname");
-        String profileImgUrl = body.getJSONObject("kakao_account").getString("profile_image_url");
+//        String profileImgUrl = body.getJSONObject("properties").getString("profile_image");
+        String profileImgUrl = "https://i.ibb.co/MDKhN7F/kakao-11.jpg";
 
         return new KakaoUserInfo(id, email, nickname, profileImgUrl);
     }
