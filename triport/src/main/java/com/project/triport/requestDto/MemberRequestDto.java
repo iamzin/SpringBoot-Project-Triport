@@ -21,13 +21,13 @@ public class MemberRequestDto {
     @Email(message = "올바른 이메일 주소를 입력해 주세요.")
     private String email;
 
-    @NotBlank(message = "비밀번호를 입력해 주세요.")
-    @Size(min = 8, max = 20, message = "비밀번호는 8-20자 이내로 입력해 주세요.")
-    @Pattern(regexp = "^.*(?=^.{8,20}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#*]).*$",
-            message = "비밀번호는 영문자와 숫자, 특수문자(!@#*)가 적어도 1개 이상 포함되도록 8-20자리 이내로 입력해 주세요.")
+//    @NotBlank(message = "비밀번호를 입력해 주세요.")
+//    @Size(min = 8, max = 20, message = "비밀번호는 8-20자 이내로 입력해 주세요.")
+//    @Pattern(regexp = "^.*(?=^.{8,20}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#*]).*$",
+//            message = "비밀번호는 영문자와 숫자, 특수문자(!@#*)가 적어도 1개 이상 포함되도록 8-20자리 이내로 입력해 주세요.")
     private String password;
 
-    @NotBlank(message = "비밀번호를 다시 한 번 입력해 주세요.")
+//    @NotBlank(message = "비밀번호를 다시 한 번 입력해 주세요.")
 //    @PwdCheck() // custom validator
 //    @Size(min = 8, max = 20, message = "비밀번호는 영어와 숫자를 포함하여 8-20자 이내로 입력해 주세요.")
 //    @Pattern(regexp = "[a-zA-Z1-9]{8,20}", message = "비밀번호가 일치하지 않습니다.")

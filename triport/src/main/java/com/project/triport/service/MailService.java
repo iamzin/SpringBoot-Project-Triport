@@ -31,7 +31,7 @@ public class MailService {
                 .orElseThrow(() -> new RuntimeException("입력하신 이메일로 가입된 사용자가 없습니다."));
 
         String tmpPwd = generateTempPwd();
-        member.updateTmpPassword(passwordEncoder, tmpPwd);
+        member.updateTmpPassword(tmpPwd, passwordEncoder);
 
         try {
             MailHandler mailHandler = new MailHandler(mailSender);

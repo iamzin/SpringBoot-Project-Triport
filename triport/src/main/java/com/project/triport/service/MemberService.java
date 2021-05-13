@@ -29,6 +29,7 @@ public class MemberService {
         // return MemberResponseDto.of(member);
     }
 
+    @Transactional
     public MemberResponseDto updateMember(MemberRequestDto memberRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")

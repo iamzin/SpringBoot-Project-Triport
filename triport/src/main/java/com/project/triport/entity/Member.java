@@ -75,10 +75,9 @@ public class Member extends Timestamped {
         this.password = passwordEncoder.encode(memberRequestDto.getNewPassword());
         this.nickname = memberRequestDto.getNickname();
         this.profileImgUrl = memberRequestDto.getProfileImgUrl();
-        this.memberGrade = MemberGrade.TRAVELER; // TODO: MemberGrade 기능 구현 후, 변경 필요
     }
 
-    public void updateTmpPassword(PasswordEncoder passwordEncoder, String tmpPwd) {
+    public void updateTmpPassword(String tmpPwd, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(tmpPwd);
     }
 }

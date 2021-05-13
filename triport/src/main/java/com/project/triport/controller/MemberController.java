@@ -23,7 +23,7 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMember());
     }
 
-    @PutMapping("/profile")
+    @PostMapping("/profile")
     public ResponseEntity<MemberResponseDto> updateMemberInfo(@RequestBody MemberRequestDto memberRequestDto) {
         return ResponseEntity.ok(memberService.updateMember(memberRequestDto));
     }
