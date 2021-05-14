@@ -31,15 +31,15 @@ import java.util.UUID;
 public class S3Util {
     private AmazonS3 s3Client;
 
-    @Value("${cloud.aws.cloudfront.domainSon}")
+    @Value("${cloud.aws.cloudfront.domain}")
     private String cloudFrontDomainName;
-    @Value("${cloud.aws.credentials.accessKeySon}")
+    @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
-    @Value("${cloud.aws.credentials.secretKeySon}")
+    @Value("${cloud.aws.credentials.secretKey}")
     private String secretKey;
-    @Value("${cloud.aws.s3.bucketSon}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    @Value("${cloud.aws.region.staticSon}")
+    @Value("${cloud.aws.region.static}")
     private String region;
 
 
