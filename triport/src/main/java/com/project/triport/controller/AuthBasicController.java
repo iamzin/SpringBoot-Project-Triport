@@ -3,8 +3,6 @@ package com.project.triport.controller;
 import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.requestDto.TokenRequestDto;
 import com.project.triport.responseDto.ResponseDto;
-import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
-import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.service.AuthBasicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
