@@ -2,6 +2,7 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.entity.RefreshToken;
+import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.jwt.TokenProvider;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
@@ -11,9 +12,11 @@ import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
 import com.project.triport.responseDto.TokenDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +102,16 @@ public class AuthBasicService {
         return tokenToHeaders(authentication, tokenDto, response);
     }
 
+    public ResponseDto logout() {
+        Member member = getAuthMember();
+        RefreshToken refreshToken = refreshTokenRepository.findByEmail(member.getEmail())
+                .orElseThrow( () -> new RuntimeException("이미 로그아웃 된 사용자 입니다.")
+        );
+
+        refreshTokenRepository.delete(refreshToken);
+        return new ResponseDto(true, "로그아웃 완료");
+    }
+
     // access, refresh token header에 담기
     public ResponseDto tokenToHeaders(Authentication authentication,
                                                        TokenDto tokenDto, HttpServletResponse response) {
@@ -121,5 +134,14 @@ public class AuthBasicService {
         // ResponseBody에 memberInfo 담아서 return
         new MemberInformationResponseDto(member);
         return new ResponseDto(true, member, "사용자 token 발급을 성공하였습니다.");
+    }
+
+    public Member getAuthMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || AnonymousAuthenticationToken.class.
+                isAssignableFrom(authentication.getClass())) {
+            return null;
+        }
+        return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
 }
