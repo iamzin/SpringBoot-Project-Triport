@@ -36,7 +36,7 @@ public class MemberService {
         );
 
         member.updateMember(memberRequestDto, passwordEncoder);
-        return new ResponseDto(true, "비밀번호 변경을 완료하였습니다.");
+        return new ResponseDto(true, "특정 member의 프로필 수정에 성공하였습니다.");
     }
 
     // member 삭제(탈퇴)
