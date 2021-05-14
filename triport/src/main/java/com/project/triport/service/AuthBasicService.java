@@ -9,7 +9,6 @@ import com.project.triport.requestDto.MemberRequestDto;
 import com.project.triport.requestDto.TokenRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
-import com.project.triport.responseDto.MemberResponseDto;
 import com.project.triport.responseDto.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

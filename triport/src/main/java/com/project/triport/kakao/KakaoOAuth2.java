@@ -29,8 +29,9 @@ public class KakaoOAuth2 {
         // HttpBody Object 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "${kakao.rest-api.key}");
-//        params.add("redirect_uri", "http://13.209.8.146/auth/kakao/callback");
+//        params.add("client_id", "${kakao.rest-api.key}");
+        params.add("client_id", "b30e166ade03d146889e1b012679fcf6");
+//        params.add("redirect_uri", "http://localhost:8080/auth/kakao/callback");
         params.add("redirect_uri", "http://13.209.8.146/auth/kakao/callback");
         params.add("code", authorizedCode);
 
