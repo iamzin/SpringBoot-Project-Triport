@@ -32,5 +32,4 @@ public class MemberController {
     public ResponseEntity<String> deleteMember() {
         return ResponseEntity.ok(memberService.deleteMember());
     }
-
 }

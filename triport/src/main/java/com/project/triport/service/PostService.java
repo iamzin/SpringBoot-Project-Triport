@@ -42,7 +42,7 @@ public class PostService {
     public ResponseDto readPostsAll(int page, String filter, String keyword) {
         // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(12), sort 고정값(DESC))
         Sort sort = Sort.by(Sort.Direction.DESC, filter);
-        Pageable pageable = PageRequest.of(page - 1, 12, sort);
+        Pageable pageable = PageRequest.of(page - 1, 6, sort);
         // 전체 post 리스트 조회
         Slice<Post> postPage;
         if ("".equals(keyword)) {
