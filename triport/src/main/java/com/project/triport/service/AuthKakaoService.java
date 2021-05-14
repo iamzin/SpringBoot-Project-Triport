@@ -14,10 +14,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -27,80 +32,77 @@ public class AuthKakaoService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
     private final KakaoOAuth2 kakaoOAuth2;
+    private final AuthBasicService authBasicService;
     private @Value("${kakao.secret}") String kakaoKey;
 
     // Kakao 로그인
-    @Transactional
+//    @Transactional
     public ResponseDto kakaoLogin(String authorizedCode, HttpServletResponse response) {
         // Kakao OAuth2를 통해 Kako 사용자 정보 조회
         KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
+        System.out.println("userInfo = " + userInfo);
         Long kakaoId = userInfo.getId();
+        System.out.println("kakaoId = " + kakaoId);
         String kakaoEmail = userInfo.getEmail();
+        System.out.println("kakaoEmail = " + kakaoEmail);
         String kakaoNickname = userInfo.getNickname();
+        System.out.println("kakaoNickname = " + kakaoNickname);
         String kakaoProfileImgUrl = userInfo.getProfileImgUrl();
+        System.out.println("kakaoProfileImgUrl = " + kakaoProfileImgUrl);
 
         // DB에 중복된 Kakao Id가 있는지 확인
         Member kakaoUser = memberRepository.findByKakaoId(kakaoId)
                 .orElse(null);
+        System.out.println("kakaoUser = " + kakaoUser);
 
         if (kakaoUser == null) {
             Member sameMember = null;
-            if (kakaoEmail.equals(memberRepository.findByEmail(kakaoEmail))) {
+            if (memberRepository.existsByEmail(kakaoEmail)) {
                 sameMember = memberRepository.findByEmail(kakaoEmail).orElseThrow(
                         () -> new IllegalArgumentException("kakaoMember email을 찾을 수 없습니다.")
                 );
-            }
-
-            if (kakaoUser != null) {
+                System.out.println("sameMember = " + sameMember);
                 kakaoUser = sameMember;
+                System.out.println("kakaoUser = " + kakaoUser);
                 kakaoUser.updateKakoId(kakaoId);
+                System.out.println("kakaoUser = " + kakaoUser);
             } else {
                 // Kakao 정보로 회원가입
-                // Member email == Kakao email
-                String email = kakaoEmail;
                 // Member password == kakaoId + kakaoKey
                 String password = kakaoId + kakaoKey;
-                // Member nickname == kakao nickname
-                String nickname = kakaoNickname;
-                // Member profileImgUrl == kakao profile_image_url
-                String profileImgUrl = kakaoProfileImgUrl;
-
-                kakaoUser.KakaoLoginMember(kakaoId, email, password, nickname, profileImgUrl);
+                System.out.println("password = " + password);
+                kakaoUser = new Member().KakaoLoginMember(kakaoId, kakaoEmail, password, kakaoNickname, kakaoProfileImgUrl);
+                System.out.println("password = " + password);
+                memberRepository.save(kakaoUser);
+                System.out.println("password = " + password);
             }
         }
 
         // 강제 로그인 처리
-//        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoUser.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(kakaoUser.getAuthority().toString());
+        System.out.println("grantedAuthority = " + grantedAuthority);
+        UserDetails principal = new org.springframework.security.core.userdetails.User(
+                String.valueOf(kakaoUser.getEmail()),
+                kakaoUser.getPassword(),
+                Collections.singleton(grantedAuthority));
+        System.out.println("principal = " + principal);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
+        System.out.println("authentication = " + authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+        System.out.println("tokenDto = " + tokenDto);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .email(authentication.getName())
                 .value(tokenDto.getRefreshToken())
                 .build();
+        System.out.println("refreshToken = " + refreshToken);
 
         refreshTokenRepository.save(refreshToken);
+        System.out.println("refreshToken = " + refreshToken);
 
-        // Header에 token과 만료시간 add
-        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
-        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
-        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
-
-        // react가 만료시간 체크 하는 방법:
-        // accessToken 만료하기 1분 전에 로그인 연장하도록 아래와 같이 setTimeout 설정
-        // setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000);
-        // Timeout 되면 onSilentRefresh가 실행되면서, /auth/reissue로 재발급 요청
-
-        // 해당 memberInfo return
-
-        // ResponseBody에 memberInfo 담아서 return
-//        new MemberInformationResponseDto(kakaoUser);
-        return new ResponseDto(true, kakaoUser, "사용자 token 발급을 성공하였습니다.");
+        return authBasicService.tokenToHeaders(authentication, tokenDto, response);
     }
 }
