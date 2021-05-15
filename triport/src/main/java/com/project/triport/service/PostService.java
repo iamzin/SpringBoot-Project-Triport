@@ -106,23 +106,17 @@ public class PostService {
 
     public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
         MultipartFile videoFile = requestDto.getFile();
-
+        String filepath = videoUtil.storeVideo(videoFile);
         try {
-            String filepath = videoUtil.storeVideo(videoFile);
-
             VideoProbeResult probeResult = videoUtil.probe(filepath);
-
-            if (probeResult.getDuration() > 10) {
+            if (probeResult.getDuration() > 10.99) {
                 return new ResponseDto(false, "10초 이내의 영상만 업로드 가능합니다.");
             }
-
             String videoUrl = s3Util.upload(filepath);
 
             Member member = getAuthMember();
             Post post = new Post(videoUrl, probeResult.getPosPlay(), requestDto.getHashtag(), member);
-
             postRepository.save(post);
-
             apiUtil.encodingFile(post);
 
             return new ResponseDto(true, "포스팅 완료!");
@@ -130,6 +124,8 @@ public class PostService {
             return new ResponseDto(false, "영상 저장 실패(IO)");
         } catch (Exception e) {
             return new ResponseDto(false, e.getMessage());
+        } finally{
+            videoUtil.deleteTmp(filepath);
         }
     }
 

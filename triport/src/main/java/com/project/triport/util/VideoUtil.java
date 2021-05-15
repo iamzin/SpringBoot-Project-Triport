@@ -69,11 +69,17 @@ public class VideoUtil {
         return new VideoProbeResult(duration, posPlay);
     }
 
-    public void cleanStorage() throws IOException {
-        File tmpStorage = new File(temporaryStorage);
-
-        FileUtils.cleanDirectory(tmpStorage);
-        System.out.println("tmp folder 비움 완료");
+    public void deleteTmp(String filepath) throws IOException {
+        File tmpFile = new File(filepath);
+        if(tmpFile.exists() ){
+            if(tmpFile.delete()){
+                System.out.println("파일삭제 성공");
+            }else{
+                System.out.println("파일삭제 실패");
+            }
+        }else{
+            System.out.println("파일이 존재하지 않습니다.");
+        }
     }
 }
 
