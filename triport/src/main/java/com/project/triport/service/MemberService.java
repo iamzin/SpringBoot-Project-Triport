@@ -39,17 +39,18 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
         );
 
-        // 프로필 이미지 변경사항 없을 때
+//         프로필 이미지 변경사항 없을 때
         if (memberRequestDto.getProfileImgFile().isEmpty()) {
-            // 기본 이미지 유지
-            // no action
+            String fileUrl = "https://i.ibb.co/MDKhN7F/kakao-11.jpg";
+            member.updateMember(memberRequestDto, passwordEncoder, fileUrl);
+            return new ResponseDto(true, "특정 member의 프로필 수정에 성공하였습니다.");
         }
 
-        MultipartFile profileImgFile = memberRequestDto.getProfileImgFile();
-        String fileName = s3ProfileImageService.uploadProfileImage(profileImgFile);
-        String filePath = "https://" + S3ProfileImageService.CLOUD_FRONT_DOMAIN_NAME + "/profileImage/" + fileName;
+//        MultipartFile profileImgFile = memberRequestDto.getProfileImgFile();
+        String filePath = s3ProfileImageService.uploadProfileImage(memberRequestDto.getProfileImgFile());
+        String fileUrl = "https://" + S3ProfileImageService.CLOUD_FRONT_DOMAIN_NAME + "/profileImage/" + filePath;
 
-        member.updateMember(memberRequestDto, passwordEncoder, filePath);
+        member.updateMember(memberRequestDto, passwordEncoder, fileUrl);
         return new ResponseDto(true, "특정 member의 프로필 수정에 성공하였습니다.");
     }
 
