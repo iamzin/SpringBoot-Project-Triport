@@ -84,9 +84,9 @@ public class BoardService {
     }
 
     // Basic 게시글 상세 조회
-    public ResponseDto getBoardDetail( Long basicId) {
+    public ResponseDto getBoardDetail( Long boardId) {
         // DB에서 해당 BasicBoard 조회
-        Board board = boardRepository.findById(basicId).orElseThrow(
+        Board board = boardRepository.findById(boardId).orElseThrow(
 //                () -> new ApiRequestException("해당 게시글이 존재하지 않습니다.")
                 () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
@@ -115,11 +115,13 @@ public class BoardService {
         Member member = getAuthMember();
 
         List<Board> boardList = boardRepository.findByMember(member);
+
         List<ListResponseDto> responseDtoList = new ArrayList<>();
+
         for (Board board : boardList) {
             boolean isLike = boardLikeRepository.existsByBoardAndMember(board, member);
-            boolean isMembers = board.getMember().getId().equals(member.getId());
-            ListResponseDto responseDto = new ListResponseDto(board, isLike, isMembers);
+
+            ListResponseDto responseDto = new ListResponseDto(board, isLike, true);
             responseDtoList.add(responseDto);
         }
         return new ResponseDto(true, responseDtoList, "해당 Member가 작성한 전체 게시글 조회에 성공하였습니다.");

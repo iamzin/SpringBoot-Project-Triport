@@ -37,7 +37,7 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     @Column(nullable = false)
     private String thumbNailUrl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
