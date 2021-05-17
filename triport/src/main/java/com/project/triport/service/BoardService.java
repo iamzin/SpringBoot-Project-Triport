@@ -1,9 +1,6 @@
 package com.project.triport.service;
 
-import com.project.triport.entity.Board;
-import com.project.triport.entity.BoardImageInfo;
-import com.project.triport.entity.CommentParent;
-import com.project.triport.entity.Member;
+import com.project.triport.entity.*;
 import com.project.triport.exception.ApiRequestException;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BoardImageInfoRepository;
@@ -13,7 +10,6 @@ import com.project.triport.requestDto.BoardRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
-import com.project.triport.responseDto.results.property.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -26,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +32,7 @@ public class BoardService {
     private final BoardImageInfoRepository boardImageInfoRepository;
     private final BoardImageInfoService boardImageInfoService;
 
-    // Basic 게시글 전체 리스트 조회 -> 페이징
+    // Board 게시글 전체 리스트 조회 -> 페이징
     public ResponseDto getBoardList(int page, String filter, String keyword) {
 
         // 로그인한 멤버의 authentication
@@ -55,7 +50,12 @@ public class BoardService {
         }
 
         // page 관련 PageRequest 설정
-        PageRequest pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter));
+        PageRequest pageRequest;
+        if (filter.equals("likeNum")) {
+            pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter).and(Sort.by(Sort.Direction.DESC,"modifiedAt")));
+        } else {
+            pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter));
+        }
 
 
         // 페이징 처리된 검색 결과 Board 리스트 조회
@@ -87,7 +87,8 @@ public class BoardService {
     public ResponseDto getBoardDetail( Long basicId) {
         // DB에서 해당 BasicBoard 조회
         Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new ApiRequestException("해당 게시글이 존재하지 않습니다.")
+//                () -> new ApiRequestException("해당 게시글이 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
         );
 
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
@@ -109,7 +110,7 @@ public class BoardService {
 
 
     // 로그인한 Member가 작성한 Board 리스트 조회 // 페이징 가능성 있음
-    public ResponseDto getBoardListCreatedByUser() {
+    public ResponseDto getBoardListCreatedByMember() {
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
         Member member = getAuthMember();
 
@@ -122,6 +123,32 @@ public class BoardService {
             responseDtoList.add(responseDto);
         }
         return new ResponseDto(true, responseDtoList, "해당 Member가 작성한 전체 게시글 조회에 성공하였습니다.");
+    }
+
+    // 로그인한 Member가 좋아요 누른 Board 리스트 조회
+    public ResponseDto getBoardListMemberLiked() {
+        // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
+        Member member = getAuthMember();
+
+        List<BoardLike> boardLikeList = boardLikeRepository.findByMember(member);
+
+        List<Board> boardList = new ArrayList<>();
+
+        List<ListResponseDto> responseDtoList = new ArrayList<>();
+
+        for (BoardLike boardLike : boardLikeList) {
+            boardList.add(boardLike.getBoard());
+        }
+
+        for (Board board : boardList) {
+            boolean isMembers = board.getMember().getId().equals(member.getId());
+
+            ListResponseDto responseDto = new ListResponseDto(board, true, isMembers);
+            responseDtoList.add(responseDto);
+        }
+
+        return new ResponseDto(true, responseDtoList, "해당 Member가 좋아요 누른 전체 게시글 조회에 성공하였습니다.");
+
     }
 
 
@@ -155,7 +182,8 @@ public class BoardService {
     public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException {
 
         Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new ApiRequestException("해당 Trilog 게시글이 존재하지 않습니다.")
+//                () -> new ApiRequestException("해당 Trilog 게시글이 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
 
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
@@ -179,8 +207,8 @@ public class BoardService {
 
             return new ResponseDto(true, "게시글이 수정되었습니다.");
         } else {
-            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
-//            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+//            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
+            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
     }
 
@@ -200,8 +228,8 @@ public class BoardService {
             boardRepository.deleteById(basicId);
             return new ResponseDto(true, "게시글이 삭제되었습니다.");
         } else {
-            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
-//            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+//            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
+            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
     }
 

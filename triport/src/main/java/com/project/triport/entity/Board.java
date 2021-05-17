@@ -2,6 +2,7 @@ package com.project.triport.entity;
 
 import com.project.triport.requestDto.BoardRequestDto;
 //import com.project.triport.requestDto.UserDto;
+import com.project.triport.service.S3ImageService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +34,9 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     @Column(nullable = false)
     private Long commentNum;
 
+    @Column(nullable = false)
+    private String thumbNailUrl;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -52,6 +56,13 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
         this.address = boardRequestDto.getAddress();
         this.likeNum = 0L;
         this.commentNum = 0L;
+
+        if(boardRequestDto.getImageUrlList().size() > 0) {
+            this.thumbNailUrl = boardRequestDto.getImageUrlList().get(0).getImageFilePath();
+        } else {
+            this.thumbNailUrl = "";
+        }
+
         this.member = member;
     }
 

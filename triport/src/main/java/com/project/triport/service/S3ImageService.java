@@ -83,7 +83,8 @@ public class S3ImageService {
 
 
         if (!limitImgSize(requestDto.getImageFile())) {
-            throw new ApiRequestException("파일 용량 초과!!!");
+//            throw new ApiRequestException("파일 용량 초과!!!");
+            throw new IllegalArgumentException("파일 용량 초과!!!");
         }
 
         // "member": 현재 로그인한 유저 정보
@@ -125,7 +126,8 @@ public class S3ImageService {
         String fileName = "image/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(Objects.requireNonNull(imageFile.getOriginalFilename()));
 
         if (!limitImgSize(imageFile)) {
-            throw new ApiRequestException("파일 용량 초과!!!");
+//            throw new ApiRequestException("파일 용량 초과!!!");
+            throw new IllegalArgumentException("파일 용량 초과!!!");
         }
 
         try {

@@ -25,12 +25,7 @@ public class BoardInformationResponseDto extends InformationResponseDto {
         this.id = board.getId();
         this.title = board.getTitle();
         this.description = board.getDescription();
-
-        if(board.getBoardImageInfoList().size() > 0) {
-            this.thumbNailUrl = "https://" + S3ImageService.CLOUD_FRONT_DOMAIN_NAME + "/image/" + board.getBoardImageInfoList().get(0).getFilePath();
-        } else {
-            this.thumbNailUrl = "";
-        }
+        this.thumbNailUrl = board.getThumbNailUrl();
 
         this.likeNum = board.getLikeNum();
         this.commentNum = board.getCommentNum();

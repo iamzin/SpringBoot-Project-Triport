@@ -23,20 +23,27 @@ public class BoardController {
 
     // Trilog 게시글 전체 리스트 조회
     @GetMapping("/api/all/boards")
-    public ResponseDto getBasicBoardList(@RequestParam int page, @RequestParam String filter, @RequestParam String keyword) {
+    public ResponseDto getBoardList(@RequestParam int page, @RequestParam String filter, @RequestParam String keyword) {
         return boardService.getBoardList(page, filter, keyword);
     }
 
     // 게시글 상세 조회
     @GetMapping("/api/all/boards/detail/{boardId}")
-    public ResponseDto getBasicBoardDetail(@PathVariable Long boardId) {
+    public ResponseDto getBoardDetail(@PathVariable Long boardId) {
         return boardService.getBoardDetail(boardId);
     }
 
-    // 로그인한 User가 작성한 전체 게시글 리스트 조회
+    // 로그인한 Member가 작성한 전체 게시글 리스트 조회
     @GetMapping("/api/boards/member")
-    public ResponseDto getBoardListFromUser() {
-        return boardService.getBoardListCreatedByUser();
+    public ResponseDto getBoardListFromMember() {
+        return boardService.getBoardListCreatedByMember();
+    }
+
+
+    // 로그인한 Member가 좋아요 누른 게시글 리스트 조회
+    @GetMapping("/api/boards/member/like")
+    public ResponseDto getBoardListMemberLiked() {
+        return boardService.getBoardListMemberLiked();
     }
 
 
@@ -54,7 +61,7 @@ public class BoardController {
 
     // 게시글 삭제
     @DeleteMapping("/api/boards/{boardId}")
-    public ResponseDto deleteBasicBoard(@PathVariable Long boardId) throws IOException {
+    public ResponseDto deleteBoard(@PathVariable Long boardId) throws IOException {
         return boardService.deleteBoard(boardId);
     }
 
