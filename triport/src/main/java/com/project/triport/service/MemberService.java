@@ -47,7 +47,7 @@ public class MemberService {
 
         MultipartFile profileImgFile = memberRequestDto.getProfileImgFile();
         String fileName = s3ProfileImageService.uploadProfileImage(profileImgFile);
-        String filePath = "https://" + S3ImageService.CLOUD_FRONT_DOMAIN_NAME + "/image/" + fileName;
+        String filePath = "https://" + S3ProfileImageService.CLOUD_FRONT_DOMAIN_NAME + "/profileImage/" + fileName;
 
         member.updateMember(memberRequestDto, passwordEncoder, filePath);
         return new ResponseDto(true, "특정 member의 프로필 수정에 성공하였습니다.");

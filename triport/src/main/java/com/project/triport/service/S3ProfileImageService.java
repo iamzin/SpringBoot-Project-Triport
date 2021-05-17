@@ -78,8 +78,7 @@ public class S3ProfileImageService {
             throw new IOException("파일 저장에 실패하였습니다.");
         }
 
-        String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/image/")[1];
-        return filePath;
+        return s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/image/")[1];
     }
 
     public Boolean limitImgSize(MultipartFile file) {
