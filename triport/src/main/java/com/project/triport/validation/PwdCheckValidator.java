@@ -12,6 +12,6 @@ public class PwdCheckValidator implements ConstraintValidator<PwdCheck, String> 
         if (value == null) {
             return false;
         }
-        return value.equals(new MemberRequestDto().getPassword().toString());
+        return true;
     }
 }

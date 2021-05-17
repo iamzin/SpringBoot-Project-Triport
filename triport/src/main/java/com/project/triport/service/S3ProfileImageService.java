@@ -68,7 +68,7 @@ public class S3ProfileImageService {
         String fileName = "profileImage/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(profileImgFile);
 
         if (!limitImgSize(profileImgFile)) {
-            throw new ApiRequestException("파일 용량이 초과되었습니다. 10MB 이하로 업로드 해주세요.");
+            throw new IllegalArgumentException("파일 용량이 초과되었습니다. 10MB 이하로 업로드 해주세요.");
         }
 
         try {
@@ -78,15 +78,14 @@ public class S3ProfileImageService {
             throw new IOException("파일 저장에 실패하였습니다.");
         }
 
-        return s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/image/")[1];
+        return s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/profileImage/")[1];
     }
 
     public Boolean limitImgSize(MultipartFile file) {
         return file.getSize() <= 10000000; // 10MB 보다 작으면 true 반환
     }
 
-    public String deleteSpaceFromFileName(MultipartFile profileImgFile) {
-        String fileName = Objects.requireNonNull(profileImgFile.getOriginalFilename());
-        return fileName.replace(" ", "_");
+    public String deleteSpaceFromFileName(MultipartFile file) {
+        return Objects.requireNonNull(file.getOriginalFilename()).replace(" ", "_");
     }
 }

@@ -26,7 +26,7 @@ public class MemberController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<ResponseDto> updateMemberInfo(@RequestBody MemberRequestDto memberRequestDto) throws IOException {
+    public ResponseEntity<ResponseDto> updateMemberInfo(@ModelAttribute MemberRequestDto memberRequestDto) throws IOException {
         return ResponseEntity.ok(memberService.updateMember(memberRequestDto));
     }
 

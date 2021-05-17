@@ -6,6 +6,7 @@ import com.project.triport.entity.MemberGrade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,8 +16,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor // 모든 값들을 파라미터로 가지는 생성자 만들어줌
+//@NoArgsConstructor // 기본 생성자 만들어줌
 public class MemberRequestDto {
     private MultipartFile profileImgFile;
 
@@ -58,5 +59,12 @@ public class MemberRequestDto {
     private String nickname;
 
     private MemberGrade memberGrade;
+
+//    public void updateProfile(MultipartFile profileImgFile, String nickname, String newPassword, String newPasswordCheck) {
+//        this.profileImgFile = profileImgFile;
+//        this.nickname = nickname;
+//        this.newPassword = newPassword;
+//        this.newPasswordCheck = newPasswordCheck;
+//    }
 
 }
