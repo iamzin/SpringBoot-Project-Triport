@@ -71,7 +71,7 @@ public class S3Util {
         try {
             // 삭제할 Data를 Keys에 저장
             ArrayList<KeyVersion> keys = new ArrayList<KeyVersion>();
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 12; i++) {
                 keys.add(new KeyVersion(directory + '/' + directory + i + "." + "ts"));
             }
             keys.add(new KeyVersion(directory + '/' + directory + ".m3u8"));
