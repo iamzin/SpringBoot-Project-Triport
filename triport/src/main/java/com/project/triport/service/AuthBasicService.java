@@ -29,10 +29,10 @@ import static com.project.triport.responseDto.MemberResponseDto.of;
 @RequiredArgsConstructor
 public class AuthBasicService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     // 기본 회원가입
     @Transactional

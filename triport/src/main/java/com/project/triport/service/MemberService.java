@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3ProfileImageService s3ProfileImageService;
 
     // 현재 로그인한 member(SecurityContext에 있는 member)의 email로
     // member 전체 정보 조회
@@ -30,12 +34,21 @@ public class MemberService {
 
     // member 프로필 수정
     @Transactional
-    public ResponseDto updateMember(MemberRequestDto memberRequestDto) {
+    public ResponseDto updateMember(MemberRequestDto memberRequestDto) throws IOException {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
         );
 
-        member.updateMember(memberRequestDto, passwordEncoder);
+        // 프로필 이미지 변경사항 없을 때
+        if (memberRequestDto.getProfileImgFile().isEmpty()) {
+            // 기본 이미지 유지
+            // no action
+        }
+
+        MultipartFile profileImgFile = memberRequestDto.getProfileImgFile();
+        String filePath = s3ProfileImageService.uploadProfileImage(profileImgFile);
+
+        member.updateMember(memberRequestDto, passwordEncoder, filePath);
         return new ResponseDto(true, "특정 member의 프로필 수정에 성공하였습니다.");
     }
 

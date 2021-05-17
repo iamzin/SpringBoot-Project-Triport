@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -17,6 +18,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberRequestDto {
+    private MultipartFile profileImgFile;
+
     @NotBlank(message = "이메일을 입력해 주세요.")
     @Email(message = "올바른 이메일 주소를 입력해 주세요.")
     private String email;
@@ -53,8 +56,6 @@ public class MemberRequestDto {
     @NotBlank(message = "닉네임을 입력해 주세요.")
     @Size(min = 3, max = 12, message = "닉네임은 3-12자리 이내로 입력해 주세요.")
     private String nickname;
-
-    private String profileImgUrl;
 
     private MemberGrade memberGrade;
 

@@ -25,12 +25,12 @@ import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class AuthKakaoService {
-    private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final MemberRepository memberRepository;
     private final KakaoOAuth2 kakaoOAuth2;
-    private final AuthBasicService authBasicService;
     private @Value("${kakao.secret}") String kakaoKey;
+    private final TokenProvider tokenProvider;
+    private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthBasicService authBasicService;
 
     // Kakao 로그인
 //    @Transactional

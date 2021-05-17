@@ -1,7 +1,7 @@
 package com.project.triport.controller;
 
 import com.project.triport.requestDto.MailRequestDto;
-import com.project.triport.responseDto.MailResponseDto;
+import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class MailController {
     private final MailService mailService;
 
     @PostMapping("/reset/password")
-    public ResponseEntity<MailResponseDto> sendTempPwd(@RequestBody MailRequestDto mailRequestDto) {
+    public ResponseEntity<ResponseDto> sendTempPwd(@RequestBody MailRequestDto mailRequestDto) {
         return ResponseEntity.ok(mailService.sendTempPwd(mailRequestDto));
     }
 

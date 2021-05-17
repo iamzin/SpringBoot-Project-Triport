@@ -71,10 +71,10 @@ public class Member extends Timestamped {
         this.kakaoId = kakaoId;
     }
 
-    public void updateMember(MemberRequestDto memberRequestDto, PasswordEncoder passwordEncoder) {
+    public void updateMember(MemberRequestDto memberRequestDto, PasswordEncoder passwordEncoder, String filePath) {
         this.password = passwordEncoder.encode(memberRequestDto.getNewPassword());
         this.nickname = memberRequestDto.getNickname();
-        this.profileImgUrl = memberRequestDto.getProfileImgUrl();
+        this.profileImgUrl = filePath;
     }
 
     public void updateTmpPassword(String tmpPwd, PasswordEncoder passwordEncoder) {
