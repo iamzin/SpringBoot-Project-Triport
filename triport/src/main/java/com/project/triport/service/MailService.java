@@ -24,7 +24,7 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final @Value("${spring.mail.username}") String fromMail;
+//    private final @Value("${spring.mail.username}") String fromMail;
 
     // 임시 비밀번호 안내 메일 발송
     @Transactional
@@ -52,7 +52,7 @@ public class MailService {
         // 받는 사람
         mailHandler.setTo(member.getEmail());
         // 보내는 사람
-        mailHandler.setFrom(fromMail);
+        mailHandler.setFrom("triport.helpdesk@gmail.com");
         // 제목
         mailHandler.setSubject("[Triport] 회원님의 임시 비밀번호를 확인해 주세요.");
         // 내용 (HTML Layout)
