@@ -23,7 +23,7 @@ public class CommentChild extends Timestamped {
     @Column(nullable = false)
     private Long likeNum;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 

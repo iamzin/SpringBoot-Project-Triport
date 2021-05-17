@@ -25,7 +25,7 @@ public class CommentParent extends Timestamped {
     @Column(nullable = false)
     private Long commentChildNum;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 

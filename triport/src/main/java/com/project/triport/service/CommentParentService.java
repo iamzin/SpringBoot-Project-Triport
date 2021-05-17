@@ -70,7 +70,7 @@ public class CommentParentService {
         return new ResponseDto(true, responseDtoList, "해당 게시글의 댓글 조회에 성공하였습니다.", isLast);
     }
 
-    // BoardCommentParent 작성
+    // CommentParent 작성
     @Transactional
     public ResponseDto createCommentParent(Long boardId, CommentRequestDto requestDto) {
         Board board = boardRepository.findById(boardId).orElseThrow(
@@ -94,7 +94,7 @@ public class CommentParentService {
         return new ResponseDto(true, responseDto,"댓글 작성이 완료되었습니다.");
     }
 
-    // Board Comment 수정
+    // CommentParent 수정
     @Transactional
     public ResponseDto updateCommentParent(Long commentParentId, CommentRequestDto requestDto) {
         CommentParent commentParent = commentParentRepository.findById(commentParentId).orElseThrow(
@@ -119,6 +119,7 @@ public class CommentParentService {
         }
     }
 
+    // CommentParent 삭제
     @Transactional
     public ResponseDto deleteCommentParent(Long commentParentId) {
         CommentParent commentParent = commentParentRepository.findById(commentParentId).orElseThrow(

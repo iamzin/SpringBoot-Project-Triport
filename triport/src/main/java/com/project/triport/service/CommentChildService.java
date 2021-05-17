@@ -31,7 +31,7 @@ public class CommentChildService {
     private final CommentChildRepository commentChildRepository;
     private final CommentChildLikeRepository commentChildLikeRepository;
 
-    // BoardCommentParent 의 답글 페이징 조회
+    // CommentParent 의 답글 페이징 조회
     public ResponseDto getPagedCommentChildList(Long commentParentId, int page) {
 
         // DB에서 해당 BoardCommentParent 조회
@@ -70,7 +70,7 @@ public class CommentChildService {
         return new ResponseDto(true, responseDtoList, "해당 댓글의 대댓글 조회에 성공하였습니다.", isLast);
     }
 
-    // BoardCommentChild 작성
+    // CommentChild 작성
     @Transactional
     public ResponseDto createCommentChild(Long commentParentId, CommentRequestDto requestDto) {
         // DB에서 해당 BoardCommentParent 조회
@@ -96,7 +96,7 @@ public class CommentChildService {
         return new ResponseDto(true, responseDto,"대댓글 작성이 완료되었습니다.");
     }
 
-    // BasicCommentChild 수정
+    // CommentChild 수정
     @Transactional
     public ResponseDto updateCommentChild(Long commentChildId, CommentRequestDto requestDto) {
         CommentChild commentChild = commentChildRepository.findById(commentChildId)
@@ -122,7 +122,7 @@ public class CommentChildService {
         }
     }
 
-    // BasicCommentChild 삭제
+    // CommentChild 삭제
     @Transactional
     public ResponseDto deleteCommentChild(Long commentChildId) {
         CommentChild commentChild = commentChildRepository.findById(commentChildId)
