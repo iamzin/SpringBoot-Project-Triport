@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -24,7 +26,7 @@ public class MemberController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<ResponseDto> updateMemberInfo(@RequestBody MemberRequestDto memberRequestDto) {
+    public ResponseEntity<ResponseDto> updateMemberInfo(@RequestBody MemberRequestDto memberRequestDto) throws IOException {
         return ResponseEntity.ok(memberService.updateMember(memberRequestDto));
     }
 
