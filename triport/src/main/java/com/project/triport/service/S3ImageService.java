@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.project.triport.entity.Board;
 import com.project.triport.entity.BoardImageInfo;
 import com.project.triport.entity.Member;
+import com.project.triport.exception.ApiRequestException;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BoardImageInfoRepository;
 import com.project.triport.repository.BoardRepository;
@@ -76,24 +77,26 @@ public class S3ImageService {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
-//        if (!restrictImgExtension(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()))) {
-//            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
-//        }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
         String fileName = "image/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()));
 
 
         if (!limitImgSize(requestDto.getImageFile())) {
-            throw new IOException("파일 용량 초과!!!");
+            throw new ApiRequestException("파일 용량 초과!!!");
         }
 
         // "member": 현재 로그인한 유저 정보
         Member member = getAuthMember();
 
-        // 파일 업로드
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+        try {
+            // 파일 업로드
+            s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch(IOException e) {
+            throw new IOException("이미지 파일 저장 실패!!!");
+        }
+
 
         String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/image/")[1];
 
@@ -117,20 +120,22 @@ public class S3ImageService {
         // 고유한 key 값을 갖기 위해 현재 시간을 postfix로 붙여줌
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
 
-//        if (!restrictImgExtension(Objects.requireNonNull(imageFile.getOriginalFilename()))) {
-//            throw new IOException("jpg, png 확장자 파일만 업로드가 가능합니다.");
-//        }
 
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
         String fileName = "image/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(Objects.requireNonNull(imageFile.getOriginalFilename()));
 
         if (!limitImgSize(imageFile)) {
-            throw new IOException("파일 용량 초과!!!");
+            throw new ApiRequestException("파일 용량 초과!!!");
         }
 
-        // 파일 업로드
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, imageFile.getInputStream(), null)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+        try {
+            // 파일 업로드
+            s3Client.putObject(new PutObjectRequest(bucket, fileName, imageFile.getInputStream(), null)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch(IOException e) {
+            throw new IOException("이미지 파일 저장 실패!!");
+        }
+
 
         String filePath = s3Client.getUrl(bucket,fileName).toString().split("https://triportawsbucket.s3.ap-northeast-2.amazonaws.com/image/")[1];
 
@@ -145,19 +150,21 @@ public class S3ImageService {
 
     // 이미지 삭제
     @Async
-    public CompletableFuture<String> deleteImg(String currentFilePath) throws IOException {
+    public void deleteImg(String currentFilePath) throws IOException {
         if (!"".equals(currentFilePath) && currentFilePath != null) {
             boolean isExistObject = s3Client.doesObjectExist(bucket, "image/"+currentFilePath);
 
             if (isExistObject) {
                 s3Client.deleteObject(bucket, "image/"+currentFilePath);
-                return CompletableFuture.completedFuture("이미지 파일 삭제 완료");
+//                return CompletableFuture.completedFuture("이미지 파일 삭제 완료");
             } else {
-                return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
+                throw new IOException("해당 이미지 파일이 존재하지 않습니다.");
+//                return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
             }
 
         } else {
-            return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
+            throw new IOException("해당 이미지 파일이 존재하지 않습니다.");
+//            return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
         }
     }
 

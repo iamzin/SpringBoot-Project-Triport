@@ -28,7 +28,7 @@ public class BoardImageInfoService {
     // 게시글 신규 작성 때 사용하지 않는 이미지 파일 삭제
     // imageUrlList에 있는 이미지 파일은 제외하고 나머지 이미지 파일은 삭제
     @Transactional
-    public void CompareAndDeleteImageForCreate(List<ImageResponseDto> imageUrlList) throws IOException, ExecutionException, InterruptedException {
+    public void CompareAndDeleteImageForCreate(List<ImageResponseDto> imageUrlList) throws IOException {
         Member member = getAuthMember();
         List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByMemberAndBoardIsNull(member);
 
@@ -39,15 +39,15 @@ public class BoardImageInfoService {
         List<BoardImageInfo> shouldBeDeletedBoardImageInfoList = boardImageInfoRepository.findDeletingImageInfoFromCreate(member);
 
         for (BoardImageInfo boardImageInfo : shouldBeDeletedBoardImageInfoList) {
-            CompletableFuture<String> page1 = s3ImageService.deleteImg(boardImageInfo.getFilePath()); // S3에서 삭제
-            System.out.println(page1.get());
+            s3ImageService.deleteImg(boardImageInfo.getFilePath()); // S3에서 삭제
         }
         boardImageInfoRepository.bulkDeleteImageInfoFromCreate(member); // 테이블에서 삭제
     }
 
 
     // 게시글 수정 중일때 사용하지 않는 이미지 파일 삭제
-    public void CompareAndDeleteImageForUpdate(List<ImageResponseDto> imageUrlList, Board board) throws IOException, ExecutionException, InterruptedException {
+    @Transactional
+    public void CompareAndDeleteImageForUpdate(List<ImageResponseDto> imageUrlList, Board board) throws IOException {
         Member member = getAuthMember();
         List<BoardImageInfo> boardImageInfoList = boardImageInfoRepository.findByMemberAndBoard(member, board);
 
@@ -58,8 +58,7 @@ public class BoardImageInfoService {
         List<BoardImageInfo> shouldBeDeletedBoardImageInfoList = boardImageInfoRepository.findDeletingImageInfoFromUpdate(member, board);
 
         for (BoardImageInfo boardImageInfo : shouldBeDeletedBoardImageInfoList) {
-            CompletableFuture<String> page1 = s3ImageService.deleteImg(boardImageInfo.getFilePath()); // S3에서 삭제
-            System.out.println(page1.get());
+            s3ImageService.deleteImg(boardImageInfo.getFilePath()); // S3에서 삭제
         }
         boardImageInfoRepository.bulkDeleteImageInfoFromUpdate(member, board); // 테이블에서 삭제
 

@@ -1,10 +1,14 @@
 package com.project.triport.validation;
 
+import com.project.triport.exception.ApiException;
+import com.project.triport.exception.ApiRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,5 +26,40 @@ public class CustomExceptionHandler {
             errors.put("message", errorMessage);
         });
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(value = { ApiRequestException.class })
+    public ResponseEntity<Object> handleApiRequestException(ApiRequestException ex) {
+        ex.printStackTrace();
+        ApiException apiException = new ApiException(
+                false,
+                ex.getMessage(),
+                // HTTP 400 -> Client Error
+                HttpStatus.BAD_REQUEST
+        );
+
+        return new ResponseEntity<>(
+                apiException,
+                // HTTP 400 -> Client Error
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(value = { IOException.class })
+    public ResponseEntity<Object> handleApiRequestException(IOException ex) {
+        ex.printStackTrace();
+
+        ApiException apiException = new ApiException(
+                false,
+                ex.getMessage(),
+                // HTTP 400 -> Client Error
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+
+        return new ResponseEntity<>(
+                apiException,
+                // HTTP 400 -> Client Error
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 }

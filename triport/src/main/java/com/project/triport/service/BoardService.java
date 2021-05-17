@@ -4,6 +4,7 @@ import com.project.triport.entity.Board;
 import com.project.triport.entity.BoardImageInfo;
 import com.project.triport.entity.CommentParent;
 import com.project.triport.entity.Member;
+import com.project.triport.exception.ApiRequestException;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BoardImageInfoRepository;
 import com.project.triport.repository.BoardLikeRepository;
@@ -84,10 +85,9 @@ public class BoardService {
 
     // Basic 게시글 상세 조회
     public ResponseDto getBoardDetail( Long basicId) {
-
         // DB에서 해당 BasicBoard 조회
         Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+                () -> new ApiRequestException("해당 게시글이 존재하지 않습니다.")
         );
 
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
@@ -127,7 +127,7 @@ public class BoardService {
 
     // 게시글 작성
     @Transactional
-    public ResponseDto createBoard(BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
+    public ResponseDto createBoard(BoardRequestDto requestDto) throws IOException {
 
         // "member": 현재 로그인한 유저 정보
         Member member = getAuthMember();
@@ -152,10 +152,10 @@ public class BoardService {
 
     // 게시글 수정
     @Transactional
-    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
+    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException {
 
         Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new IllegalArgumentException("해당 Trilog 게시글이 존재하지 않습니다.")
+                () -> new ApiRequestException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
 
         // "member": 현재 로그인한 유저 정보 -> 좋아요 작성자가 맞는지 검증 필요!
@@ -179,7 +179,8 @@ public class BoardService {
 
             return new ResponseDto(true, "게시글이 수정되었습니다.");
         } else {
-            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
+//            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
     }
 
@@ -187,7 +188,7 @@ public class BoardService {
     public ResponseDto deleteBoard(Long basicId) throws IOException {
 
         Board board = boardRepository.findById(basicId).orElseThrow(
-                () -> new IllegalArgumentException("해당 Trilog 게시글이 존재하지 않습니다.")
+                () -> new ApiRequestException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
 
         // "member": 현재 로그인한 유저 정보  -> 게시글 작성자가 맞는지 검증
@@ -199,7 +200,8 @@ public class BoardService {
             boardRepository.deleteById(basicId);
             return new ResponseDto(true, "게시글이 삭제되었습니다.");
         } else {
-            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
+//            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
         }
     }
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -42,13 +42,13 @@ public class BoardController {
 
     // 게시글 작성
     @PostMapping("/api/boards")
-    public ResponseDto createBoard(@RequestBody BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
+    public ResponseDto createBoard(@RequestBody BoardRequestDto requestDto) throws IOException {
         return boardService.createBoard(requestDto);
     }
 
     // 게시글 수정
     @PutMapping("/api/boards/{boardId}")
-    public ResponseDto updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto requestDto) throws IOException, ExecutionException, InterruptedException {
+    public ResponseDto updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto requestDto) throws IOException {
         return boardService.updateBoard(boardId, requestDto);
     }
 

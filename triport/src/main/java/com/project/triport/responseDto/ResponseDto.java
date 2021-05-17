@@ -2,6 +2,7 @@ package com.project.triport.responseDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
