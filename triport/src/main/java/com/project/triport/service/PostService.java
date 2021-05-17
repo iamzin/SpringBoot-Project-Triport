@@ -120,8 +120,6 @@ public class PostService {
             apiUtil.encodingFile(post);
 
             return new ResponseDto(true, "포스팅 완료!");
-        } catch (IOException e) {
-            return new ResponseDto(false, "영상 저장 실패(IO)");
         } catch (Exception e) {
             return new ResponseDto(false, e.getMessage());
         } finally{

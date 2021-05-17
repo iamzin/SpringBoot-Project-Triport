@@ -69,7 +69,7 @@ public class VideoUtil {
         return new VideoProbeResult(duration, posPlay);
     }
 
-    public void deleteTmp(String filepath) throws IOException {
+    public void deleteTmp(String filepath) {
         File tmpFile = new File(filepath);
         if(tmpFile.exists() ){
             if(tmpFile.delete()){
