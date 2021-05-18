@@ -9,10 +9,9 @@ import lombok.Setter;
 //import javax.validation.constraints.Size;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginReqeustDto {
+public class AuthLoginReqeustDto {
 
     @NotNull
 //    @Size(min = 5, max = 100)

@@ -1,7 +1,7 @@
 package com.project.triport.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.triport.requestDto.MemberRequestDto;
+import com.project.triport.requestDto.MemberInfoRequestDto;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -44,11 +44,11 @@ public class Member extends Timestamped {
     private Authority authority;
 
     // TODO: password encoding -> Service에서 처리하도록 변경
-    public Member toMember(MemberRequestDto memberRequestDto, PasswordEncoder passwordEncoder) {
+    public Member toMember(MemberInfoRequestDto memberInfoRequestDto, PasswordEncoder passwordEncoder) {
         return Member.builder()
-                .email(memberRequestDto.getEmail())
-                .password(passwordEncoder.encode(memberRequestDto.getPassword()))
-                .nickname(memberRequestDto.getNickname())
+                .email(memberInfoRequestDto.getEmail())
+                .password(passwordEncoder.encode(memberInfoRequestDto.getPassword()))
+                .nickname(memberInfoRequestDto.getNickname())
                 .profileImgUrl("https://i.ibb.co/MDKhN7F/kakao-11.jpg")
                 .memberGrade(MemberGrade.TRAVELER)
                 .authority(Authority.ROLE_USER)
@@ -71,9 +71,9 @@ public class Member extends Timestamped {
         this.kakaoId = kakaoId;
     }
 
-    public void updateMember(MemberRequestDto memberRequestDto, PasswordEncoder passwordEncoder, String fileUrl) {
-        this.password = passwordEncoder.encode(memberRequestDto.getNewPassword());
-        this.nickname = memberRequestDto.getNickname();
+    public void updateMember(MemberInfoRequestDto memberInfoRequestDto, PasswordEncoder passwordEncoder, String fileUrl) {
+        this.password = passwordEncoder.encode(memberInfoRequestDto.getNewPassword());
+        this.nickname = memberInfoRequestDto.getNickname();
         this.profileImgUrl = fileUrl;
     }
 

@@ -1,7 +1,5 @@
 package com.project.triport.validation;
 
-import com.project.triport.requestDto.MemberRequestDto;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 

@@ -6,7 +6,8 @@ import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.jwt.TokenProvider;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
-import com.project.triport.requestDto.MemberRequestDto;
+import com.project.triport.requestDto.AuthLoginReqeustDto;
+import com.project.triport.requestDto.MemberInfoRequestDto;
 import com.project.triport.requestDto.TokenRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
@@ -36,22 +37,27 @@ public class AuthBasicService {
 
     // 기본 회원가입
     @Transactional
-    public ResponseDto signup(MemberRequestDto memberRequestDto) {
-        if (memberRepository.existsByEmail(memberRequestDto.getEmail())) {
+    public ResponseDto signup(MemberInfoRequestDto memberInfoRequestDto) {
+        if (memberRepository.existsByEmail(memberInfoRequestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 email 입니다.");
         }
 
-        Member member = new Member().toMember(memberRequestDto, passwordEncoder);
+        Member member = new Member().toMember(memberInfoRequestDto, passwordEncoder);
         of(memberRepository.save(member));
         return new ResponseDto(true, "회원가입 성공하였습니다.");
     }
 
     // 기본 로그인
     @Transactional
-    public ResponseDto login(MemberRequestDto memberRequestDto, HttpServletResponse response) {
+    public ResponseDto login(AuthLoginReqeustDto authLoginReqeustDto, HttpServletResponse response) {
+        // 0. Member 존재 여부 확인
+        memberRepository.findByEmail(authLoginReqeustDto.getEmail()).orElseThrow(
+                () -> new RuntimeException("해당하는 사용자를 찾을 수 없습니다.")
+        );
+
         // 1. Login 시 입력한 ID/PW를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(memberRequestDto.getEmail(), memberRequestDto.getPassword());
+                new UsernamePasswordAuthenticationToken(authLoginReqeustDto.getEmail(), authLoginReqeustDto.getPassword());
 
         // 2. 실제로 비밀번호 검증이 이루어지는 부분
         //    authenticate method가 실행될 때, CustomuserDetailService에서 만들었던 loadUserByUsername method 실행
@@ -122,18 +128,10 @@ public class AuthBasicService {
         response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
 
-        // react가 만료시간 체크 하는 방법:
-        // accessToken 만료하기 1분 전에 로그인 연장하도록 아래와 같이 setTimeout 설정
-        // setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000);
-        // Timeout 되면 onSilentRefresh가 실행되면서, /auth/reissue로 재발급 요청
-
-        // 해당 memberInfo return
-        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
-        );
+        // 해당 memberInfo 담기
+        Member member = memberRepository.findMemberByEmail(authentication.getName());
 
         // ResponseBody에 memberInfo 담아서 return
-        new MemberInformationResponseDto(member);
         return new ResponseDto(true, member, "사용자 token 발급을 성공하였습니다.");
     }
 

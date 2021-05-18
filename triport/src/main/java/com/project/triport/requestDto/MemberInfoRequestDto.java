@@ -18,14 +18,14 @@ import javax.validation.constraints.Size;
 @Getter
 @AllArgsConstructor // 모든 값들을 파라미터로 가지는 생성자 만들어줌
 //@NoArgsConstructor // 기본 생성자 만들어줌
-public class MemberRequestDto {
+public class MemberInfoRequestDto {
     private MultipartFile profileImgFile;
 
     @NotBlank(message = "이메일을 입력해 주세요.")
     @Email(message = "올바른 이메일 주소를 입력해 주세요.")
     private String email;
 
-    private String rawPassword;
+//    private String rawPassword;
 
 //    @NotBlank(message = "비밀번호를 입력해 주세요.")
 //    @Size(min = 8, max = 20, message = "비밀번호는 8-20자 이내로 입력해 주세요.")

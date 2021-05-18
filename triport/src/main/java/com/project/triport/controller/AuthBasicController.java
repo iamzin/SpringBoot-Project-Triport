@@ -1,6 +1,7 @@
 package com.project.triport.controller;
 
-import com.project.triport.requestDto.MemberRequestDto;
+import com.project.triport.requestDto.AuthLoginReqeustDto;
+import com.project.triport.requestDto.MemberInfoRequestDto;
 import com.project.triport.requestDto.TokenRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.AuthBasicService;
@@ -19,15 +20,15 @@ public class AuthBasicController {
 
     // 기본 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDto> signup(@RequestBody @Valid MemberRequestDto memberRequestDto) {
-        return ResponseEntity.ok(authBasicService.signup(memberRequestDto));
+    public ResponseEntity<ResponseDto> signup(@RequestBody @Valid MemberInfoRequestDto memberInfoRequestDto) {
+        return ResponseEntity.ok(authBasicService.signup(memberInfoRequestDto));
     }
 
     // 기본 로그인
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto> login(@RequestBody MemberRequestDto memberRequestDto,
+    public ResponseEntity<ResponseDto> login(@RequestBody AuthLoginReqeustDto authLoginReqeustDto,
                                                               HttpServletResponse response) {
-        return ResponseEntity.ok(authBasicService.login(memberRequestDto, response));
+        return ResponseEntity.ok(authBasicService.login(authLoginReqeustDto, response));
     }
 
     // 기본 token 재발급
