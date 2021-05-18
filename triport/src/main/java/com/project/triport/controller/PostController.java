@@ -18,7 +18,6 @@ public class PostController {
 
     private final PostService postService;
 
-    // 로그인 불필요 항목
     @GetMapping("/api/all/posts")
     public ResponseDto readPostsAll(
             @RequestParam int page,
@@ -32,10 +31,14 @@ public class PostController {
         return postService.readPost(postId);
     }
 
-    // 로그인 필요 항목
     @GetMapping("/api/posts/member")
     public ResponseDto readPostsMember() {
         return postService.readPostsMember();
+    }
+
+    @GetMapping("/api/posts/like")
+    public ResponseDto readPostsMemberLike() {
+        return postService.readPostsMemberLike();
     }
 
     @PostMapping("/api/posts")

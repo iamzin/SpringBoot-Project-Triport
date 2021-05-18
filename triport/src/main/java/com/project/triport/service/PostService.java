@@ -2,6 +2,7 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.entity.Post;
+import com.project.triport.entity.PostLike;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
@@ -48,7 +49,7 @@ public class PostService {
         if ("".equals(keyword)) {
             postPage = postRepository.findAllBy(pageable);
         } else {
-            postPage = postRepository.findByHashtag(keyword, pageable);
+            postPage = postRepository.findByHashtagContaining(keyword, pageable);
         }
         // 반환 page가 last page인지 확인
         Boolean isLast = postPage.isLast();
@@ -101,7 +102,20 @@ public class PostService {
             ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
             listResponseDtoList.add(listResponseDto);
         }
-        return new ResponseDto(true, listResponseDtoList, "전체 post 조회 완료");
+        return new ResponseDto(true, listResponseDtoList, "member post 조회 완료");
+    }
+
+    public ResponseDto readPostsMemberLike() {
+        Member member = getAuthMember();
+        List<PostLike> postLikeList = postLikeRepository.findAllByMember(member);
+        List<ListResponseDto> listResponseDtoList = new ArrayList<>();
+        for (PostLike postLike : postLikeList) {
+            Post post = postLike.getPost();
+            boolean isMembers = post.getMember().getId().equals(member.getId());
+            ListResponseDto listResponseDto = new ListResponseDto(post, true, isMembers);
+            listResponseDtoList.add(listResponseDto);
+        }
+        return new ResponseDto(true, listResponseDtoList, "좋아요 post 조회 완료");
     }
 
     public ResponseDto createPost(PostRequestDto requestDto) throws IOException {

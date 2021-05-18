@@ -72,10 +72,10 @@ public class S3Util {
             // 삭제할 Data를 Keys에 저장
             ArrayList<KeyVersion> keys = new ArrayList<KeyVersion>();
             for (int i = 0; i < 12; i++) {
-                keys.add(new KeyVersion(directory + '/' + directory + i + "." + "ts"));
+                keys.add(new KeyVersion("video/" + directory + '/' + directory + i + "." + "ts"));
             }
-            keys.add(new KeyVersion(directory + '/' + directory + ".m3u8"));
-            keys.add(new KeyVersion(directory + '/' + directory + ".mp4"));
+            keys.add(new KeyVersion("video/" + directory + '/' + directory + ".m3u8"));
+            keys.add(new KeyVersion("video/" + directory + '/' + directory + ".mp4"));
 
             // 삭제 요청할 양식을 만듬
             DeleteObjectsRequest multiObjectDeleteRequest = new DeleteObjectsRequest(bucket)
