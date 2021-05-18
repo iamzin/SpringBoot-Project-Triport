@@ -44,11 +44,11 @@ public class Post extends Timestamped {
         this.posPlay = posPlay;
         this.likeNum = 0L;
         this.member = member;
-
     }
 
     public void update(List<PostHashtag> hashtagList) {
-        this.hashtag = hashtagList;
+        this.hashtag.clear();
+        this.hashtag.addAll(hashtagList);
     }
 
     public void updateUrl(VideoUrlDto requestDto) {

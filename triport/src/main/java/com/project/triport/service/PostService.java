@@ -146,6 +146,7 @@ public class PostService {
 
             List<PostHashtag> hashtagList = convertHashtag(post, requestDto.getHashtag());
             saveHashtagList(hashtagList);
+            post.update(hashtagList);
 
             apiUtil.encodingFile(post);
             return new ResponseDto(true, "포스팅 완료!");
@@ -161,8 +162,12 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
+        postHashtagRepository.deleteAllByPost(post);
+
         List<PostHashtag> hashtagList = convertHashtag(post, requestDto.getHashtag());
+        saveHashtagList(hashtagList);
         post.update(hashtagList);
+
         return new ResponseDto(true, "포스트 수정 완료!");
     }
 
@@ -203,10 +208,9 @@ public class PostService {
         return hashtagList;
     }
 
-    public List<PostHashtag> saveHashtagList(List<PostHashtag> hashtagList){
+    public void saveHashtagList(List<PostHashtag> hashtagList){
         for(PostHashtag hashtag : hashtagList){
             postHashtagRepository.save(hashtag);
         }
-        return hashtagList;
     }
 }
