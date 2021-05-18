@@ -36,7 +36,7 @@ public class PostController {
         return postService.readPostsMember();
     }
 
-    @GetMapping("/api/posts/like")
+    @GetMapping("/api/posts/member/like")
     public ResponseDto readPostsMemberLike() {
         return postService.readPostsMemberLike();
     }

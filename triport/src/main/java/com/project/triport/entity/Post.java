@@ -1,12 +1,12 @@
 package com.project.triport.entity;
 
-import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.requestDto.VideoUrlDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,31 +31,24 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private Long likeNum;
 
-    @ElementCollection
-    private List<String> hashtag;
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.REMOVE})
+    private List<PostHashtag> hashtag = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(nullable = false)
     private Member member;
 
-//    public Post(PostRequestDto requestDto, Member member){
-//        this.videoUrl = requestDto.getVideoUrl();
-//        this.likeNum = 0L;
-//        this.hashtag = requestDto.getHashtag();
-//        this.member = member;
-//    }
-
-    public Post(String videoUrl, boolean posPlay, List<String> hashtag, Member member) {
+    public Post(String videoUrl, boolean posPlay, Member member) {
         this.videoType = "mp4";
         this.videoUrl = videoUrl;
         this.posPlay = posPlay;
         this.likeNum = 0L;
-        this.hashtag = hashtag;
         this.member = member;
+
     }
 
-    public void update(PostRequestDto requestDto) {
-        this.hashtag = requestDto.getHashtag();
+    public void update(List<PostHashtag> hashtagList) {
+        this.hashtag = hashtagList;
     }
 
     public void updateUrl(VideoUrlDto requestDto) {
