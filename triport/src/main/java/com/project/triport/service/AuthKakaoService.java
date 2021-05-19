@@ -35,6 +35,9 @@ public class AuthKakaoService {
     // Kakao 로그인
 //    @Transactional
     public ResponseDto kakaoLogin(String authorizedCode, HttpServletResponse response) {
+
+        // if email이 empty 값일 경우 반환? 이 단계까지 안 올 듯
+
         // Kakao OAuth2를 통해 Kako 사용자 정보 조회
         KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
         Long kakaoId = userInfo.getId();

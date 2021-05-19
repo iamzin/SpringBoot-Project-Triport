@@ -2,8 +2,10 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.entity.Post;
+import com.project.triport.entity.PostHashtag;
 import com.project.triport.entity.PostLike;
 import com.project.triport.jwt.CustomUserDetails;
+import com.project.triport.repository.PostHashtagRepository;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.requestDto.PostRequestDto;
@@ -26,17 +28,19 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostHashtagRepository postHashtagRepository;
     private final PostLikeRepository postLikeRepository;
     private final S3Util s3Util;
     private final APIUtil apiUtil;
-
     private final VideoUtil videoUtil;
 
 
@@ -45,11 +49,19 @@ public class PostService {
         Sort sort = Sort.by(Sort.Direction.DESC, filter);
         Pageable pageable = PageRequest.of(page - 1, 6, sort);
         // 전체 post 리스트 조회
-        Slice<Post> postPage;
+        Page<Post> postPage;
         if ("".equals(keyword)) {
             postPage = postRepository.findAllBy(pageable);
         } else {
-            postPage = postRepository.findByHashtagContaining(keyword, pageable);
+            List<PostHashtag> postHashtagList = postHashtagRepository.findByHashtagContaining(keyword);
+            Set<Post> postSet = new HashSet<>();
+            for(PostHashtag postHashtag : postHashtagList){
+                postSet.add(postHashtag.getPost());
+            }
+            List<Post> postList = new ArrayList<>(postSet);
+            final int start = (int)pageable.getOffset();
+            final int end = Math.min((start + pageable.getPageSize()), postList.size());
+            postPage= new PageImpl<>(postList.subList(start, end), pageable, postList.size());
         }
         // 반환 page가 last page인지 확인
         Boolean isLast = postPage.isLast();
@@ -129,10 +141,13 @@ public class PostService {
             String videoUrl = s3Util.upload(filepath);
 
             Member member = getAuthMember();
-            Post post = new Post(videoUrl, probeResult.getPosPlay(), requestDto.getHashtag(), member);
+            Post post = new Post(videoUrl, probeResult.getPosPlay(), member);
             postRepository.save(post);
-            apiUtil.encodingFile(post);
 
+            List<PostHashtag> hashtagList = convertHashtag(post, requestDto.getHashtag());
+            saveHashtagList(hashtagList);
+
+            apiUtil.encodingFile(post);
             return new ResponseDto(true, "포스팅 완료!");
         } catch (Exception e) {
             return new ResponseDto(false, e.getMessage());
@@ -146,7 +161,8 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );
-        post.update(requestDto);
+        List<PostHashtag> hashtagList = convertHashtag(post, requestDto.getHashtag());
+        post.update(hashtagList);
         return new ResponseDto(true, "포스트 수정 완료!");
     }
 
@@ -177,5 +193,20 @@ public class PostService {
             return null;
         }
         return ((CustomUserDetails) authentication.getPrincipal()).getMember();
+    }
+
+    public List<PostHashtag> convertHashtag(Post post, List<String> hashtagStringList){
+        List<PostHashtag> hashtagList = new ArrayList<>();
+        for(String hashtag : hashtagStringList){
+            hashtagList.add(new PostHashtag(post, hashtag));
+        }
+        return hashtagList;
+    }
+
+    public List<PostHashtag> saveHashtagList(List<PostHashtag> hashtagList){
+        for(PostHashtag hashtag : hashtagList){
+            postHashtagRepository.save(hashtag);
+        }
+        return hashtagList;
     }
 }

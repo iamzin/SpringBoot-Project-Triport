@@ -35,8 +35,8 @@ public class Member extends Timestamped {
     @Column(nullable = false)
     private String profileImgUrl;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MemberGrade memberGrade;
 
     @JsonIgnore
