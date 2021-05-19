@@ -205,7 +205,14 @@ public class BoardService {
                 boardImageInfo.updateShouldBeDelete(true);
             }
 
-            board.update(requestDto);
+            Optional<BoardImageInfo> firstBoardImageInfo = boardImageInfoRepository.findFirstByBoardOrderByIdDesc(board);
+            String thumbNailUrl = "";
+
+            if(firstBoardImageInfo.isPresent()) {
+                thumbNailUrl = "https://" + S3ImageService.CLOUD_FRONT_DOMAIN_NAME + "/image/" + firstBoardImageInfo.get().getFilePath();
+            }
+
+            board.update(requestDto, thumbNailUrl);
 
             return new ResponseDto(true, "게시글이 수정되었습니다.");
         } else {

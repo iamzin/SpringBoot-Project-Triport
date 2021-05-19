@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BoardImageInfoRepository extends JpaRepository<BoardImageInfo, Long> {
@@ -19,6 +20,8 @@ public interface BoardImageInfoRepository extends JpaRepository<BoardImageInfo, 
     List<BoardImageInfo> findByMemberAndBoardIsNull(Member member);
 
     List<BoardImageInfo> findByMemberAndBoard(Member member, Board board);
+
+    Optional<BoardImageInfo> findFirstByBoardOrderByIdDesc(Board board);
 
     @Query("select i from BoardImageInfo i where i.member = :member and i.board is null and i.shouldBeDeleted = true")
     List<BoardImageInfo> findDeletingImageInfoFromCreate(@Param("member") Member member);
