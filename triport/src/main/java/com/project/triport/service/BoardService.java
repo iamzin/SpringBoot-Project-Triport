@@ -181,9 +181,9 @@ public class BoardService {
 
     // 게시글 수정
     @Transactional
-    public ResponseDto updateBoard(Long basicId, BoardRequestDto requestDto) throws IOException {
+    public ResponseDto updateBoard(Long boardId, BoardRequestDto requestDto) throws IOException {
 
-        Board board = boardRepository.findById(basicId).orElseThrow(
+        Board board = boardRepository.findById(boardId).orElseThrow(
 //                () -> new ApiRequestException("해당 Trilog 게시글이 존재하지 않습니다.")
                 () -> new IllegalArgumentException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
@@ -215,9 +215,9 @@ public class BoardService {
     }
 
     //     게시글 삭제
-    public ResponseDto deleteBoard(Long basicId) throws IOException {
+    public ResponseDto deleteBoard(Long boardId) throws IOException {
 
-        Board board = boardRepository.findById(basicId).orElseThrow(
+        Board board = boardRepository.findById(boardId).orElseThrow(
                 () -> new ApiRequestException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
 
@@ -227,7 +227,7 @@ public class BoardService {
 
         if(member.getId().equals(board.getMember().getId())) {
             boardImageInfoService.deleteImageFromS3(board); // s3에서 이미지 파일 삭제
-            boardRepository.deleteById(basicId);
+            boardRepository.deleteById(boardId);
             return new ResponseDto(true, "게시글이 삭제되었습니다.");
         } else {
 //            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
