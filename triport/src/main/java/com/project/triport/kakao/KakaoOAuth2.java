@@ -32,7 +32,7 @@ public class KakaoOAuth2 {
 //        params.add("client_id", "${kakao.rest-api.key}");
         params.add("client_id", "b30e166ade03d146889e1b012679fcf6");
 //        params.add("redirect_uri", "http://localhost:8080/auth/kakao/callback");
-        params.add("redirect_uri", "http://localhost:3000/auth/kakao/callback");
+        params.add("redirect_uri", "http://triport.kr/auth/kakao/callback");
         params.add("code", authorizedCode);
 
         // HttpHeader와 HttpBody를 하나의 Object에 담기

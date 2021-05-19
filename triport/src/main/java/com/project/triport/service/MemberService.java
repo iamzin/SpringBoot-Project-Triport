@@ -61,4 +61,9 @@ public class MemberService {
         memberRepository.delete(member);
         return "회원탈퇴가 완료되었습니다.";
     }
+
+//    // member level up
+//    public void LevelupMember(Member member, ) {
+//
+//    }
 }
