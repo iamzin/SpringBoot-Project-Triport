@@ -35,12 +35,12 @@ public class BoardLikeService {
         if (isExist) {
             boardLikeRepository.deleteByBoardAndMember(board, member);
             board.updateLikeNum(-1);
-            return new ResponseDto(true, "Basic 게시글 좋아요 취소");
+            return new ResponseDto(true, "Basic 게시글 좋아요 취소",200);
         } else {
             BoardLike boardLike = new BoardLike(board, member);
             boardLikeRepository.save(boardLike);
             board.updateLikeNum(+1);
-            return new ResponseDto(true, "Basic 게시글 좋아요 추가");
+            return new ResponseDto(true, "Basic 게시글 좋아요 추가",200);
         }
     }
 }

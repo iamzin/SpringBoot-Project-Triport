@@ -35,12 +35,12 @@ public class CommentChildLikeService {
         if (isExist) {
             commentChildLikeRepository.deleteByCommentChildAndMember(commentChild, member);
             commentChild.updateLikeNum(-1);
-            return new ResponseDto(true, "대댓글 좋아요 취소가 완료되었습니다.");
+            return new ResponseDto(true, "대댓글 좋아요 취소가 완료되었습니다.",200);
         } else {
             CommentChildLike commentChildLike = new CommentChildLike(commentChild, member);
             commentChildLikeRepository.save(commentChildLike);
             commentChild.updateLikeNum(+1);
-            return new ResponseDto(true, "대댓글 좋아요 추가가 완료되었습니다.");
+            return new ResponseDto(true, "대댓글 좋아요 추가가 완료되었습니다.",200);
         }
     }
 }

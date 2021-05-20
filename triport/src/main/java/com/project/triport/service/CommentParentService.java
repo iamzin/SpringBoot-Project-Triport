@@ -67,7 +67,7 @@ public class CommentParentService {
             responseDtoList.add(responseDto);
         }
 
-        return new ResponseDto(true, responseDtoList, "해당 게시글의 댓글 조회에 성공하였습니다.", isLast);
+        return new ResponseDto(true, responseDtoList, "해당 게시글의 댓글 조회에 성공하였습니다.", isLast,200);
     }
 
     // CommentParent 작성
@@ -91,7 +91,7 @@ public class CommentParentService {
 
         CommentListResponseDto responseDto = new CommentListResponseDto(commentParent, isLike, isMembers);
 
-        return new ResponseDto(true, responseDto,"댓글 작성이 완료되었습니다.");
+        return new ResponseDto(true, responseDto,"댓글 작성이 완료되었습니다.",200);
     }
 
     // CommentParent 수정
@@ -113,9 +113,9 @@ public class CommentParentService {
 
             CommentListResponseDto responseDto = new CommentListResponseDto(commentParent, isLike, isMembers);
 
-            return new ResponseDto(true, responseDto, "댓글 수정이 완료되었습니다.");
+            return new ResponseDto(true, responseDto, "댓글 수정이 완료되었습니다.",200);
         } else {
-            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+            throw new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
         }
     }
 
@@ -133,9 +133,9 @@ public class CommentParentService {
         if (member.getId().equals(commentParent.getMember().getId())) {
             commentParentRepository.deleteById(commentParentId);
             commentParent.getBoard().updateCommentNum(-1);
-            return new ResponseDto(true, "댓글 삭제가 완료되었습니다.");
+            return new ResponseDto(true, "댓글 삭제가 완료되었습니다.",200);
         } else {
-            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+            throw new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
         }
     }
 

@@ -80,7 +80,7 @@ public class BoardService {
             responseDtoList.add(responseDto);
         }
 
-        return new ResponseDto(true, responseDtoList,"전체 Basic 게시글 리스트 조회에 성공하였습니다.", isLast);
+        return new ResponseDto(true, responseDtoList,"전체 Basic 게시글 리스트 조회에 성공하였습니다.", isLast, 200);
     }
 
     // Basic 게시글 상세 조회
@@ -105,7 +105,7 @@ public class BoardService {
 
         DetailResponseDto detailResponseDto = new DetailResponseDto(board, isLike, isMembers);
 
-        return new ResponseDto(true, detailResponseDto,"특정 게시글 조회에 성공하였습니다.");
+        return new ResponseDto(true, detailResponseDto,"특정 게시글 조회에 성공하였습니다.",200);
     }
 
 
@@ -124,7 +124,7 @@ public class BoardService {
             ListResponseDto responseDto = new ListResponseDto(board, isLike, true);
             responseDtoList.add(responseDto);
         }
-        return new ResponseDto(true, responseDtoList, "해당 Member가 작성한 전체 게시글 조회에 성공하였습니다.");
+        return new ResponseDto(true, responseDtoList, "해당 Member가 작성한 전체 게시글 조회에 성공하였습니다.",200);
     }
 
     // 로그인한 Member가 좋아요 누른 Board 리스트 조회
@@ -149,7 +149,7 @@ public class BoardService {
             responseDtoList.add(responseDto);
         }
 
-        return new ResponseDto(true, responseDtoList, "해당 Member가 좋아요 누른 전체 게시글 조회에 성공하였습니다.");
+        return new ResponseDto(true, responseDtoList, "해당 Member가 좋아요 누른 전체 게시글 조회에 성공하였습니다.",200);
 
     }
 
@@ -176,7 +176,7 @@ public class BoardService {
             boardImageInfo.updateRelationWithBoard(board);
         }
 
-        return new ResponseDto(true, "게시글이 작성되었습니다.");
+        return new ResponseDto(true, "게시글이 작성되었습니다.",200);
     }
 
     // 게시글 수정
@@ -214,10 +214,9 @@ public class BoardService {
 
             board.update(requestDto, thumbNailUrl);
 
-            return new ResponseDto(true, "게시글이 수정되었습니다.");
+            return new ResponseDto(true, "게시글이 수정되었습니다.",200);
         } else {
-//            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
-            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+            throw new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
         }
     }
 
@@ -225,7 +224,7 @@ public class BoardService {
     public ResponseDto deleteBoard(Long boardId) throws IOException {
 
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new ApiRequestException("해당 Trilog 게시글이 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 Trilog 게시글이 존재하지 않습니다.")
         );
 
         // "member": 현재 로그인한 유저 정보  -> 게시글 작성자가 맞는지 검증
@@ -235,10 +234,9 @@ public class BoardService {
         if(member.getId().equals(board.getMember().getId())) {
             boardImageInfoService.deleteImageFromS3(board); // s3에서 이미지 파일 삭제
             boardRepository.deleteById(boardId);
-            return new ResponseDto(true, "게시글이 삭제되었습니다.");
+            return new ResponseDto(true, "게시글이 삭제되었습니다.",200);
         } else {
-//            throw new ApiRequestException("유저 정보가 일치하지 않습니다.");
-            return new ResponseDto(false, "유저 정보가 일치하지 않습니다.");
+            throw new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
         }
     }
 

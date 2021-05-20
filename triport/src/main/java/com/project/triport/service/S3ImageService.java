@@ -107,7 +107,7 @@ public class S3ImageService {
 
         ImageResponseDto imageResponseDto = new ImageResponseDto(filePath);
 
-        return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.");
+        return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.", 200);
     }
 
     // 기존 게시물 수정 중 이미지 파일 추가
@@ -147,7 +147,7 @@ public class S3ImageService {
 
         ImageResponseDto imageResponseDto = new ImageResponseDto(filePath);
 
-        return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.");
+        return new ResponseDto(true, imageResponseDto, "이미지 업로드가 완료되었습니다.",200);
     }
 
     // 이미지 삭제
