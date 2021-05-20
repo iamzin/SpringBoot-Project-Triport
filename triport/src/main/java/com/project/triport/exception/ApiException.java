@@ -9,5 +9,5 @@ import org.springframework.http.HttpStatus;
 public class ApiException {
     private final Boolean ok;
     private final String msg;
-    private final HttpStatus httpStatus;
+    private final String status;
 }

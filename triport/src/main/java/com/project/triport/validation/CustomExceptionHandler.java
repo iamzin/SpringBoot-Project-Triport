@@ -2,6 +2,8 @@ package com.project.triport.validation;
 
 import com.project.triport.exception.ApiException;
 import com.project.triport.exception.ApiRequestException;
+import com.project.triport.responseDto.ResponseDto;
+import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,38 +30,15 @@ public class CustomExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    @ExceptionHandler(value = { ApiRequestException.class })
-    public ResponseEntity<Object> handleApiRequestException(ApiRequestException ex) {
+    @ExceptionHandler(value = { IllegalArgumentException.class })
+    public ResponseDto handleApiRequestException(IllegalArgumentException ex) {
         ex.printStackTrace();
-        ApiException apiException = new ApiException(
-                false,
-                ex.getMessage(),
-                // HTTP 400 -> Client Error
-                HttpStatus.BAD_REQUEST
-        );
-
-        return new ResponseEntity<>(
-                apiException,
-                // HTTP 400 -> Client Error
-                HttpStatus.BAD_REQUEST
-        );
+        return new ResponseDto(false, ex.getMessage(), 400);
     }
 
     @ExceptionHandler(value = { IOException.class })
-    public ResponseEntity<Object> handleApiRequestException(IOException ex) {
+    public ResponseDto handleApiRequestException(IOException ex) {
         ex.printStackTrace();
-
-        ApiException apiException = new ApiException(
-                false,
-                ex.getMessage(),
-                // HTTP 400 -> Client Error
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
-
-        return new ResponseEntity<>(
-                apiException,
-                // HTTP 400 -> Client Error
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
+        return new ResponseDto(false, ex.getMessage(), 500);
     }
 }
