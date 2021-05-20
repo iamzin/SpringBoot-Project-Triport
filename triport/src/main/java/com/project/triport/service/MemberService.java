@@ -115,5 +115,7 @@ public class MemberService {
             memberGradeUp.gradeUpMember(member, TRAVEL_MASTER);
         }
 
+        // TODO: triport 사이트 알림, 메일링 메소드 추가
+
     }
 }
