@@ -16,6 +16,8 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +44,7 @@ public class S3Util {
     @Value("${cloud.aws.region.static}")
     private String region;
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @PostConstruct
     public void setS3Client() {
@@ -60,8 +63,9 @@ public class S3Util {
         String filename = "video/" + randomString + "/" + randomString + ".mp4";
         try {
             transferManager.upload(bucket, filename, file).waitForCompletion();
+            logger.info("File {} S3 Upload Success!", randomString + ".mp4");
         } catch (AmazonClientException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         String videoUrl = "https://" + cloudFrontDomainName + "/" + filename;
         return videoUrl;
@@ -70,28 +74,23 @@ public class S3Util {
     public void deleteFolder(String directory) {
         try {
             // 삭제할 Data를 Keys에 저장
-            ArrayList<KeyVersion> keys = new ArrayList<KeyVersion>();
+            ArrayList<KeyVersion> keys = new ArrayList<>();
             for (int i = 0; i < 6; i++) {
                 keys.add(new KeyVersion("video/" + directory + '/' + directory + i + "." + "ts"));
             }
             keys.add(new KeyVersion("video/" + directory + '/' + directory + ".m3u8"));
             keys.add(new KeyVersion("video/" + directory + '/' + directory + ".mp4"));
-
             // 삭제 요청할 양식을 만듬
             DeleteObjectsRequest multiObjectDeleteRequest = new DeleteObjectsRequest(bucket)
                     .withKeys(keys)
                     .withQuiet(false);
-
             // 요청 양식을 이용해 삭제 진행
             DeleteObjectsResult delObjRes = s3Client.deleteObjects(multiObjectDeleteRequest);
             int successfulDeletes = delObjRes.getDeletedObjects().size();
-            for (KeyVersion key : keys) {
-                System.out.println(key.getKey());
-            }
-            System.out.println("directory = " + directory);
-            System.out.println(successfulDeletes + " objects successfully deleted.");
+            logger.info("directory = " + directory);
+            logger.info(successfulDeletes + " objects successfully deleted.");
         } catch (AmazonServiceException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

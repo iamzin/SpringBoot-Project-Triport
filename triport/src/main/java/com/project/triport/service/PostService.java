@@ -12,12 +12,13 @@ import com.project.triport.requestDto.PostRequestDto;
 import com.project.triport.requestDto.VideoUrlDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
-import com.project.triport.responseDto.results.ListResponseDto;
 import com.project.triport.util.APIUtil;
 import com.project.triport.util.VideoProbeResult;
 import com.project.triport.util.S3Util;
 import com.project.triport.util.VideoUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,9 +45,10 @@ public class PostService {
     private final APIUtil apiUtil;
     private final VideoUtil videoUtil;
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ResponseDto readPostsAll(int page, String filter, String keyword) {
-        // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(12), sort 고정값(DESC))
+        // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(6), sort 고정값(DESC))
         Sort sort = Sort.by(Sort.Direction.DESC, filter);
         Pageable pageable = PageRequest.of(page - 1, 6, sort);
         // 전체 post 리스트 조회
@@ -65,21 +68,12 @@ public class PostService {
         }
         // 반환 page가 last page인지 확인
         Boolean isLast = postPage.isLast();
-        // 필요한 post 정보를 담은 ListResponseDto 를 담기 위한 리스트 생성
-        List<ListResponseDto> listResponseDtoList = new ArrayList<>();
-        // post와 member 정보를 통해 ListResponseDto에 필요한 정보를 기입(생성자 사용)
+        // post와 member 정보를 통해 DetailResponseDto에 필요한 정보를 기입(생성자 사용)
         Member member = getAuthMember();
-        for (Post post : postPage) {
-            boolean isLike = false;
-            boolean isMembers = false;
-            if (member != null) {
-                isLike = postLikeRepository.existsByPostAndMember(post, member);
-                isMembers = post.getMember().getId().equals(member.getId());
-            }
-            ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
-            listResponseDtoList.add(listResponseDto);
-        }
-        return new ResponseDto(true, listResponseDtoList, "전체 post 조회 완료", isLast);
+        // 필요한 post 정보를 담은 DetailResponseDto 를 담기 위한 리스트 생성
+        List<DetailResponseDto> responseDtoList = makeResponseDtoList(postPage, false, member);
+
+        return new ResponseDto(true, responseDtoList, "전체 post 조회 완료", isLast);
     }
 
     public ResponseDto readPost(Long postId) {
@@ -89,15 +83,8 @@ public class PostService {
                     () -> new IllegalArgumentException("post가 존재하지 않습니다.")
             );
             Member member = getAuthMember();
-            boolean isLike = false;
-            boolean isMembers = false;
-            if (member != null) {
-                // 접근 Member의 좋아요 상태를 확인한다.
-                isLike = postLikeRepository.existsByPostAndMember(post, member);
-                isMembers = post.getMember().getId().equals(member.getId());
-            }
-            // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다..
-            DetailResponseDto detailResponseDto = new DetailResponseDto(post, isLike, isMembers);
+            // detailResponseDto 생성자에 위 세가지 항목을 넣어 results 양식에 맞는 객체를 작성한다.
+            DetailResponseDto detailResponseDto = makeDetailResponseDto(post, false, member);
             return new ResponseDto(true, detailResponseDto, "post detail 불러오기 성공");
         } catch (IllegalArgumentException e) {
             return new ResponseDto(false, e.getMessage());
@@ -107,27 +94,38 @@ public class PostService {
     public ResponseDto readPostsMember() {
         Member member = getAuthMember();
         List<Post> postList = postRepository.findByMember(member);
-        List<ListResponseDto> listResponseDtoList = new ArrayList<>();
-        for (Post post : postList) {
-            boolean isLike = postLikeRepository.existsByPostAndMember(post, member);
-            boolean isMembers = post.getMember().getId().equals(member.getId());
-            ListResponseDto listResponseDto = new ListResponseDto(post, isLike, isMembers);
-            listResponseDtoList.add(listResponseDto);
-        }
+        List<DetailResponseDto> listResponseDtoList = makeResponseDtoList(postList,false, member);
+
         return new ResponseDto(true, listResponseDtoList, "member post 조회 완료");
     }
 
     public ResponseDto readPostsMemberLike() {
         Member member = getAuthMember();
         List<PostLike> postLikeList = postLikeRepository.findAllByMember(member);
-        List<ListResponseDto> listResponseDtoList = new ArrayList<>();
-        for (PostLike postLike : postLikeList) {
-            Post post = postLike.getPost();
-            boolean isMembers = post.getMember().getId().equals(member.getId());
-            ListResponseDto listResponseDto = new ListResponseDto(post, true, isMembers);
-            listResponseDtoList.add(listResponseDto);
-        }
+        List<Post> postList = new ArrayList<>();
+        for(PostLike postLike : postLikeList) { postList.add(postLike.getPost()); }
+        List<DetailResponseDto> listResponseDtoList =  makeResponseDtoList(postList,true, member);
         return new ResponseDto(true, listResponseDtoList, "좋아요 post 조회 완료");
+    }
+
+    public List<DetailResponseDto> makeResponseDtoList(Iterable<Post> postIterable, Boolean isLike, Member member) {
+        List<DetailResponseDto> listResponseDtoList = new ArrayList<>();
+        for (Post post : postIterable) {
+            DetailResponseDto detailResponseDto = makeDetailResponseDto(post, isLike, member);
+            listResponseDtoList.add(detailResponseDto);
+        }
+        return listResponseDtoList;
+    }
+
+    public DetailResponseDto makeDetailResponseDto(Post post, Boolean isLike, Member member){
+        boolean isMembers = false;
+        if(member != null) {
+            if (!isLike) { // 좋아요 명단을 제외한 나머지 List
+                isLike = postLikeRepository.existsByPostAndMember(post, member);
+            }
+            isMembers = post.getMember().getId().equals(member.getId());
+        }
+        return new DetailResponseDto(post, isLike, isMembers);
     }
 
     public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
@@ -146,11 +144,12 @@ public class PostService {
 
             List<PostHashtag> hashtagList = convertHashtag(post, requestDto.getHashtag());
             saveHashtagList(hashtagList);
-            post.update(hashtagList);
+            post.addHashtagAll(hashtagList);
 
             apiUtil.encodingFile(post);
             return new ResponseDto(true, "포스팅 완료!");
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return new ResponseDto(false, e.getMessage());
         } finally{
             videoUtil.deleteTmp(filepath);
@@ -184,7 +183,9 @@ public class PostService {
     }
 
     @Transactional
-    public void updateUrl(VideoUrlDto requestDto) {
+//    public void updateUrl(VideoUrlDto requestDto, HttpServletRequest req)
+    public void updateUrl(VideoUrlDto requestDto, HttpServletRequest req)
+    {
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(
                 () -> new IllegalArgumentException("해당 post가 존재하지 않습니다.")
         );

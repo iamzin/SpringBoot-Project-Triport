@@ -46,6 +46,9 @@ public class Post extends Timestamped {
         this.member = member;
     }
 
+    public void addHashtagAll(List<PostHashtag> hashtagList){
+        this.hashtag.addAll(hashtagList);
+    }
     public void update(List<PostHashtag> hashtagList) {
         this.hashtag.clear();
         this.hashtag.addAll(hashtagList);

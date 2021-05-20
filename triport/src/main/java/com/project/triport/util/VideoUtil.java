@@ -7,6 +7,8 @@ import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,8 @@ public class VideoUtil {
     private final Path rootLocation;
     private FFprobe ffprobe;
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     public VideoUtil(StorageProperties properties) {
         this.rootLocation = Paths.get(properties.getLocation());
@@ -44,6 +48,7 @@ public class VideoUtil {
             ffprobe = new FFprobe(ffprobePath);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
@@ -73,12 +78,12 @@ public class VideoUtil {
         File tmpFile = new File(filepath);
         if(tmpFile.exists() ){
             if(tmpFile.delete()){
-                System.out.println("파일삭제 성공");
+                logger.info("파일 삭제 성공");
             }else{
-                System.out.println("파일삭제 실패");
+                logger.error("파일 삭제 실패");
             }
         }else{
-            System.out.println("파일이 존재하지 않습니다.");
+            logger.error("파일이 존재하지 않습니다.");
         }
     }
 }

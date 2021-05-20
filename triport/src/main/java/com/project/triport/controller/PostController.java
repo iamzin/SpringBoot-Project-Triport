@@ -7,9 +7,8 @@ import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
@@ -56,8 +55,10 @@ public class PostController {
         return postService.deletePost(postId);
     }
 
-    @PostMapping("/api/all/posts/video")
-    public void updateUrl(@RequestBody VideoUrlDto requestDto){
-        postService.updateUrl(requestDto);
+
+    @PostMapping("/api/encoding/posts/video")
+    @CrossOrigin(origins = "${server.ipAddress}")
+    public void updateUrl(@RequestBody VideoUrlDto requestDto, HttpServletRequest req){
+            postService.updateUrl(requestDto, req);
     }
 }

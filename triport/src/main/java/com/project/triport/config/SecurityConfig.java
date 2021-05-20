@@ -42,9 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
+
         // CSRF 설정 Disable
         http.csrf().disable()
-
 
                 // exception handlingd에 직접 만든 401, 403 class 추가
                 .exceptionHandling()
@@ -56,7 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .frameOptions()
                 .sameOrigin()
-
 
                 // Spring Security는 기본적으로 session 사용
                 // but 본 로직에서는 session을 사용하지 않으므로 STATELESS 처리
@@ -72,6 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/all/**").permitAll()
                 .antMatchers("/mail/**").permitAll()
                 .antMatchers("/static/**").permitAll()
+                .antMatchers("/api/encoding/**").permitAll()
                 // TODO: Trils encoding server ip에서 요청하는 uri permit 처리 필요
                 .anyRequest().authenticated()
 
@@ -79,5 +79,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // Security 최전선에 JwtFilter가 있도록 (?)
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
+
     }
 }
