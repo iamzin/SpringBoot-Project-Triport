@@ -84,4 +84,10 @@ public class S3ProfileImageService {
     public String deleteSpaceFromFileName(MultipartFile file) {
         return Objects.requireNonNull(file.getOriginalFilename()).replace(" ", "_");
     }
+
+    // file을 S3에 upload 후 url 반환
+    public String getFileUrl(MultipartFile file) throws IOException {
+        String filePath = uploadProfileImage(file);
+        return "https://" + S3ProfileImageService.CLOUD_FRONT_DOMAIN_NAME + "/profileImage/" + filePath;
+    }
 }
