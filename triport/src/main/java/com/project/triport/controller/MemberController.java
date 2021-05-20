@@ -26,7 +26,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/profile")
-    public ResponseEntity<String> deleteMember() {
+    public ResponseEntity<ResponseDto> deleteMember() {
         return ResponseEntity.ok(memberService.deleteMember());
     }
 }

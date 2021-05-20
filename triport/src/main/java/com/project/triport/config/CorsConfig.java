@@ -12,7 +12,8 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOriginPattern("*");
-        config.addAllowedOrigin("http://**"); // TODO: Trils encoding server ip 허용 필요
+        config.addAllowedOrigin("http://**");
+        config.addAllowedOrigin("https://triport.kr");
         config.setAllowCredentials(true);
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");

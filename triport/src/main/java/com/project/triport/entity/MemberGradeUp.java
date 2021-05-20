@@ -1,14 +1,21 @@
 package com.project.triport.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static com.project.triport.entity.MemberGrade.TRAVELER;
+
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class MemberLevel extends Timestamped {
+@Table(name = "member_grade")
+public class MemberGradeUp extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +29,15 @@ public class MemberLevel extends Timestamped {
     @Enumerated(EnumType.STRING)
     private MemberGrade memberGrade;
 
-    @Column(nullable = false)
-    private Long postLikeNum;
+    public MemberGradeUp newMemberInfo(Member member) {
+        return MemberGradeUp.builder()
+                .member(member)
+                .memberGrade(TRAVELER)
+                .build();
+    }
 
-    @Column(nullable = false)
-    private Long boardLikeNum;
-
+    public void gradeUpMember(Member member, MemberGrade memberGrade) {
+        this.member = member;
+        this.memberGrade = memberGrade;
+    }
 }

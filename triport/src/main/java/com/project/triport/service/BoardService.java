@@ -31,6 +31,7 @@ public class BoardService {
     private final BoardLikeRepository boardLikeRepository;
     private final BoardImageInfoRepository boardImageInfoRepository;
     private final BoardImageInfoService boardImageInfoService;
+    private final MemberService memberService;
 
     // Board 게시글 전체 리스트 조회 -> 페이징
     public ResponseDto getBoardList(int page, String filter, String keyword) {
@@ -175,6 +176,9 @@ public class BoardService {
             boardImageInfo.updateShouldBeDelete(true); // 이미지 삭제 후에는 게시글 수정 상황을 위해 shouldBeDelete 값을 true로 바꿔놓는다.
             boardImageInfo.updateRelationWithBoard(board);
         }
+
+        // 등업 조건 확인 및 grade up
+        memberService.GradeupMember(member);
 
         return new ResponseDto(true, "게시글이 작성되었습니다.",200);
     }
