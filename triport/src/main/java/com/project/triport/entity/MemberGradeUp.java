@@ -14,7 +14,7 @@ import static com.project.triport.entity.MemberGrade.TRAVELER;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "member_grade")
+@Table(name = "member_grade_history")
 public class MemberGradeUp extends Timestamped {
 
     @Id

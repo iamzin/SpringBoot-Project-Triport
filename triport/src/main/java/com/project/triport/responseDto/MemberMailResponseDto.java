@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MailResponseDto {
+public class MemberMailResponseDto {
     String message;
 }

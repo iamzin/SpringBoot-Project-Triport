@@ -2,11 +2,9 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Member;
 import com.project.triport.repository.MemberRepository;
-import com.project.triport.requestDto.MailRequestDto;
-import com.project.triport.responseDto.MailResponseDto;
+import com.project.triport.requestDto.MemberMailRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.util.MailHandler;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,7 +19,7 @@ import java.util.Random;
 @Service
 //@AllArgsConstructor
 @RequiredArgsConstructor
-public class MailService {
+public class MemberMailService {
 
     private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
@@ -30,8 +28,8 @@ public class MailService {
 
     // 임시 비밀번호 안내 메일 발송
     @Transactional
-    public ResponseDto sendTempPwd(MailRequestDto mailRequestDto) {
-        Member member = memberRepository.findByEmail(mailRequestDto.getEmail())
+    public ResponseDto sendTempPwd(MemberMailRequestDto memberMailRequestDto) {
+        Member member = memberRepository.findByEmail(memberMailRequestDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("입력하신 이메일로 가입된 사용자가 없습니다."));
 
         String tmpPwd = generateTempPwd();
