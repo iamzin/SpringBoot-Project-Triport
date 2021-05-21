@@ -103,10 +103,10 @@ public class MailUtil {
                 "<span style='font-size: large'; color: black'>" +
                 "<img src='cid:triport_logo' style='width:200px'> <br><br><br>" +
                 "안녕하세요, 여행의 설레임 <span style='color: #1f70de; font-weight: bold'>TRIPORT✈️</span> 입니다! <br>" +
-                nickname+"님의 <span style='color: #1f70de; font-weight: bold'>Trils</span> 영상 좋아요가 벌써 5개에요!😆🎉<br><br><br>" +
+                nickname+"님의 <span style='color: #1f70de; font-weight: bold'>Trils</span> <span style='font-weight: bold'>영상 좋아요가 벌써 5개에요!😆🎉</span><br><br><br>" +
                 "다른 <span style='font-weight: bold'>TRAVELER</span>분들이 영상 속 이야기를 궁금해 하시는 것 같아요~<br>" +
-                "<span style='font-weight: bold'>특별했던 회원님의 여행을 <span style='color: #1f70de; font-weight: bold'>Trilog</span>에 기록해 주세요!</span><br>" +
-                nickname+"님의 멋진 추억을 다른 분들과 공유하면서 좋은 에너지를 나누어주시기 바랍니다!🥰 <br><br><br>" +
+                "<span style='font-weight: bold'>특별했던 "+nickname+"님의 여행을 <span style='color: #1f70de; font-weight: bold'>Trilog</span>에 기록해 주세요!</span><br>" +
+                "멋진 추억을 다른 분들과 공유하면서 좋은 에너지를 나누어주시기 바랍니다!🥰 <br><br><br>" +
                 "<span style='font-weight: bold'>(속닥속닥) <span style='color: #1f70de; font-weight: bold'>Trilog</span>에 여행 이야기를 기록하면, " +
                 "<span style='color: #FD574A; font-weight: bold'>TRAVEL Editor로 Level Up!</span> 해드려요..!🤫</span> <br><br><br>" +
                 "<a href='https://triport.kr' style='font-weight: bold'>💙️"+nickname+"님의 Trils 반응 보고, Trilog 작성하러 가기!💙</a>" +
