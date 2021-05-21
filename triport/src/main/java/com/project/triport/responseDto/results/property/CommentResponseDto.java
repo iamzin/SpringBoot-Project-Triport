@@ -16,6 +16,9 @@ public class CommentResponseDto {
     private Long likeNum;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long commentChildNum;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String cratedAt;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String modifiedAt;
 
     public CommentResponseDto(CommentParent commentParent) {
@@ -26,7 +29,7 @@ public class CommentResponseDto {
         this.contents = commentParent.getContents();
         this.likeNum = commentParent.getLikeNum();
         this.commentChildNum = commentParent.getCommentChildNum();
-        this.modifiedAt = commentParent.getModifiedAt().format(formatter);
+        this.cratedAt = commentParent.getCreatedAt().format(formatter);
     }
 
     public CommentResponseDto(CommentChild commentChild) {

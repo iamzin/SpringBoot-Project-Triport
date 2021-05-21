@@ -53,7 +53,7 @@ public class BoardService {
         // page 관련 PageRequest 설정
         PageRequest pageRequest;
         if (filter.equals("likeNum")) {
-            pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter).and(Sort.by(Sort.Direction.DESC,"modifiedAt")));
+            pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter).and(Sort.by(Sort.Direction.DESC,"createdAt")));
         } else {
             pageRequest = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, filter));
         }

@@ -25,6 +25,7 @@ public class BoardInformationResponseDto extends InformationResponseDto {
     private Long commentNum;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ImageResponseDto> imageUrlList;
+    private String createdAt;
 
     public BoardInformationResponseDto(Board board) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm");
@@ -36,7 +37,8 @@ public class BoardInformationResponseDto extends InformationResponseDto {
 
         this.likeNum = board.getLikeNum();
         this.commentNum = board.getCommentNum();
-        this.modifiedAt = board.getModifiedAt().format(formatter);
+        this.createdAt = board.getCreatedAt().format(formatter);
+//        this.modifiedAt = board.getModifiedAt().format(formatter);
     }
 
     public BoardInformationResponseDto(Board board, String address){
@@ -49,7 +51,8 @@ public class BoardInformationResponseDto extends InformationResponseDto {
 
         this.likeNum = board.getLikeNum();
         this.commentNum = board.getCommentNum();
-        this.modifiedAt = board.getModifiedAt().format(formatter);
+        this.createdAt = board.getCreatedAt().format(formatter);
+//        this.modifiedAt = board.getModifiedAt().format(formatter);
 
         List<BoardImageInfo> boardImageInfoList = board.getBoardImageInfoList();
         this.imageUrlList = new ArrayList<>();
