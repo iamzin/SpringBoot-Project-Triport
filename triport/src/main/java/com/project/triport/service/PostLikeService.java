@@ -8,6 +8,7 @@ import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
+import com.project.triport.util.MailUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
     private final MemberMailService memberMailService;
+    private final MailUtil mailUtil;
 
     @Transactional
     public ResponseDto creatDeletePostLike(Long postId) {
