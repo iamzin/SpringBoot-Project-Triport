@@ -53,9 +53,11 @@ public class VideoUtil {
     }
 
     public String storeVideo(MultipartFile file) throws IOException {
+        String[] videoUrlStringList = file.getOriginalFilename().split("\\.");
+        String videoExtension = videoUrlStringList[videoUrlStringList.length-1];
         String randomString = UUID.randomUUID().toString();
-        Files.copy(file.getInputStream(), this.rootLocation.resolve(randomString+".mp4"));
-        String filepath = temporaryStorage + "/" + randomString+".mp4";
+        Files.copy(file.getInputStream(), this.rootLocation.resolve(randomString+"." +videoExtension));
+        String filepath = temporaryStorage + "/" + randomString+"."+videoExtension;
         return filepath;
     }
 

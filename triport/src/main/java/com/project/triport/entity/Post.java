@@ -34,12 +34,15 @@ public class Post extends Timestamped {
     @OneToMany(mappedBy = "post", cascade = {CascadeType.REMOVE})
     private List<PostHashtag> hashtag = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.REMOVE})
+    private List<PostLike> postLike = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Member member;
 
-    public Post(String videoUrl, boolean posPlay, Member member) {
-        this.videoType = "mp4";
+    public Post(String videoType, String videoUrl, boolean posPlay, Member member) {
+        this.videoType = videoType;
         this.videoUrl = videoUrl;
         this.posPlay = posPlay;
         this.likeNum = 0L;
@@ -55,7 +58,8 @@ public class Post extends Timestamped {
     }
 
     public void updateUrl(VideoUrlDto requestDto) {
-        this.videoType = "m3u8";
+        String[] videoUrlStringList = requestDto.getVideoUrl().split("\\.");
+        this.videoType = videoUrlStringList[videoUrlStringList.length-1];
         this.posPlay = true;
         this.videoUrl = requestDto.getVideoUrl();
     }
