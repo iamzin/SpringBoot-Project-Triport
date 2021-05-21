@@ -17,7 +17,7 @@ public class CommentResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long commentChildNum;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String cratedAt;
+    private String createdAt;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String modifiedAt;
 
@@ -29,7 +29,7 @@ public class CommentResponseDto {
         this.contents = commentParent.getContents();
         this.likeNum = commentParent.getLikeNum();
         this.commentChildNum = commentParent.getCommentChildNum();
-        this.cratedAt = commentParent.getCreatedAt().format(formatter);
+        this.createdAt = commentParent.getCreatedAt().format(formatter);
     }
 
     public CommentResponseDto(CommentChild commentChild) {
