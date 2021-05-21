@@ -34,6 +34,9 @@ public class Post extends Timestamped {
     @OneToMany(mappedBy = "post", cascade = {CascadeType.REMOVE})
     private List<PostHashtag> hashtag = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.REMOVE})
+    private List<PostLike> postLike = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Member member;

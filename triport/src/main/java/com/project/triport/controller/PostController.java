@@ -8,7 +8,6 @@ import com.project.triport.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
@@ -58,7 +57,7 @@ public class PostController {
 
     @PostMapping("/api/encoding/posts/video")
     @CrossOrigin(origins = "${server.ipAddress}")
-    public void updateUrl(@RequestBody VideoUrlDto requestDto, HttpServletRequest req){
-            postService.updateUrl(requestDto, req);
+    public void updateUrl(@RequestBody VideoUrlDto requestDto){
+            postService.updateUrl(requestDto);
     }
 }
