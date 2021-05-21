@@ -15,7 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +26,9 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
     private final MemberMailService memberMailService;
-    private final MailUtil mailUtil;
 
     @Transactional
-    public ResponseDto creatDeletePostLike(Long postId) {
+    public ResponseDto creatDeletePostLike(Long postId) throws IOException, MessagingException {
         Member member = getAuthMember();
         if (member == null) {
             return new ResponseDto(false, "로그인이 필요합니다.");

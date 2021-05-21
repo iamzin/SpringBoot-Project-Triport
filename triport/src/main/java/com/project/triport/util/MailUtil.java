@@ -13,7 +13,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -24,7 +23,6 @@ import java.util.Random;
 public class MailUtil {
 
     private final JavaMailSender mailSender;
-    private final MemberPromotion memberPromotion;
     private final PasswordEncoder passwordEncoder;
     private @Value("${spring.mail.username}") String fromMail;
 
@@ -126,7 +124,6 @@ public class MailUtil {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            memberPromotion.updateTrilsPromo(member, true);
         }
     }
 }

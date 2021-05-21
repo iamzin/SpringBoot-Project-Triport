@@ -53,6 +53,7 @@ public class MemberMailService {
         boolean isEnabled = memberPromotion.isTrilsFiveLikePromo();
 
         mailUtil.trilsPromoMail(likeNum, author, isEnabled);
+        memberPromotion.updateTrilsPromo(author, true);
     }
 
 }
