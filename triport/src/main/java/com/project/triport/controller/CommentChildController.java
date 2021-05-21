@@ -6,6 +6,8 @@ import com.project.triport.service.CommentChildService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+
 @RestController
 @RequiredArgsConstructor
 public class CommentChildController {
@@ -14,7 +16,7 @@ public class CommentChildController {
 
     // Comment Child 리스트 조회(페이징 처리)
     @GetMapping("/api/all/boards/comments/children/{commentParentId}")
-    public ResponseDto getBoardCommentChildList(@PathVariable Long commentParentId, @RequestParam int page) {
+    public ResponseDto getBoardCommentChildList(@PathVariable Long commentParentId, @Min(value=1, message = "페이지는 1보다 커야합니다.") @RequestParam int page) {
         return commentChildService.getPagedCommentChildList(commentParentId, page);
     }
 
