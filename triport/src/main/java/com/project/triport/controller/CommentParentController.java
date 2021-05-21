@@ -4,10 +4,12 @@ import com.project.triport.requestDto.CommentRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.CommentParentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class CommentParentController {
