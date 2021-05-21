@@ -7,15 +7,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import static com.project.triport.entity.MemberGrade.TRAVELER;
-
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "member_grade_history")
-public class MemberGradeUp extends Timestamped {
+@Table(name = "member_promotion_history")
+public class MemberPromotion extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,19 +23,20 @@ public class MemberGradeUp extends Timestamped {
     @OneToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @Column(nullable = false, name = "member_grade")
-    @Enumerated(EnumType.STRING)
-    private MemberGrade memberGrade;
+    @Column(nullable = false, name = "trils_promo")
+    private boolean trilsFiveLikePromo;
 
-    public MemberGradeUp newMemberGrade(Member member) {
-        return MemberGradeUp.builder()
+    public MemberPromotion newMemberPromo(Member member) {
+        return MemberPromotion.builder()
                 .member(member)
-                .memberGrade(TRAVELER)
+                .trilsFiveLikePromo(false)
                 .build();
     }
 
-    public void gradeUpMember(Member member, MemberGrade memberGrade) {
+    public void updateTrilsPromo(Member member, boolean trilsFiveLikePromo) {
         this.member = member;
-        this.memberGrade = memberGrade;
+        this.trilsFiveLikePromo = trilsFiveLikePromo;
     }
+
+
 }

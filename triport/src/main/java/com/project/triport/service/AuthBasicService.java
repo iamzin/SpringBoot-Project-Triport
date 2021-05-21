@@ -1,12 +1,13 @@
 package com.project.triport.service;
 
 import com.project.triport.entity.Member;
-import com.project.triport.entity.MemberGrade;
 import com.project.triport.entity.MemberGradeUp;
+import com.project.triport.entity.MemberPromotion;
 import com.project.triport.entity.RefreshToken;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.jwt.TokenProvider;
 import com.project.triport.repository.MemberGradeUpRepository;
+import com.project.triport.repository.MemberPromotionRepository;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
 import com.project.triport.requestDto.AuthLoginReqeustDto;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static com.project.triport.responseDto.MemberResponseDto.of;
+import static com.project.triport.responseDto.results.property.information.MemberInformationResponseDto.of;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class AuthBasicService {
 
     private final MemberRepository memberRepository;
     private final MemberGradeUpRepository memberGradeUpRepository;
+    private final MemberPromotionRepository memberPromotionRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
@@ -50,8 +52,12 @@ public class AuthBasicService {
         of(memberRepository.save(member));
 
         // grade 관리를 위해 가입과 동시에 grade up table에 추가
-        MemberGradeUp memberGradeUp = new MemberGradeUp().newMemberInfo(member);
+        MemberGradeUp memberGradeUp = new MemberGradeUp().newMemberGrade(member);
         memberGradeUpRepository.save(memberGradeUp);
+
+        // promotion Mail history 관리를 위해 가입과 동시에 member promotion history table에 추가
+        MemberPromotion memberPromotion = new MemberPromotion().newMemberPromo(member);
+        memberPromotionRepository.save(memberPromotion);
 
         return new ResponseDto(true, "회원가입 성공하였습니다.");
     }

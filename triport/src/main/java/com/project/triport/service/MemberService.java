@@ -2,13 +2,12 @@ package com.project.triport.service;
 
 import com.project.triport.entity.Board;
 import com.project.triport.entity.Member;
-import com.project.triport.entity.MemberGrade;
 import com.project.triport.entity.MemberGradeUp;
 import com.project.triport.repository.BoardRepository;
 import com.project.triport.repository.MemberGradeUpRepository;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.requestDto.MemberInfoRequestDto;
-import com.project.triport.responseDto.MemberResponseDto;
+import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,7 @@ public class MemberService {
     public ResponseDto getMember() {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보가 없습니다."));
-        MemberResponseDto.of(member);
+        MemberInformationResponseDto.of(member);
         return new ResponseDto(true, member, "로그인한 사용자의 프로필 조회에 성공하였습니다.");
     }
 

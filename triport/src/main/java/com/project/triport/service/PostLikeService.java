@@ -22,6 +22,7 @@ public class PostLikeService {
 
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
+    private final MemberMailService memberMailService;
 
     @Transactional
     public ResponseDto creatDeletePostLike(Long postId) {
@@ -41,6 +42,7 @@ public class PostLikeService {
             PostLike postLike = new PostLike(post, member);
             postLikeRepository.save(postLike);
             post.plusLikeNum();
+            memberMailService.sendPromotion(postId); //Trils likeNum==5 Promotion Mail
             return new ResponseDto(true,makeResponseDto(post,member),"좋아요 완료");
         }
     }

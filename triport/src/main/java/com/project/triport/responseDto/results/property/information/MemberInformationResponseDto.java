@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberInformationResponseDto {
-    Long id;
-    String email;
-    String nickname;
-    String profileImgUrl;
-    MemberGrade grade;
+    private Long id;
+    private String email;
+    private String nickname;
+    private String profileImgUrl;
+    private MemberGrade memberGrade;
 
-    public MemberInformationResponseDto(Member member) {
-        this.id = member.getId();
-        this.nickname = member.getNickname();
+    public static MemberInformationResponseDto of(Member member) {
+        return new MemberInformationResponseDto(member.getId(), member.getEmail(), member.getNickname(),
+                member.getProfileImgUrl(), member.getMemberGrade());
     }
 }
