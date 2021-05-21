@@ -9,6 +9,7 @@ import com.project.triport.repository.PostHashtagRepository;
 import com.project.triport.repository.PostLikeRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.requestDto.PostRequestDto;
+import com.project.triport.requestDto.VideoNameDto;
 import com.project.triport.requestDto.VideoUrlDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
@@ -111,6 +112,7 @@ public class PostService {
     public ResponseDto createPost(PostRequestDto requestDto) throws IOException {
         MultipartFile videoFile = requestDto.getFile();
         String filepath = videoUtil.storeVideo(videoFile);
+        String videoType = new VideoNameDto(filepath).getType();
         try {
             VideoProbeResult probeResult = videoUtil.probe(filepath);
             if (probeResult.getDuration() > 10.99) {
@@ -119,7 +121,7 @@ public class PostService {
             String videoUrl = s3Util.upload(filepath);
 
             Member member = getAuthMember();
-            Post post = new Post(videoUrl, probeResult.getPosPlay(), member);
+            Post post = new Post(videoType, videoUrl, probeResult.getPosPlay(), member);
             postRepository.save(post);
 
             List<PostHashtag> hashtagList = convertHashtag(post, requestDto.getHashtag());
@@ -155,9 +157,7 @@ public class PostService {
                 () -> new IllegalArgumentException("존재하지 않는 post 입니다.")
         );
         String videoUrl = post.getVideoUrl();
-        String[] tmpArray = videoUrl.split("/");
-        String directory = tmpArray[tmpArray.length - 2];
-        s3Util.deleteFolder(directory);
+        s3Util.deleteFolder(new VideoNameDto(videoUrl).getFilename());
         postRepository.deleteById(postId);
         return new ResponseDto(true, "포스트를 삭제 하였습니다.");
     }

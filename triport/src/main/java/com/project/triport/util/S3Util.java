@@ -15,6 +15,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.project.triport.requestDto.VideoNameDto;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,14 +57,16 @@ public class S3Util {
                 .build();
     }
 
-    public String upload(String filepath) throws IOException, AmazonServiceException {
+    public String upload(String filepath) throws AmazonServiceException {
+        VideoNameDto videoNameDto = new VideoNameDto(filepath);
+
         TransferManager transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
         File file = new File(filepath);
         String randomString = UUID.randomUUID().toString();
-        String filename = "video/" + randomString + "/" + randomString + ".mp4";
+        String filename = "video/" + randomString + "/" + randomString + "." + videoNameDto.getType();
         try {
             transferManager.upload(bucket, filename, file).waitForCompletion();
-            logger.info("File {} S3 Upload Success!", randomString + ".mp4");
+            logger.info("File {} S3 Upload Success!", randomString + "." + videoNameDto.getType());
         } catch (AmazonClientException | InterruptedException e) {
             logger.error(e.getMessage());
         }
@@ -80,6 +83,7 @@ public class S3Util {
             }
             keys.add(new KeyVersion("video/" + directory + '/' + directory + ".m3u8"));
             keys.add(new KeyVersion("video/" + directory + '/' + directory + ".mp4"));
+            keys.add(new KeyVersion("video/" + directory + '/' + directory + ".mov"));
             // 삭제 요청할 양식을 만듬
             DeleteObjectsRequest multiObjectDeleteRequest = new DeleteObjectsRequest(bucket)
                     .withKeys(keys)
