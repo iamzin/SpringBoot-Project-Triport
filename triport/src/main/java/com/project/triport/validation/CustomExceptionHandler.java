@@ -10,9 +10,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 // @Valid로 인해 발생하는 Exception Handling
 @RestControllerAdvice // RestController에서
@@ -27,18 +29,30 @@ public class CustomExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put("message", errorMessage);
         });
+//        String errorMessage = exception.getBindingResult()
+//                .getAllErrors()
+//                .get(0)
+//                .getDefaultMessage();
+
+//        return new ResponseDto(false, errorMessage, 400);
         return ResponseEntity.badRequest().body(errors);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseDto handleConstraintViolation(ConstraintViolationException exception) {
+        exception.printStackTrace();
+        return new ResponseDto(false, exception.getMessage(), 400);
+    }
+
     @ExceptionHandler(value = { IllegalArgumentException.class })
-    public ResponseDto handleApiRequestException(IllegalArgumentException ex) {
-        ex.printStackTrace();
-        return new ResponseDto(false, ex.getMessage(), 400);
+    public ResponseDto handleApiRequestException(IllegalArgumentException exception) {
+        exception.printStackTrace();
+        return new ResponseDto(false, exception.getMessage(), 400);
     }
 
     @ExceptionHandler(value = { IOException.class })
-    public ResponseDto handleApiRequestException(IOException ex) {
-        ex.printStackTrace();
-        return new ResponseDto(false, ex.getMessage(), 500);
+    public ResponseDto handleApiRequestException(IOException exception) {
+        exception.printStackTrace();
+        return new ResponseDto(false, exception.getMessage(), 500);
     }
 }

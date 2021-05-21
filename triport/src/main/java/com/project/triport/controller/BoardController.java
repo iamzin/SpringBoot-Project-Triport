@@ -8,12 +8,15 @@ import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.BoardService;
 import com.project.triport.service.S3ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.io.IOException;
 
-
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class BoardController {
@@ -23,7 +26,7 @@ public class BoardController {
 
     // Trilog 게시글 전체 리스트 조회
     @GetMapping("/api/all/boards")
-    public ResponseDto getBoardList(@RequestParam int page, @RequestParam String filter, @RequestParam String keyword) {
+    public ResponseDto getBoardList(@Min(value=1, message = "페이지는 1보다 커야합니다.") @RequestParam int page, @RequestParam String filter, @RequestParam String keyword) {
         return boardService.getBoardList(page, filter, keyword);
     }
 
@@ -49,7 +52,7 @@ public class BoardController {
 
     // 게시글 작성
     @PostMapping("/api/boards")
-    public ResponseDto createBoard(@RequestBody BoardRequestDto requestDto) throws IOException {
+    public ResponseDto createBoard(@RequestBody @Valid BoardRequestDto requestDto) throws IOException {
         return boardService.createBoard(requestDto);
     }
 
