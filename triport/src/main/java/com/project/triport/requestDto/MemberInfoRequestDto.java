@@ -1,7 +1,5 @@
 package com.project.triport.requestDto;
 
-import com.project.triport.entity.Authority;
-import com.project.triport.entity.Member;
 import com.project.triport.entity.MemberGrade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
