@@ -1,6 +1,7 @@
 package com.project.triport.controller;
 
 import com.project.triport.requestDto.MemberInfoRequestDto;
+import com.project.triport.requestDto.MemberProfileRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class MemberController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<ResponseDto> updateMemberInfo(@ModelAttribute MemberInfoRequestDto memberInfoRequestDto) throws IOException {
-        return ResponseEntity.ok(memberService.updateMember(memberInfoRequestDto));
+    public ResponseEntity<ResponseDto> updateMemberInfo(@ModelAttribute MemberProfileRequestDto memberProfileRequestDto) throws IOException {
+        return ResponseEntity.ok(memberService.updateMember(memberProfileRequestDto));
     }
 
     @DeleteMapping("/profile")

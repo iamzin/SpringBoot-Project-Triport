@@ -7,6 +7,7 @@ import com.project.triport.repository.BoardRepository;
 import com.project.triport.repository.MemberGradeUpRepository;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.requestDto.MemberInfoRequestDto;
+import com.project.triport.requestDto.MemberProfileRequestDto;
 import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.util.SecurityUtil;
@@ -42,52 +43,115 @@ public class MemberService {
         return new ResponseDto(true, member, "로그인한 사용자의 프로필 조회에 성공하였습니다.");
     }
 
-    // member 프로필 수정
+    // member 프로필 수정 -> front에서 마이페이지 접속 시, nickname 불러오기 가능할 경우
     @Transactional
-    public ResponseDto updateMember(MemberInfoRequestDto memberInfoRequestDto) throws IOException {
+    public ResponseDto updateMember(MemberProfileRequestDto memberProfileRequestDto) throws IOException {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
         );
 
-        MultipartFile profileImgFile = memberInfoRequestDto.getProfileImgFile();
-        String nickname = memberInfoRequestDto.getNickname();
-        String password = passwordEncoder.encode(memberInfoRequestDto.getNewPassword());
-        String passwordCheck = passwordEncoder.encode((memberInfoRequestDto.getNewPasswordCheck()));
+        MultipartFile profileImgFile = memberProfileRequestDto.getProfileImgFile();
+        String nickname = memberProfileRequestDto.getNickname();
+        String newPassword = memberProfileRequestDto.getNewPassword();
+        String newPasswordCheck = memberProfileRequestDto.getNewPasswordCheck();
 
         // 모든 항목 변경사항 없을 때
         if (profileImgFile.isEmpty() && nickname.equals(member.getNickname())
-                && password.isEmpty() && passwordCheck.isEmpty()) {
-            throw new RuntimeException("변경사항이 없습니다.");
+                && newPassword.equals("") && newPasswordCheck.equals("")) {
+            return new ResponseDto(false, "변경사항이 없습니다.", 200);
         }
         // 프로필 이미지만 변경사항 없을 때
         else if (profileImgFile.isEmpty() && !nickname.equals(member.getNickname())
-                && !password.isEmpty() && !passwordCheck.isEmpty()) {
+                && !(newPassword.equals("")) && !newPasswordCheck.equals("")) {
+            if (!(newPassword.equals(newPasswordCheck))) {
+                return new ResponseDto(false, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", 200);
+            }
             String fileUrl = member.getProfileImgUrl();
-            member.updateMember(memberInfoRequestDto, password, fileUrl);
-            return new ResponseDto(true, "프로필 수정이 완료되었습니다.");
+            member.updateMember(memberProfileRequestDto, passwordEncoder.encode(newPassword), fileUrl);
+            return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
         }
-        // 비밀번호만 변경사항 없을 때
-        else if (password.isEmpty() && passwordCheck.isEmpty()) {
-            String newPassword = member.getPassword();
+        // 닉네임만 변경사항 없을 때
+        else if (!profileImgFile.isEmpty() && nickname.equals(member.getNickname())
+                && !newPassword.equals("") && !newPasswordCheck.equals("")) {
+            if (!(newPassword.equals(newPasswordCheck))) {
+                return new ResponseDto(false, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", 200);
+            }
+            memberProfileRequestDto.noChangeNickname(member.getNickname());
             String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
-            member.updateMember(memberInfoRequestDto, newPassword, fileUrl);
-            return new ResponseDto(true, "프로필 수정이 완료되었습니다.");
-        } else if (password.isEmpty() || passwordCheck.isEmpty()) {
-            throw new RuntimeException("비밀번호와 비밀번호 확인을 모두 입력해 주세요.");
+            member.updateMember(memberProfileRequestDto, passwordEncoder.encode(newPassword), fileUrl);
         }
 
-        // 닉네임만 변경사항 없을 때 -> 프론트로부터 받은 값 (== 기존 nickname) 그대로 update
+        // 비밀번호만 변경사항 없을 때
+        else if (!profileImgFile.isEmpty() &&  !nickname.equals(member.getNickname())
+                && newPassword.equals("") && newPasswordCheck.equals("")) {
+            String password = member.getPassword();
+            String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
+            member.updateMember(memberProfileRequestDto, password, fileUrl);
+            return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
+        }
+        // 비밀번호, 비밀번호 확인 중 1개가 빈 값일 때
+        else if (!profileImgFile.isEmpty() &&  !nickname.equals(member.getNickname())
+                && (newPassword.equals("") || newPasswordCheck.equals(""))) {
+            return new ResponseDto(false, "비밀번호와 비밀번호 확인을 모두 입력해 주세요.", 200);
+        }
 
-
-//        MultipartFile profileImgFile = memberRequestDto.getProfileImgFile();
-//        String filePath = s3ProfileImageService.uploadProfileImage(memberInfoRequestDto.getProfileImgFile());
-//        String fileUrl = "https://" + S3ProfileImageService.CLOUD_FRONT_DOMAIN_NAME + "/profileImage/" + filePath;
-
-        String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
-        member.updateMember(memberInfoRequestDto, password, fileUrl);
-
-        return new ResponseDto(true, "특정 member의 프로필 수정에 성공하였습니다.");
+        return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
     }
+
+    //    // member 프로필 수정 -> front에서 마이페이지 접속 시, nickname 불러오기 안될 경우
+//    @Transactional
+//    public ResponseDto updateMember(MemberProfileRequestDto memberProfileRequestDto) throws IOException {
+//        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
+//                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
+//                );
+//
+//        MultipartFile profileImgFile = memberProfileRequestDto.getProfileImgFile();
+//        String nickname = memberProfileRequestDto.getNickname();
+//        String newPassword = passwordEncoder.encode(memberProfileRequestDto.getNewPassword());
+//        String newPasswordCheck = passwordEncoder.encode((memberProfileRequestDto.getNewPasswordCheck()));
+//
+//        // 모든 항목 변경사항 없을 때
+//        if (profileImgFile.isEmpty() && nickname.isEmpty()
+//                && newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
+//            return new ResponseDto(false, "변경사항이 없습니다.", 200);
+//        }
+//        // 프로필 이미지만 변경사항 없을 때
+//        else if (profileImgFile.isEmpty() && !nickname.isEmpty()
+//                && !newPassword.isEmpty() && !newPasswordCheck.isEmpty()) {
+//            if (!newPassword.equals(newPasswordCheck)) {
+//                return new ResponseDto(false, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", 200);
+//            }
+//            String fileUrl = member.getProfileImgUrl();
+//            member.updateMember(memberProfileRequestDto, newPassword, fileUrl);
+//            return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
+//        }
+//        // 닉네임만 변경사항 없을 때
+//        else if (!profileImgFile.isEmpty() && nickname.isEmpty()
+//                && !newPassword.isEmpty() && !newPasswordCheck.isEmpty()) {
+//            if (!newPassword.equals(newPasswordCheck)) {
+//                return new ResponseDto(false, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", 200);
+//            }
+//            memberProfileRequestDto.noChangeNickname(member.getNickname());
+//            String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
+//            member.updateMember(memberProfileRequestDto, newPassword, fileUrl);
+//        }
+//
+//        // 비밀번호만 변경사항 없을 때
+//        else if (!profileImgFile.isEmpty() &&  !nickname.isEmpty()
+//                && newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
+//            String password = member.getPassword();
+//            String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
+//            member.updateMember(memberProfileRequestDto, password, fileUrl);
+//            return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
+//        }
+//        // 비밀번호, 비밀번호 확인 중 1개가 빈 값일 때
+//        else if (!profileImgFile.isEmpty() &&  !nickname.isEmpty()
+//                && (newPassword.isEmpty() || newPasswordCheck.isEmpty())) {
+//            return new ResponseDto(false, "비밀번호와 비밀번호 확인을 모두 입력해 주세요.", 200);
+//        }
+//
+//        return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
+//    }
 
     // member 삭제(탈퇴)
     public ResponseDto deleteMember() {

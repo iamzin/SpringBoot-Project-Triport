@@ -2,6 +2,7 @@ package com.project.triport.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.triport.requestDto.MemberInfoRequestDto;
+import com.project.triport.requestDto.MemberProfileRequestDto;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -71,9 +72,9 @@ public class Member extends Timestamped {
         this.kakaoId = kakaoId;
     }
 
-    public void updateMember(MemberInfoRequestDto memberInfoRequestDto, String newPassword, String fileUrl) {
+    public void updateMember(MemberProfileRequestDto memberProfileRequestDto, String newPassword, String fileUrl) {
         this.password = newPassword;
-        this.nickname = memberInfoRequestDto.getNickname();
+        this.nickname = memberProfileRequestDto.getNickname();
         this.profileImgUrl = fileUrl;
     }
 
