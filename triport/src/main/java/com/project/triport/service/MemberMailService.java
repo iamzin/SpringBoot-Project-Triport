@@ -8,7 +8,6 @@ import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.PostRepository;
 import com.project.triport.requestDto.MemberMailRequestDto;
 import com.project.triport.responseDto.ResponseDto;
-import com.project.triport.util.MailHandler;
 import com.project.triport.util.MailUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

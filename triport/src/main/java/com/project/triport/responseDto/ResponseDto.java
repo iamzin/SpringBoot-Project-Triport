@@ -2,9 +2,6 @@ package com.project.triport.responseDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-
-import java.util.List;
 
 @Getter
 public class ResponseDto { // 10개씩 내보내야 함. page 처리 필요.

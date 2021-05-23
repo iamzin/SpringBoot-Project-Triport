@@ -1,12 +1,6 @@
 package com.project.triport.util;
 
 import com.project.triport.entity.Member;
-import com.project.triport.entity.MemberPromotion;
-import com.project.triport.entity.Post;
-import com.project.triport.repository.MemberPromotionRepository;
-import com.project.triport.repository.MemberRepository;
-import com.project.triport.repository.PostRepository;
-import com.project.triport.util.MailHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
