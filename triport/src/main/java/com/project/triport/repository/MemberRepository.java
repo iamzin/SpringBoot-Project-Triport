@@ -13,4 +13,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findById(Long memberId);
     Optional<Member> findByKakaoId(Long kakaoId);
     boolean existsByEmail(String email); //중복 가입 방지
+    boolean existsByNickname(String nickname); //닉네임 중복 방지
 }
