@@ -22,7 +22,7 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String description;
 
     @Column(nullable = false)
