@@ -43,7 +43,6 @@ public class MemberService {
         return new ResponseDto(true, member, "로그인한 사용자의 프로필 조회에 성공하였습니다.");
     }
 
-    // member 프로필 수정 -> front에서 마이페이지 접속 시, nickname 불러오기 가능할 경우
     @Transactional
     public ResponseDto updateMemberProfileInfo(MemberProfileInfoRequestDto memberProfileInfoRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
@@ -71,6 +70,9 @@ public class MemberService {
         // 비밀번호만 변경사항 없을 때
         else if (!nickname.equals(member.getNickname())
                 && newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
+            if (memberRepository.existsByNickname(nickname)) {
+                return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
+            }
             member.updateMemberProfileInfo(memberProfileInfoRequestDto, member.getPassword());
             return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
         }
@@ -81,6 +83,9 @@ public class MemberService {
         }
 
         // 모든 항목 변경사항 있을 때
+        if (memberRepository.existsByNickname(nickname)) {
+            return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
+        }
         return new ResponseDto(true, "프로필 정보 수정이 완료되었습니다.", 200);
     }
 

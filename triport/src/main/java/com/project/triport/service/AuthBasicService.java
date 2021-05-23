@@ -45,7 +45,11 @@ public class AuthBasicService {
     @Transactional
     public ResponseDto signup(MemberInfoRequestDto memberInfoRequestDto) {
         if (memberRepository.existsByEmail(memberInfoRequestDto.getEmail())) {
-            throw new RuntimeException("이미 가입되어 있는 email 입니다.");
+            return new ResponseDto(false, "이미 가입되어 있는 email 입니다.", 400);
+        }
+
+        if (memberRepository.existsByNickname(memberInfoRequestDto.getNickname())) {
+            return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
         }
 
         Member member = new Member().toMember(memberInfoRequestDto, passwordEncoder);
@@ -59,7 +63,7 @@ public class AuthBasicService {
         MemberPromotion memberPromotion = new MemberPromotion().newMemberPromo(member);
         memberPromotionRepository.save(memberPromotion);
 
-        return new ResponseDto(true, "회원가입 성공하였습니다.");
+        return new ResponseDto(true, "회원가입 성공하였습니다.", 200);
     }
 
     // 기본 로그인
