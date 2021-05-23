@@ -64,8 +64,9 @@ public class MemberService {
             if (!(newPassword.equals(newPasswordCheck))) {
                 return new ResponseDto(false, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", 400);
             }
-            memberProfileInfoRequestDto.noChangeNickname(member.getNickname());
-            member.updateMemberProfileInfo(memberProfileInfoRequestDto, passwordEncoder.encode(newPassword));
+            String encodeNewPassword = passwordEncoder.encode(newPassword);
+            member.updatePassword(encodeNewPassword);
+            return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
         }
         // 비밀번호만 변경사항 없을 때
         else if (!nickname.equals(member.getNickname())
@@ -73,7 +74,7 @@ public class MemberService {
             if (memberRepository.existsByNickname(nickname)) {
                 return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
             }
-            member.updateMemberProfileInfo(memberProfileInfoRequestDto, member.getPassword());
+            member.updateMemberNickname(nickname);
             return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
         }
         // 비밀번호 확인이 빈 값일 때 (비밀번호는 Entity에서 Valid로 검증됨)
@@ -81,11 +82,12 @@ public class MemberService {
                 && !newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
             return new ResponseDto(false, "비밀번호와 비밀번호 확인을 모두 입력해 주세요.", 400);
         }
-
         // 모든 항목 변경사항 있을 때
         if (memberRepository.existsByNickname(nickname)) {
             return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
         }
+        String encodeNewPassword = passwordEncoder.encode(newPassword);
+        member.updateMemberProfileInfo(nickname, encodeNewPassword);
         return new ResponseDto(true, "프로필 정보 수정이 완료되었습니다.", 200);
     }
 

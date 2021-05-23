@@ -25,8 +25,4 @@ public class MemberProfileInfoRequestDto {
     @Pattern(regexp = "^.*(?=^.{8,20}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#*]).*$",
             message = "비밀번호와 비밀번호 확인이 일치하지 않습니다.")
     private String newPasswordCheck;
-
-    public void noChangeNickname(String nickname) {
-        this.nickname = nickname;
-    }
 }

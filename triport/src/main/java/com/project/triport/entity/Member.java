@@ -72,16 +72,20 @@ public class Member extends Timestamped {
         this.kakaoId = kakaoId;
     }
 
-    public void updateMemberProfileInfo(MemberProfileInfoRequestDto memberProfileInfoRequestDto, String newPassword) {
-        this.password = newPassword;
-        this.nickname = memberProfileInfoRequestDto.getNickname();
-    }
-
     public void updateMemberProfileImg(String fileUrl) {
         this.profileImgUrl = fileUrl;
     }
 
-    public void updateTmpPassword(String tmpPwd, PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(tmpPwd);
+    public void updateMemberProfileInfo(String nickname, String newPassword) {
+        this.nickname = nickname;
+        this.password = newPassword;
+    }
+
+    public void updateMemberNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }
