@@ -9,6 +9,7 @@ import com.project.triport.repository.BoardRepository;
 import com.project.triport.requestDto.BoardRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.responseDto.results.DetailResponseDto;
+import com.project.triport.responseDto.results.ImageResponseDto;
 import com.project.triport.responseDto.results.ListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -209,7 +210,7 @@ public class BoardService {
                 boardImageInfo.updateShouldBeDelete(true);
             }
 
-            Optional<BoardImageInfo> firstBoardImageInfo = boardImageInfoRepository.findFirstByBoardOrderByIdDesc(board);
+            Optional<BoardImageInfo> firstBoardImageInfo = boardImageInfoRepository.findFirstByBoardOrderByIdAsc(board);
             String thumbNailUrl = "";
 
             if(firstBoardImageInfo.isPresent()) {
