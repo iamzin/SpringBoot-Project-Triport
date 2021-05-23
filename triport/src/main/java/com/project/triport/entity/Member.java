@@ -5,7 +5,6 @@ import com.project.triport.requestDto.MemberInfoRequestDto;
 import com.project.triport.requestDto.MemberProfileInfoRequestDto;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 

@@ -1,20 +1,12 @@
 package com.project.triport.validation;
 
-import com.project.triport.exception.ApiException;
-import com.project.triport.exception.ApiRequestException;
 import com.project.triport.responseDto.ResponseDto;
-import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 // @Valid로 인해 발생하는 Exception Handling
 @RestControllerAdvice // RestController에서

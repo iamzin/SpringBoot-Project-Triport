@@ -1,7 +1,5 @@
 package com.project.triport.jwt;
 
-import com.project.triport.entity.RefreshToken;
-import com.project.triport.repository.RefreshTokenRepository;
 import com.project.triport.responseDto.TokenDto;
 import com.project.triport.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
