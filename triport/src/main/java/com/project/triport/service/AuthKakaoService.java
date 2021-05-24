@@ -1,10 +1,14 @@
 package com.project.triport.service;
 
 import com.project.triport.entity.Member;
+import com.project.triport.entity.MemberGradeUp;
+import com.project.triport.entity.MemberPromotion;
 import com.project.triport.entity.RefreshToken;
 import com.project.triport.jwt.TokenProvider;
 import com.project.triport.kakao.KakaoOAuth2;
 import com.project.triport.kakao.KakaoUserInfo;
+import com.project.triport.repository.MemberGradeUpRepository;
+import com.project.triport.repository.MemberPromotionRepository;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.RefreshTokenRepository;
 import com.project.triport.responseDto.ResponseDto;
@@ -25,12 +29,14 @@ import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class AuthKakaoService {
+    private final MemberRepository memberRepository;
+    private final MemberGradeUpRepository memberGradeUpRepository;
+    private final MemberPromotionRepository memberPromotionRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthBasicService authBasicService;
     private final KakaoOAuth2 kakaoOAuth2;
     private @Value("${kakao.secret}") String kakaoKey;
     private final TokenProvider tokenProvider;
-    private final MemberRepository memberRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final AuthBasicService authBasicService;
 
     // Kakao 로그인
 //    @Transactional
@@ -63,6 +69,14 @@ public class AuthKakaoService {
                 String password = kakaoId + kakaoKey;
                 kakaoUser = new Member().KakaoLoginMember(kakaoId, kakaoEmail, password, kakaoNickname, kakaoProfileImgUrl);
                 memberRepository.save(kakaoUser);
+
+                // grade 관리를 위해 가입과 동시에 grade up table에 추가
+                MemberGradeUp memberGradeUp = new MemberGradeUp().newMemberGrade(kakaoUser);
+                memberGradeUpRepository.save(memberGradeUp);
+
+                // promotion Mail history 관리를 위해 가입과 동시에 member promotion history table에 추가
+                MemberPromotion memberPromotion = new MemberPromotion().newMemberPromo(kakaoUser);
+                memberPromotionRepository.save(memberPromotion);
             }
         }
 

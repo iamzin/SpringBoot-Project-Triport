@@ -129,11 +129,9 @@ public class AuthBasicService {
 
     public ResponseDto logout() {
         Member member = getAuthMember();
-        System.out.println("member = " + member);
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(member.getEmail())
                 .orElseThrow( () -> new RuntimeException("이미 로그아웃 된 사용자 입니다.")
         );
-        System.out.println("refreshToken = " + refreshToken);
         refreshTokenRepository.delete(refreshToken);
         return new ResponseDto(true, "로그아웃 완료");
     }
