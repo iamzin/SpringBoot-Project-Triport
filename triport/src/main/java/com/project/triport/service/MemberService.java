@@ -6,8 +6,9 @@ import com.project.triport.entity.MemberGradeUp;
 import com.project.triport.repository.BoardRepository;
 import com.project.triport.repository.MemberGradeUpRepository;
 import com.project.triport.repository.MemberRepository;
-import com.project.triport.requestDto.MemberProfileImgRequestDto;
-import com.project.triport.requestDto.MemberProfileInfoRequestDto;
+import com.project.triport.requestDto.MemberImgRequestDto;
+import com.project.triport.requestDto.MemberNicknameRequestDto;
+import com.project.triport.requestDto.MemberPwdRequestDto;
 import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.util.SecurityUtil;
@@ -43,60 +44,55 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto updateMemberProfileInfo(MemberProfileInfoRequestDto memberProfileInfoRequestDto) {
+    public ResponseDto updateMemberNickname(MemberNicknameRequestDto memberNicknameRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
         );
 
-        String nickname = memberProfileInfoRequestDto.getNickname();
-        String newPassword = memberProfileInfoRequestDto.getNewPassword();
-        String newPasswordCheck = memberProfileInfoRequestDto.getNewPasswordCheck();
-
-        // 모든 항목 변경사항 없을 때
-        if (nickname.equals(member.getNickname())
-                && newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
+        String nickname = memberNicknameRequestDto.getNickname();
+        // 변경사항 없을 때
+        if (nickname.equals(member.getNickname())) {
             return new ResponseDto(false, "변경사항이 없습니다.", 400);
         }
-        // 닉네임만 변경사항 없을 때
-        else if (nickname.equals(member.getNickname())
-                && !newPassword.isEmpty() && !newPasswordCheck.isEmpty()) {
-            if (!(newPassword.equals(newPasswordCheck))) {
-                return new ResponseDto(false, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", 400);
-            }
-            String encodeNewPassword = passwordEncoder.encode(newPassword);
-            member.updatePassword(encodeNewPassword);
-            return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
-        }
-        // 비밀번호만 변경사항 없을 때
-        else if (!nickname.equals(member.getNickname())
-                && newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
-            if (memberRepository.existsByNickname(nickname)) {
+        // 변경사항 있을 때
+        // 중복된 닉네임일 때
+        else if (memberRepository.existsByNickname(nickname)) {
                 return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
-            }
-            member.updateMemberNickname(nickname);
-            return new ResponseDto(true, "프로필 수정이 완료되었습니다.", 200);
         }
-        // 비밀번호 확인이 빈 값일 때 (비밀번호는 Entity에서 Valid로 검증됨)
-        else if (!nickname.equals(member.getNickname())
-                && !newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
-            return new ResponseDto(false, "비밀번호와 비밀번호 확인을 모두 입력해 주세요.", 400);
-        }
-        // 모든 항목 변경사항 있을 때
-        if (memberRepository.existsByNickname(nickname)) {
-            return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
-        }
-        String encodeNewPassword = passwordEncoder.encode(newPassword);
-        member.updateMemberProfileInfo(nickname, encodeNewPassword);
-        return new ResponseDto(true, "프로필 정보 수정이 완료되었습니다.", 200);
+
+        member.updateMemberNickname(nickname);
+        return new ResponseDto(true, "닉네임 변경이 완료되었습니다.", 200);
     }
 
     @Transactional
-    public ResponseDto updateMemberProfileImg(MemberProfileImgRequestDto memberProfileImgRequestDto) throws IOException {
+    public ResponseDto updateMemberPwd(MemberPwdRequestDto memberPwdRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
                 );
 
-        MultipartFile profileImgFile = memberProfileImgRequestDto.getProfileImgFile();
+        String newPassword = memberPwdRequestDto.getNewPassword();
+        String newPasswordCheck = memberPwdRequestDto.getNewPasswordCheck();
+
+        // 비밀번호, 비밀번호 확인 모두 빈 값일 때
+        if (newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
+            return new ResponseDto(false, "변경사항이 없습니다.", 400);
+        }
+        // 비밀번호는 입력하고, 비밀번호 확인은 빈 값일 때 (비밀번호는 Entity에서 Valid로 검증됨)
+        else if (!newPassword.isEmpty() && newPasswordCheck.isEmpty()) {
+            return new ResponseDto(false, "비밀번호와 비밀번호 확인을 모두 입력해 주세요.", 400);
+        }
+        String encodeNewPassword = passwordEncoder.encode(newPassword);
+        member.updatePassword(encodeNewPassword);
+        return new ResponseDto(true, "비밀번호 변경이 완료되었습니다.", 200);
+    }
+
+    @Transactional
+    public ResponseDto updateMemberProfileImg(MemberImgRequestDto memberImgRequestDto) throws IOException {
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
+                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
+                );
+
+        MultipartFile profileImgFile = memberImgRequestDto.getProfileImgFile();
         String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
         member.updateMemberProfileImg(fileUrl);
 
@@ -104,6 +100,7 @@ public class MemberService {
     }
 
     // member 삭제(탈퇴)
+    @Transactional
     public ResponseDto deleteMember() {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
@@ -116,22 +113,25 @@ public class MemberService {
     // TRAVELER mailing: Trils 좋아요 5개 이상
     // TRAVELER -> TRAVEL EDITOR: Trilog 1개 이상 create
     // TRAVEL EDITOR -> TRAVEL MASTER: Trilog 3개 이상 create
+    @Transactional
     public String GradeupMember(Member member) {
         List<Board> boardList = boardRepository.findByMember(member);
         Long boardNum = (long) boardList.size();
 
         MemberGradeUp memberGradeUp = memberGradeUpRepository.findByMember(member);
 
-        String grade = "no change";
+        final String subMsg = "no change";
 
         if (boardNum == 1) {
             memberGradeUp.gradeUpMember(member, TRAVEL_EDITOR);
-            grade = "TRAVEL Editor";
+            member.updateGrade(TRAVEL_EDITOR);
+            return "TRAVEL Editor";
         } else if (boardNum == 3) {
             memberGradeUp.gradeUpMember(member, TRAVEL_MASTER);
-            grade = "TRAVEL Master";
+            member.updateGrade(TRAVEL_MASTER);
+            return "TRAVEL Master";
         }
 
-        return grade;
+        return subMsg;
     }
 }

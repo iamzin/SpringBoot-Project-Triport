@@ -1,7 +1,8 @@
 package com.project.triport.controller;
 
-import com.project.triport.requestDto.MemberProfileImgRequestDto;
-import com.project.triport.requestDto.MemberProfileInfoRequestDto;
+import com.project.triport.requestDto.MemberImgRequestDto;
+import com.project.triport.requestDto.MemberNicknameRequestDto;
+import com.project.triport.requestDto.MemberPwdRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +23,19 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMember());
     }
 
-    @PostMapping("/profile/info")
-    public ResponseEntity<ResponseDto> updateMemberProfileInfo(@RequestBody @Valid MemberProfileInfoRequestDto memberProfileInfoRequestDto) {
-        return ResponseEntity.ok(memberService.updateMemberProfileInfo(memberProfileInfoRequestDto));
+    @PostMapping("/profile/nickname")
+    public ResponseEntity<ResponseDto> updateMemberNickname(@RequestBody @Valid MemberNicknameRequestDto memberNicknameRequestDto) {
+        return ResponseEntity.ok(memberService.updateMemberNickname(memberNicknameRequestDto));
+    }
+
+    @PostMapping("/profile/pwd")
+    public ResponseEntity<ResponseDto> updateMemberPwd(@RequestBody @Valid MemberPwdRequestDto memberPwdRequestDto) {
+        return ResponseEntity.ok(memberService.updateMemberPwd(memberPwdRequestDto));
     }
 
     @PostMapping("/profile/img")
-    public ResponseEntity<ResponseDto> updateMemberProfileImg(@ModelAttribute MemberProfileImgRequestDto memberProfileImgRequestDto) throws IOException {
-        return ResponseEntity.ok(memberService.updateMemberProfileImg(memberProfileImgRequestDto));
+    public ResponseEntity<ResponseDto> updateMemberProfileImg(@ModelAttribute MemberImgRequestDto memberImgRequestDto) throws IOException {
+        return ResponseEntity.ok(memberService.updateMemberProfileImg(memberImgRequestDto));
     }
 
     @DeleteMapping("/profile")

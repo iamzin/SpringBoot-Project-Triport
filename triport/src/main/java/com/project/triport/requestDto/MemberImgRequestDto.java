@@ -6,6 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @AllArgsConstructor
-public class MemberProfileImgRequestDto {
+public class MemberImgRequestDto {
     private MultipartFile profileImgFile;
 }
