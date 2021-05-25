@@ -10,10 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
 public class TriportApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(TriportApplication.class, args);
     }
-
 }
 

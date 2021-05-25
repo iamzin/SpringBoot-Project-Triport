@@ -128,7 +128,9 @@ public class PostService {
             saveHashtagList(hashtagList);
             post.addHashtagAll(hashtagList);
 
-            apiUtil.encodingFile(post);
+            if(!videoType.equals("mp4") || !probeResult.getPosPlay()) {
+                apiUtil.encodingFile(post);
+            }
             return new ResponseDto(true, "포스팅 완료!");
         } catch (Exception e) {
             logger.error(e.getMessage());
