@@ -71,4 +71,5 @@ public class Post extends Timestamped {
     public void minusLikeNum() {
         this.likeNum--;
     }
+
 }

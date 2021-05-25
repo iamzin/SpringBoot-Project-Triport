@@ -27,13 +27,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,10 +59,18 @@ public class PostService {
                 postSet.add(postHashtag.getPost());
             }
             List<Post> postList = new ArrayList<>(postSet);
+            Comparator<Post> comparator;
+            if("likeNum".equals(filter)) {
+                comparator = (post1, post2) -> (int) (post2.getLikeNum() - post1.getLikeNum());
+            } else{
+                comparator = (post1, post2) -> post2.getCreatedAt().compareTo(post1.getCreatedAt());
+            }
+            postList.sort(comparator);
             final int start = (int)pageable.getOffset();
             final int end = Math.min((start + pageable.getPageSize()), postList.size());
             postPage= new PageImpl<>(postList.subList(start, end), pageable, postList.size());
         }
+        postPage.getSort();
         // 반환 page가 last page인지 확인
         Boolean isLast = postPage.isLast();
         // post와 member 정보를 통해 DetailResponseDto에 필요한 정보를 기입(생성자 사용)
