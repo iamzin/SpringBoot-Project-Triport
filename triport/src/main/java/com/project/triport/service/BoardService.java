@@ -179,9 +179,9 @@ public class BoardService {
         }
 
         // 등업 조건 확인 및 grade up
-        memberService.GradeupMember(member);
+        String grade = memberService.GradeupMember(member);
 
-        return new ResponseDto(true, "게시글이 작성되었습니다.",200);
+        return new ResponseDto(true, "게시글이 작성되었습니다.", grade,200);
     }
 
     // 게시글 수정

@@ -10,6 +10,7 @@ public class ResponseDto { // 10개씩 내보내야 함. page 처리 필요.
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object results;
     private String msg;
+    private String subMsg;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean last; // 마지막 postId일 때 true, 이외에는 false
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -51,6 +52,13 @@ public class ResponseDto { // 10개씩 내보내야 함. page 처리 필요.
     public ResponseDto(Boolean ok, String msg, int status) {
         this.ok = ok;
         this.msg = msg;
+        this.status = status;
+    }
+
+    public ResponseDto(Boolean ok, String msg, String subMsg, int status) {
+        this.ok = ok;
+        this.msg = msg;
+        this.subMsg = subMsg;
         this.status = status;
     }
 }

@@ -20,8 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static com.project.triport.entity.MemberGrade.TRAVEL_EDITOR;
-import static com.project.triport.entity.MemberGrade.TRAVEL_MASTER;
+import static com.project.triport.entity.MemberGrade.*;
 
 @Service
 @RequiredArgsConstructor
@@ -117,19 +116,22 @@ public class MemberService {
     // TRAVELER mailing: Trils 좋아요 5개 이상
     // TRAVELER -> TRAVEL EDITOR: Trilog 1개 이상 create
     // TRAVEL EDITOR -> TRAVEL MASTER: Trilog 3개 이상 create
-    public void GradeupMember(Member member) {
+    public String GradeupMember(Member member) {
         List<Board> boardList = boardRepository.findByMember(member);
         Long boardNum = (long) boardList.size();
 
         MemberGradeUp memberGradeUp = memberGradeUpRepository.findByMember(member);
 
+        String grade = "no change";
+
         if (boardNum == 1) {
             memberGradeUp.gradeUpMember(member, TRAVEL_EDITOR);
+            grade = "TRAVEL Editor";
         } else if (boardNum == 3) {
             memberGradeUp.gradeUpMember(member, TRAVEL_MASTER);
+            grade = "TRAVEL Master";
         }
 
-        // TODO: triport 사이트 알림, 메일링 메소드 추가
-
+        return grade;
     }
 }
