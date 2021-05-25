@@ -1,14 +1,16 @@
 package com.project.triport.requestDto;
 
-import lombok.AllArgsConstructor;
+//import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
-@AllArgsConstructor
+//@AllArgsConstructor
+@NoArgsConstructor
 public class MemberNicknameRequestDto {
     @NotBlank(message = "닉네임을 입력해 주세요.")
     @Size(min = 3, max = 12, message = "닉네임은 3-12자리 이내로 입력해 주세요.")
