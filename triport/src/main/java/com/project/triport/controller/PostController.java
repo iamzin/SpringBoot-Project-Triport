@@ -17,16 +17,18 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/api/all/posts")
-    public ResponseDto readPostsAll(
-            @RequestParam int page,
-            @RequestParam String filter,
-            @RequestParam String keyword) {
+    public ResponseDto readPostsAll(@RequestParam int page, @RequestParam String filter, @RequestParam String keyword) {
         return postService.readPostsAll(page, filter, keyword);
     }
 
     @GetMapping("/api/all/posts/detail/{postId}")
     public ResponseDto readPost(@PathVariable Long postId) {
         return postService.readPost(postId);
+    }
+
+    @GetMapping("/api/all/posts/member/{memberId}")
+    public ResponseDto readPostsAuthor(@PathVariable Long memberId, @RequestParam int page, @RequestParam String filter) {
+        return postService.readPostsAuthor(memberId, page, filter);
     }
 
     @GetMapping("/api/posts/member")

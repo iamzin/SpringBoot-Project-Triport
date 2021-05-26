@@ -1,5 +1,6 @@
 package com.project.triport.responseDto.results.property;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.triport.entity.Board;
 import com.project.triport.entity.CommentChild;
 import com.project.triport.entity.CommentParent;
@@ -8,6 +9,8 @@ import lombok.Getter;
 
 @Getter
 public class AuthorResponseDto {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long authorId;
     // Author 관련 전달 사항
     private String nickname; // email 주소(id)
     private String profileImgUrl; // http://15.165.205.40/profiles/img1.png
@@ -15,6 +18,7 @@ public class AuthorResponseDto {
     public AuthorResponseDto(Post post) {
         this.nickname = post.getMember().getNickname();
         this.profileImgUrl = post.getMember().getProfileImgUrl();
+        this.authorId = post.getMember().getId();
     }
 
     public AuthorResponseDto(Board board) {

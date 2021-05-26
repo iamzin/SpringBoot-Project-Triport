@@ -11,6 +11,8 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllBy(Pageable pageable);
 
+    Page<Post> findByMemberId(Long memberId, Pageable pageable);
+
     Page<Post> findByHashtagContaining(String hashtag, Pageable pageable);
 
     Page<Post> findByHashtag(String hashtag, Pageable pageable);

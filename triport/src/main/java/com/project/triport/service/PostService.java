@@ -70,7 +70,22 @@ public class PostService {
             final int end = Math.min((start + pageable.getPageSize()), postList.size());
             postPage= new PageImpl<>(postList.subList(start, end), pageable, postList.size());
         }
-        postPage.getSort();
+        // 반환 page가 last page인지 확인
+        Boolean isLast = postPage.isLast();
+        // post와 member 정보를 통해 DetailResponseDto에 필요한 정보를 기입(생성자 사용)
+        Member member = getAuthMember();
+        // 필요한 post 정보를 담은 DetailResponseDto 를 담기 위한 리스트 생성
+        List<DetailResponseDto> responseDtoList = makeResponseDtoList(postPage, false, member);
+
+        return new ResponseDto(true, responseDtoList, "전체 post 조회 완료", isLast);
+    }
+
+    public ResponseDto readPostsAuthor(Long memberId, int page, String filter){
+        // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(6), sort 고정값(DESC))
+        Sort sort = Sort.by(Sort.Direction.DESC, filter);
+        Pageable pageable = PageRequest.of(page - 1, 6, sort);
+        // 전체 post 리스트 조회
+        Page<Post> postPage = postRepository.findByMemberId(memberId, pageable);
         // 반환 page가 last page인지 확인
         Boolean isLast = postPage.isLast();
         // post와 member 정보를 통해 DetailResponseDto에 필요한 정보를 기입(생성자 사용)
