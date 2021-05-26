@@ -46,12 +46,17 @@ public class PostService {
 
     public ResponseDto readPostsAll(int page, String filter, String keyword) {
         // paging, sort 정리(page uri, filter(sortBy) uri, size 고정값(6), sort 고정값(DESC))
-        Sort sort = Sort.by(Sort.Direction.DESC, filter);
+        Sort sort;
+        if("likeNum".equals(filter)){
+            sort = Sort.by(Sort.Direction.DESC, filter).and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        } else{
+            sort = Sort.by(Sort.Direction.DESC, filter);
+        }
         Pageable pageable = PageRequest.of(page - 1, 6, sort);
         // 전체 post 리스트 조회
-        Page<Post> postPage;
+        Slice<Post> postPage;
         if ("".equals(keyword)) {
-            postPage = postRepository.findAllBy(pageable);
+            postPage = postRepository.findAll(pageable);
         } else {
             List<PostHashtag> postHashtagList = postHashtagRepository.findByHashtagContaining(keyword);
             Set<Post> postSet = new HashSet<>();
