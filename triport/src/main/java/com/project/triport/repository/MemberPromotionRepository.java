@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberPromotionRepository extends JpaRepository<MemberPromotion, Long> {
     MemberPromotion findByMember(Member member);
+    void deleteByMember(Member member);
 }

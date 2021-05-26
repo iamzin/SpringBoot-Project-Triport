@@ -1,9 +1,12 @@
 package com.project.triport.controller;
 
+import com.project.triport.entity.Board;
+import com.project.triport.entity.Member;
 import com.project.triport.requestDto.MemberImgRequestDto;
 import com.project.triport.requestDto.MemberNicknameRequestDto;
 import com.project.triport.requestDto.MemberPwdRequestDto;
 import com.project.triport.responseDto.ResponseDto;
+import com.project.triport.service.BoardService;
 import com.project.triport.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final BoardService boardService;
 
     @GetMapping("/profile")
     public ResponseEntity<ResponseDto> getMemberInfo() {
@@ -39,7 +44,11 @@ public class MemberController {
     }
 
     @DeleteMapping("/profile")
-    public ResponseEntity<ResponseDto> deleteMember() {
+    public ResponseEntity<ResponseDto> deleteMember() throws IOException {
+        // 해당 member가 작성한 board와 그 board에 관련 데이터* 삭제:
+        // boardService에 method를 구현하여 memberService와 boardService 간의 이중 주입 방지
+        // *관련 데이터: 해당 board에 업로드된 이미지들, 좋아요, 댓글, 대댓글
+        boardService.deleteBoardListFromMember();
         return ResponseEntity.ok(memberService.deleteMember());
     }
 }

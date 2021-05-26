@@ -15,4 +15,6 @@ public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
 
     @EntityGraph(attributePaths = ("board"))
     List<BoardLike> findByMember(Member member);
+
+    void deleteAllByMember(Member member);
 }

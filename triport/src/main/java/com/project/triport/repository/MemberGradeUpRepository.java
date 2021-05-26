@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberGradeUpRepository extends JpaRepository<MemberGradeUp, Long> {
     MemberGradeUp findByMember(Member member);
+    void deleteByMember(Member member);
 }

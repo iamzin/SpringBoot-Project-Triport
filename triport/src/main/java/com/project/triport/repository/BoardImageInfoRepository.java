@@ -36,4 +36,7 @@ public interface BoardImageInfoRepository extends JpaRepository<BoardImageInfo, 
     @Modifying
     @Query("delete from BoardImageInfo i where i.member = :member and i.board = :board and i.shouldBeDeleted = true")
     void bulkDeleteImageInfoFromUpdate(@Param("member") Member member, @Param("board") Board board);
+
+    List<BoardImageInfo> findAllByMember(Member member);
+    void deleteAllByMember(Member member);
 }

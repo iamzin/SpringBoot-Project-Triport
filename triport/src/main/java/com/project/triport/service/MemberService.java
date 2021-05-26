@@ -1,11 +1,7 @@
 package com.project.triport.service;
 
-import com.project.triport.entity.Board;
-import com.project.triport.entity.Member;
-import com.project.triport.entity.MemberGradeUp;
-import com.project.triport.repository.BoardRepository;
-import com.project.triport.repository.MemberGradeUpRepository;
-import com.project.triport.repository.MemberRepository;
+import com.project.triport.entity.*;
+import com.project.triport.repository.*;
 import com.project.triport.requestDto.MemberImgRequestDto;
 import com.project.triport.requestDto.MemberNicknameRequestDto;
 import com.project.triport.requestDto.MemberPwdRequestDto;
@@ -28,8 +24,17 @@ import static com.project.triport.entity.MemberGrade.*;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final BoardRepository boardRepository;
     private final MemberGradeUpRepository memberGradeUpRepository;
+    private final MemberPromotionRepository memberPromotionRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final BoardRepository boardRepository;
+    private final BoardLikeRepository boardLikeRepository;
+    private final CommentParentRepository commentParentRepository;
+    private final CommentParentLikeRepository commentParentLikeRepository;
+    private final CommentChildRepository commentChildRepository;
+    private final CommentChildLikeRepository commentChildLikeRepository;
     private final S3ProfileImageService s3ProfileImageService;
     private final PasswordEncoder passwordEncoder;
 
@@ -99,16 +104,6 @@ public class MemberService {
         return new ResponseDto(true, fileUrl,"프로필 이미지 수정이 완료되었습니다.", 200);
     }
 
-    // member 삭제(탈퇴)
-    @Transactional
-    public ResponseDto deleteMember() {
-        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
-
-        memberRepository.delete(member);
-        return new ResponseDto(true, "회원탈퇴가 완료되었습니다.");
-    }
-
     // member grade up
     // TRAVELER mailing: Trils 좋아요 5개 이상
     // TRAVELER -> TRAVEL EDITOR: Trilog 1개 이상 create
@@ -133,5 +128,69 @@ public class MemberService {
         }
 
         return subMsg;
+    }
+
+    // member 삭제(탈퇴)
+    @Transactional
+    public ResponseDto deleteMember() throws IOException {
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
+                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
+
+        // post
+        // postLike minus 처리
+        List<PostLike> postLikeList = postLikeRepository.findByMember(member);
+        for (PostLike postLike : postLikeList) {
+            postLike.getPost().minusLikeNum();
+        }
+        // postLike 삭제: 해당 member가 postLike한 기록 삭제
+        postLikeRepository.deleteAllByMember(member);
+        // post 삭제: 해당 member가 작성한 post의 해시태그, 좋아요 기록 삭제
+        postRepository.deleteAllByMember(member);
+
+        // board
+        // commentChildLike minus 처리: 해당 member가 다른 commentChild에 like한 경우
+        List<CommentChildLike> commentChildLikeList = commentChildLikeRepository.findAllByMember(member);
+        for (CommentChildLike commentChildLike : commentChildLikeList) {
+            commentChildLike.getCommentChild().updateLikeNum(-1);
+        }
+        // commentChildLike 삭제: 해당 member가 commentChildLike한 기록 삭제
+        commentChildLikeRepository.deleteAllByMember(member);
+        // commentParentLike minus 처리: 해당 member가 다른 commentParent에 like한 경우
+        List<CommentParentLike> commentParentLikeList = commentParentLikeRepository.findAllByMember(member);
+        for (CommentParentLike commentParentLike : commentParentLikeList) {
+            commentParentLike.getCommentParent().updateLikeNum(-1);
+        }
+        // commentParentLike 삭제: 해당 member가 commentParentLike한 기록 삭제
+        commentParentLikeRepository.deleteAllByMember(member);
+        // commentParent의 commentChildNum minus 처리: 해당 member가 작성한 commentChild가 달린 commentParent에 대한 처리
+        List<CommentChild> commentChildList = commentChildRepository.findAllByMember(member);
+        for (CommentChild commentChild : commentChildList) {
+            commentChild.getCommentParent().updateCommentChildNum(-1);
+        }
+        // commentChild 삭제
+        commentChildRepository.deleteAllByMember(member);
+        // commentParent가 달린 board의 댓글 수 minus 처리
+        List<CommentParent> commentParentList = commentParentRepository.findAllByMember(member);
+        for (CommentParent commentParent : commentParentList) {
+            commentParent.getBoard().updateCommentNum(-1);
+        }
+        // commentParent 삭제
+        commentParentRepository.deleteAllByMember(member);
+        // boardLike minus 처리
+        List<BoardLike> boardLikeList = boardLikeRepository.findByMember(member);
+        for (BoardLike boardLike : boardLikeList) {
+            boardLike.getBoard().updateLikeNum(-1);
+        }
+        // boardLike 삭제
+        boardLikeRepository.deleteAllByMember(member);
+        // board 삭제: Controller에서 진행 (이중 주입 방지)
+
+        // member
+        memberPromotionRepository.deleteByMember(member);
+        memberGradeUpRepository.deleteByMember(member);
+        refreshTokenRepository.deleteByEmail(member.getEmail());
+        memberRepository.delete(member);
+
+        return new ResponseDto(true, "회원탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.");
     }
 }
