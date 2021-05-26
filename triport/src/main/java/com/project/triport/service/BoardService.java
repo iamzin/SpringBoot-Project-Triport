@@ -250,6 +250,23 @@ public class BoardService {
         }
     }
 
+    // memeber 회원 탈퇴을 위한 board 삭제 method
+    // 탈퇴할 member의 board 삭제: boardService에서 진행 (이중 주입 방지)
+    // 해당 board 관련 데이터* 모두 삭제
+    // *관련 데이터: 해당 board에 업로드된 이미지들, 좋아요, 댓글들 모두 삭제
+    public void deleteBoardListFromMember(Member member) throws IOException {
+        Member loginMember = getAuthMember();
+        if (member.equals(loginMember)) {
+            List<Board> boardList = boardRepository.findByMember(member);
+            for (Board board : boardList) {
+                boardImageInfoService.deleteImageFromS3(board);
+                boardRepository.delete(board);
+            }
+        } else {
+            throw new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
+        }
+    }
+
     public Member getAuthMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || AnonymousAuthenticationToken.class.
