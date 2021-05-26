@@ -18,4 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByHashtag(String hashtag, Pageable pageable);
 
     List<Post> findByMember(Member member);
+
+    void deleteAllByMember(Member member);
 }
