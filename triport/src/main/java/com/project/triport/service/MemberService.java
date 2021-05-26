@@ -45,7 +45,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보가 없습니다."));
         MemberInformationResponseDto.of(member);
-        return new ResponseDto(true, member, "로그인한 사용자의 프로필 조회에 성공하였습니다.");
+        return new ResponseDto(true, member, "로그인한 사용자의 프로필 조회에 성공하였습니다.", 200);
     }
 
     @Transactional
@@ -132,9 +132,14 @@ public class MemberService {
 
     // member 삭제(탈퇴)
     @Transactional
-    public ResponseDto deleteMember() throws IOException {
+    public ResponseDto deleteMember() {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
+
+        // kakaoId가 있는 member인 경우 AuthKakaoService를 통해 Kakao 연결끊기 실행
+//        if (!(member.getKakaoId() == null)) {
+//
+//        }
 
         // post
         // postLike minus 처리
@@ -191,6 +196,6 @@ public class MemberService {
         refreshTokenRepository.deleteByEmail(member.getEmail());
         memberRepository.delete(member);
 
-        return new ResponseDto(true, "회원탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.");
+        return new ResponseDto(true, "회원탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.", 200);
     }
 }

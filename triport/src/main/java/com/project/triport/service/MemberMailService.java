@@ -34,7 +34,7 @@ public class MemberMailService {
 
         mailUtil.TempPwdMail(member);
 
-        return new ResponseDto(true, "회원님의 이메일로 임시 비밀번호를 발송하였습니다.");
+        return new ResponseDto(true, "회원님의 이메일로 임시 비밀번호를 발송하였습니다.", 200);
     }
 
     // Trils 좋아요 5개 + TRAVELER 인 member에게

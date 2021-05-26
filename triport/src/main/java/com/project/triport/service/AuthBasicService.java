@@ -133,7 +133,7 @@ public class AuthBasicService {
                 .orElseThrow( () -> new RuntimeException("이미 로그아웃 된 사용자 입니다.")
         );
         refreshTokenRepository.delete(refreshToken);
-        return new ResponseDto(true, "로그아웃 완료");
+        return new ResponseDto(true, "로그아웃 완료", 200);
     }
 
     // access, refresh token header에 담기
@@ -149,7 +149,7 @@ public class AuthBasicService {
         Member member = memberRepository.findMemberByEmail(authentication.getName());
 
         // ResponseBody에 memberInfo 담아서 return
-        return new ResponseDto(true, member, "사용자 token 발급을 성공하였습니다.");
+        return new ResponseDto(true, member, "사용자 token 발급을 성공하였습니다.", 200);
     }
 
     public Member getAuthMember() {
