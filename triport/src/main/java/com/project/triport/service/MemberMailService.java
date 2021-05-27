@@ -31,8 +31,13 @@ public class MemberMailService {
     public ResponseDto sendTempPwd(MemberMailRequestDto memberMailRequestDto) {
         Member member = memberRepository.findByEmail(memberMailRequestDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("입력하신 이메일로 가입된 사용자가 없습니다."));
+        
+        if (!(member.getKakaoId() == null)) {
+            return new ResponseDto(false, "카카오 로그인 사용자는 비밀번호 찾기 이용이 불가합니다.🥲");
+        }
 
-        mailUtil.TempPwdMail(member);
+        String tmpPwd = mailUtil.TempPwdMail(member);
+        member.updatePassword(tmpPwd);
 
         return new ResponseDto(true, "회원님의 이메일로 임시 비밀번호를 발송하였습니다.", 200);
     }
