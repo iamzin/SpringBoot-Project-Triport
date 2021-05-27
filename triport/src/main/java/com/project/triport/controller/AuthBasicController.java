@@ -26,8 +26,7 @@ public class AuthBasicController {
 
     // 기본 로그인
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto> login(@RequestBody AuthLoginReqeustDto authLoginReqeustDto,
-                                                              HttpServletResponse response) {
+    public ResponseEntity<ResponseDto> login(@RequestBody AuthLoginReqeustDto authLoginReqeustDto, HttpServletResponse response) {
         return ResponseEntity.ok(authBasicService.login(authLoginReqeustDto, response));
     }
 
