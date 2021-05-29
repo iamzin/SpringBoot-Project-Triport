@@ -23,8 +23,8 @@ public class AuthKakaoController {
         return ResponseEntity.ok(authKakaoService.kakaoLogin(code, response));
     }
 
-    @GetMapping("/logout")
-    public ResponseEntity<ResponseDto> Logout() {
-        return ResponseEntity.ok(authBasicService.logout());
-    }
+//    @GetMapping("/logout")
+//    public ResponseEntity<ResponseDto> Logout() {
+//        return ResponseEntity.ok(authBasicService.logout());
+//    }
 }

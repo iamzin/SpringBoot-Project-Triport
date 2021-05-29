@@ -36,4 +36,9 @@ public class AuthBasicController {
                                                                 HttpServletResponse response) {
         return ResponseEntity.ok(authBasicService.reissue(tokenRequestDto, response));
     }
+
+    @GetMapping("/logout")
+    public ResponseEntity<ResponseDto> Logout() {
+        return ResponseEntity.ok(authBasicService.logout());
+    }
 }
