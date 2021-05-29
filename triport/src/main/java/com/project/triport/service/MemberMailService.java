@@ -14,12 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 //@AllArgsConstructor
@@ -30,6 +32,7 @@ public class MemberMailService {
     private final PostRepository postRepository;
     private final MemberPromotionRepository memberPromotionRepository;
     private final MailUtil mailUtil;
+    private final PasswordEncoder passwordEncoder;
 
     // 임시 비밀번호 안내 메일 발송
     @Transactional
@@ -48,7 +51,10 @@ public class MemberMailService {
             return new ResponseDto(false, "카카오 로그인 사용자는 비밀번호 찾기 이용이 불가합니다.🥲", 400);
         }
 
-        mailUtil.TempPwdMail(member);
+        String tmpPwd = generateTempPwd();
+        member.updatePassword(passwordEncoder.encode(tmpPwd));
+        mailUtil.TempPwdMail(member, tmpPwd);
+
         return new ResponseDto(true, "회원님의 이메일로 임시 비밀번호를 발송하였습니다.", 200);
     }
 
@@ -68,6 +74,22 @@ public class MemberMailService {
 
         mailUtil.trilsPromoMail(likeNum, author, isEnabled);
         memberPromotion.updateTrilsPromo(author, true);
+    }
+
+    // 임시 비밀번호 생성: 랜덤 영문자+숫자
+    public String generateTempPwd() {
+
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 12;
+
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
 }
