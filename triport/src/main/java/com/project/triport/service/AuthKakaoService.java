@@ -101,4 +101,9 @@ public class AuthKakaoService {
 
         return authBasicService.tokenToHeaders(authentication, tokenDto, response);
     }
+
+    // TODO: 회원 탈퇴 시, 카카오와 서비스 연결 끊기
+//    public void disconnectKakaoAndMember() {
+//        response.
+//    }
 }

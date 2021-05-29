@@ -17,15 +17,12 @@ import java.util.Random;
 public class MailUtil {
 
     private final JavaMailSender mailSender;
-    private final PasswordEncoder passwordEncoder;
     private @Value("${spring.mail.username}") String fromMail;
 
 
     // *임시 비밀번호 Mail 발송
     @Async
-    public void TempPwdMail(Member member) {
-        String tmpPwd = passwordEncoder.encode(generateTempPwd());
-        member.updatePassword(tmpPwd);
+    public void TempPwdMail(Member member, String tmpPwd) {
 
         try {
             MailHandler mailHandler = tempPwdMail(member, tmpPwd);
@@ -61,22 +58,6 @@ public class MailUtil {
         mailHandler.setInline("tripper_with_logo", "static/tripper_with_logo.png");
 
         return mailHandler;
-    }
-
-    // 임시 비밀번호 생성: 랜덤 영문자+숫자
-    public String generateTempPwd() {
-
-        int leftLimit = 48; // numeral '0'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = 12;
-
-        Random random = new Random();
-
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
     }
 
     // *Trils LikeNum 5개인 member에게 promotion 메일 발송

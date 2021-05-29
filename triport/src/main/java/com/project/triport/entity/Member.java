@@ -44,6 +44,7 @@ public class Member extends Timestamped {
     private Authority authority;
 
     // TODO: password encoding -> Service에서 처리하도록 변경
+    // TODO: 기본 가입자는 kakaoId를 0으로 저장 -> front도 함께 작업 필요 (프로필 설정 비밀번호 변경, 회원탈퇴에서 사용 중)
     public Member toMember(MemberInfoRequestDto memberInfoRequestDto, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .email(memberInfoRequestDto.getEmail())

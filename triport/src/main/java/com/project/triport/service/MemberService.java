@@ -101,7 +101,7 @@ public class MemberService {
         String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
         member.updateMemberProfileImg(fileUrl);
 
-        return new ResponseDto(true, fileUrl,"프로필 이미지 수정이 완료되었습니다.", 200);
+        return new ResponseDto(true, "프로필 이미지 수정이 완료되었습니다.", fileUrl, 200);
     }
 
     // member grade up
@@ -136,7 +136,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
 
-        // kakaoId가 있는 member인 경우 AuthKakaoService를 통해 Kakao 연결끊기 실행
+        // TODO: kakaoId가 있는 member인 경우 AuthKakaoService를 통해 Kakao 연결끊기 실행
 //        if (!(member.getKakaoId() == null)) {
 //
 //        }

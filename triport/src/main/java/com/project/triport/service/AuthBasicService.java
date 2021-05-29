@@ -137,8 +137,7 @@ public class AuthBasicService {
     }
 
     // access, refresh token header에 담기
-    public ResponseDto tokenToHeaders(Authentication authentication,
-                                                       TokenDto tokenDto, HttpServletResponse response) {
+    public ResponseDto tokenToHeaders(Authentication authentication, TokenDto tokenDto, HttpServletResponse response) {
 
         // Header에 token과 만료시간 add
         response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
