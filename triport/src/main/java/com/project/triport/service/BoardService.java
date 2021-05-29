@@ -1,7 +1,6 @@
 package com.project.triport.service;
 
 import com.project.triport.entity.*;
-import com.project.triport.exception.ApiRequestException;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BoardImageInfoRepository;
 import com.project.triport.repository.BoardLikeRepository;

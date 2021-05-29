@@ -10,7 +10,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.project.triport.entity.Board;
 import com.project.triport.entity.BoardImageInfo;
 import com.project.triport.entity.Member;
-import com.project.triport.exception.ApiRequestException;
 import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.BoardImageInfoRepository;
 import com.project.triport.repository.BoardRepository;
