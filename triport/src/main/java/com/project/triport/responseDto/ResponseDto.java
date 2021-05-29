@@ -10,6 +10,7 @@ public class ResponseDto { // 10개씩 내보내야 함. page 처리 필요.
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object results;
     private String msg;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String subMsg;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean last; // 마지막 postId일 때 true, 이외에는 false
