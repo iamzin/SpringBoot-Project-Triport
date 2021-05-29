@@ -22,8 +22,8 @@ Triport 서비스는 여행이라는 테마 아래 영상 <b>릴스 서비스 (=
     - 안지수
     
 ### 📝 공통 문서
-- **ERD(Entity Relationship Diagram)** - <a href="" >상세보기 - WIKI 이동</a>  
-- **API(Application Programming Interface)** - <a href="" >상세보기 - WIKI 이동</a>
+- **ERD(Entity Relationship Diagram)** - <a href="https://github.com/iamzin/SpringBoot-Project-Triport/wiki/ERDiagram" >상세보기 - WIKI 이동</a>  
+- **API(Application Programming Interface)** - <a href="https://github.com/iamzin/SpringBoot-Project-Triport/wiki/API" >상세보기 - WIKI 이동</a>
 
 ### ⚙️ 개발 환경
 - **Server** : AWS EC2(Ubuntu 20.04 LTS)  
