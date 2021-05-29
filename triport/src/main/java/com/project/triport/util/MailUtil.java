@@ -23,9 +23,9 @@ public class MailUtil {
 
     // *임시 비밀번호 Mail 발송
     @Async
-    public String TempPwdMail(Member member) {
+    public void TempPwdMail(Member member) {
         String tmpPwd = generateTempPwd();
-        member.updatePassword(tmpPwd);
+        member.updatePassword(passwordEncoder.encode(tmpPwd));
 
         try {
             MailHandler mailHandler = tempPwdMail(member, tmpPwd);
@@ -33,8 +33,6 @@ public class MailUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return tmpPwd;
     }
 
     // 임시 비밀번호 안내 메일 내용

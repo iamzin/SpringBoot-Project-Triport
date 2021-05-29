@@ -35,19 +35,20 @@ public class MemberMailService {
     @Transactional
     public ResponseDto sendTempPwd(MemberMailRequestDto memberMailRequestDto) {
         boolean existsByEmail = memberRepository.existsByEmail(memberMailRequestDto.getEmail());
+        System.out.println("existsByEmail = " + existsByEmail);
         if (!existsByEmail) {
             return new ResponseDto(false, "가입되지 않은 이메일 입니다.", 400);
         }
 
-        Member member = getAuthMember();
-        
+        Member member = memberRepository.findByEmail(memberMailRequestDto.getEmail()).orElseThrow(
+                () -> new RuntimeException("해당 이메일로 가입한 사용자를 찾을 수 없습니다.")
+        );
+
         if (!(member.getKakaoId() == null)) {
             return new ResponseDto(false, "카카오 로그인 사용자는 비밀번호 찾기 이용이 불가합니다.🥲", 400);
         }
 
-        String tmpPwd = mailUtil.TempPwdMail(member);
-        member.updatePassword(tmpPwd);
-
+        mailUtil.TempPwdMail(member);
         return new ResponseDto(true, "회원님의 이메일로 임시 비밀번호를 발송하였습니다.", 200);
     }
 
@@ -67,15 +68,6 @@ public class MemberMailService {
 
         mailUtil.trilsPromoMail(likeNum, author, isEnabled);
         memberPromotion.updateTrilsPromo(author, true);
-    }
-
-    public Member getAuthMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || AnonymousAuthenticationToken.class.
-                isAssignableFrom(authentication.getClass())) {
-            return null;
-        }
-        return ((CustomUserDetails) authentication.getPrincipal()).getMember();
     }
 
 }
