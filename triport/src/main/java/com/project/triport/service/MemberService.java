@@ -43,7 +43,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public ResponseDto getMember() {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보가 없습니다."));
         MemberInformationResponseDto.of(member);
         return new ResponseDto(true, member, "로그인한 사용자의 프로필 조회에 성공하였습니다.", 200);
     }
@@ -51,7 +51,7 @@ public class MemberService {
     @Transactional
     public ResponseDto updateMemberNickname(MemberNicknameRequestDto memberNicknameRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
         );
 
         String nickname = memberNicknameRequestDto.getNickname();
@@ -72,7 +72,7 @@ public class MemberService {
     @Transactional
     public ResponseDto updateMemberPwd(MemberPwdRequestDto memberPwdRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
                 );
 
         String newPassword = memberPwdRequestDto.getNewPassword();
@@ -94,7 +94,7 @@ public class MemberService {
     @Transactional
     public ResponseDto updateMemberProfileImg(MemberImgRequestDto memberImgRequestDto) throws IOException {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다.")
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
                 );
 
         MultipartFile profileImgFile = memberImgRequestDto.getProfileImgFile();
@@ -134,7 +134,7 @@ public class MemberService {
     @Transactional
     public ResponseDto deleteMember() {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new RuntimeException("로그인한 사용자 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다."));
 
         // TODO: kakaoId가 있는 member인 경우 AuthKakaoService를 통해 Kakao 연결끊기 실행
 //        if (!(member.getKakaoId() == null)) {

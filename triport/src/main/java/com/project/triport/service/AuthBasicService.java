@@ -44,15 +44,15 @@ public class AuthBasicService {
     // 기본 회원가입
     @Transactional
     public ResponseDto signup(MemberInfoRequestDto memberInfoRequestDto) {
-        if (memberRepository.existsByEmail(memberInfoRequestDto.getEmail())) {
-            return new ResponseDto(false, "이미 가입되어 있는 email 입니다.", 400);
-        }
+        Member member = memberRepository.findByEmail(memberInfoRequestDto.getEmail()).orElseThrow(
+                () -> new IllegalArgumentException("이미 가입되어 있는 email 입니다.")
+        );
 
         if (memberRepository.existsByNickname(memberInfoRequestDto.getNickname())) {
             return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
         }
 
-        Member member = new Member().toMember(memberInfoRequestDto, passwordEncoder);
+        member.toMember(memberInfoRequestDto, passwordEncoder);
         of(memberRepository.save(member));
 
         // grade 관리를 위해 가입과 동시에 grade up table에 추가
@@ -71,7 +71,7 @@ public class AuthBasicService {
     public ResponseDto login(AuthLoginReqeustDto authLoginReqeustDto, HttpServletResponse response) {
         // 0. Member 존재 여부 확인
         memberRepository.findByEmail(authLoginReqeustDto.getEmail()).orElseThrow(
-                () -> new RuntimeException("해당하는 사용자를 찾을 수 없습니다.")
+                () -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다.")
         );
 
         // 1. Login 시 입력한 ID/PW를 기반으로 AuthenticationToken 생성
@@ -102,7 +102,7 @@ public class AuthBasicService {
     public ResponseDto reissue(TokenRequestDto tokenRequestDto, HttpServletResponse response) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+            throw new IllegalArgumentException("회원 정보가 유효하지 않습니다. 관리자에게 문의하세요.");
         }
 
         // 2. Access Token에서 Member ID 가져오기
@@ -110,11 +110,11 @@ public class AuthBasicService {
 
         // 3. Refresh Token 저장소에서 Member ID를 기반으로 Refresh Token 값 가져오기
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다.")); // TODO: front로 로그인이 필요함을 return
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보가 유효하지 않습니다. 관리자에게 문의하세요.")); // TODO: front로 로그인이 필요함을 return
 
         // 4. Refresh Token이 일치하는지 확인
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Token의 user 정보가 일치하지 않습나다."); // Refresh Token이 일치하지 않습니다.
+            throw new IllegalArgumentException("회원 정보가 일치하지 않습나다. 관리자에게 문의하세요."); // Refresh Token이 일치하지 않습니다.
         }
 
         // 5. new token 생성
@@ -130,10 +130,10 @@ public class AuthBasicService {
     public ResponseDto logout() {
         Member member = getAuthMember();
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(member.getEmail())
-                .orElseThrow( () -> new RuntimeException("이미 로그아웃 된 사용자 입니다.")
+                .orElseThrow( () -> new IllegalArgumentException("회원 정보가 유효하지 않습니다. 관리자에게 문의하세요.")
         );
         refreshTokenRepository.delete(refreshToken);
-        return new ResponseDto(true, "로그아웃 완료", 200);
+        return new ResponseDto(true, "로그아웃이 완료되었습니다.", 200);
     }
 
     // access, refresh token header에 담기
@@ -148,7 +148,7 @@ public class AuthBasicService {
         Member member = memberRepository.findMemberByEmail(authentication.getName());
 
         // ResponseBody에 memberInfo 담아서 return
-        return new ResponseDto(true, member, "사용자 token 발급을 성공하였습니다.", 200);
+        return new ResponseDto(true, member, "로그인 되었습니다.", 200);
     }
 
     public Member getAuthMember() {

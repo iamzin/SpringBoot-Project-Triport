@@ -25,8 +25,6 @@ import java.util.Objects;
 public class S3ProfileImageService {
 
     private AmazonS3 s3Client;
-    private final BoardImageInfoRepository boardImageInfoRepository;
-    private final BoardRepository boardRepository;
 
     // @Value 로 application.yml에 작성한  cloud.aws.credentials의 값들을 가져옴
     @Value("${cloud.aws.credentials.accessKey}")
