@@ -36,15 +36,14 @@ public class MemberMailService {
 
     // 임시 비밀번호 안내 메일 발송
     @Transactional
-    public ResponseDto sendTempPwd(MemberMailRequestDto memberMailRequestDto) {
+    public ResponseDto sendTempPwd(MemberMailRequestDto memberMailRequestDto) throws IOException, MessagingException {
         boolean existsByEmail = memberRepository.existsByEmail(memberMailRequestDto.getEmail());
-        System.out.println("existsByEmail = " + existsByEmail);
         if (!existsByEmail) {
             return new ResponseDto(false, "가입되지 않은 이메일 입니다.", 400);
         }
 
         Member member = memberRepository.findByEmail(memberMailRequestDto.getEmail()).orElseThrow(
-                () -> new RuntimeException("해당 이메일로 가입한 사용자를 찾을 수 없습니다.")
+                () -> new IllegalArgumentException("해당 이메일로 가입한 사용자를 찾을 수 없습니다.")
         );
 
         if (!(member.getKakaoId() == null)) {
@@ -60,11 +59,11 @@ public class MemberMailService {
 
     // Trils 좋아요 5개 + TRAVELER 인 member에게
     // Trilog 작성 promotion 메일 발송
-    // 여기서 Member는 '좋아요를 받은 작성자=author'인 점 주의
+    // 여기서 Member는 '좋아요를 받은 작성자=author'임
     @Transactional
     public void sendPromotion(Long postId) throws IOException, MessagingException {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new RuntimeException("해당하는 post가 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당하는 post가 존재하지 않습니다.")
         );
 
         Long likeNum = post.getLikeNum();
@@ -72,10 +71,12 @@ public class MemberMailService {
         MemberPromotion memberPromotion = memberPromotionRepository.findByMember(author);
         boolean isEnabled = memberPromotion.isTrilsFiveLikePromo();
 
-        mailUtil.trilsPromoMail(likeNum, author, isEnabled);
-        memberPromotion.updateTrilsPromo(author, true);
+        if (likeNum == 5 && !isEnabled) {
+            mailUtil.trilsPromoMail(author);
+            memberPromotion.updateTrilsPromo(author, true);
+        }
     }
-
+    
     // 임시 비밀번호 생성: 랜덤 영문자+숫자
     public String generateTempPwd() {
 
