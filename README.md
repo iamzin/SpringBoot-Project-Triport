@@ -36,10 +36,14 @@ Triport 서비스는 여행이라는 테마 아래 영상 <b>릴스 서비스 (=
 - SSL
 - CORS 
 - CSRF
-#### 로그인/회원가입 - <a href="" >상세보기 - WIKI 이동</a>
-- JWT 기반 일반 로그인
-- 카카오 소셜 로그인
-- 이메일기반 비밀번호 찾기
+#### 로그인 - <a href="https://github.com/iamzin/SpringBoot-Project-Triport/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EC%86%8C%EA%B0%9C(Login)" >상세보기 - WIKI 이동</a>
+- Spring Security + JWT 기반 일반 로그인
+- OAuth2 Kakao 소셜 로그인
+- 비밀번호 찾기 Mail 발송
+#### Member - <a href="https://github.com/iamzin/SpringBoot-Project-Triport/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EC%86%8C%EA%B0%9C(Member)" >상세보기 - WIKI 이동</a>
+- Profile 정보 변경
+- Trilog 작성 유도 Mail
+- Grade Up
 #### Trils (영상 릴스) - <a href="https://github.com/iamzin/SpringBoot-Project-Triport/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EC%86%8C%EA%B0%9C(Trils_%EC%98%81%EC%83%81)" >상세보기 - WIKI 이동</a>
 - 게시물, 좋아요, 해쉬태그 CRUD
 - 스트리밍 서비스 제공
