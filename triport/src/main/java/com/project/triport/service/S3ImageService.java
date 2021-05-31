@@ -82,7 +82,6 @@ public class S3ImageService {
 
 
         if (!limitImgSize(requestDto.getImageFile())) {
-//            throw new ApiRequestException("파일 용량 초과!!!");
             throw new IllegalArgumentException("파일 용량 초과!!!");
         }
 
@@ -125,7 +124,6 @@ public class S3ImageService {
         String fileName = "image/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(Objects.requireNonNull(imageFile.getOriginalFilename()));
 
         if (!limitImgSize(imageFile)) {
-//            throw new ApiRequestException("파일 용량 초과!!!");
             throw new IllegalArgumentException("파일 용량 초과!!!");
         }
 
@@ -157,15 +155,12 @@ public class S3ImageService {
 
             if (isExistObject) {
                 s3Client.deleteObject(bucket, "image/"+currentFilePath);
-//                return CompletableFuture.completedFuture("이미지 파일 삭제 완료");
             } else {
                 throw new IOException("해당 이미지 파일이 존재하지 않습니다.");
-//                return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
             }
 
         } else {
             throw new IOException("해당 이미지 파일이 존재하지 않습니다.");
-//            return CompletableFuture.completedFuture("해당 이미지 파일이 존재하지 않습니다.");
         }
     }
 
@@ -181,12 +176,6 @@ public class S3ImageService {
     public Boolean limitImgSize(MultipartFile file) {
         return file.getSize() <= 10000000; // 10MB 보다 작으면 true 반환
     }
-
-//    public Boolean restrictImgExtension(String fileName) {
-//        String extensionPart = fileName.substring(fileName.length() - 4).toLowerCase(Locale.ROOT);
-//        System.out.println("extensionPart = " + extensionPart);
-//        return extensionPart.equals(".png") || extensionPart.equals(".jpg");
-//    }
 
     public String deleteSpaceFromFileName(String fileName) {
         return fileName.replace(" ", "_");
