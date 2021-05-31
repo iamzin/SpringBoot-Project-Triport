@@ -32,7 +32,7 @@ Triport 서비스는 여행이라는 테마 아래 영상 <b>릴스 서비스 (=
 - **ETC** : AWS S3, AWS Cloudfront, AWS LoadBalancer, AWS ROUTE 53, AWS IAM  
 
 ### 📌 주요 기능
-#### Security - <a href="" >상세보기 - WIKI 이동</a>
+#### Security
 - SSL
 - CORS 
 - CSRF
