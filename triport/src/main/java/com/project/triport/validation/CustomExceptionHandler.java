@@ -5,6 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.mail.MessagingException;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 
@@ -46,5 +47,11 @@ public class CustomExceptionHandler {
     public ResponseDto handleApiRequestException(IOException exception) {
         exception.printStackTrace();
         return new ResponseDto(false, exception.getMessage(), 500);
+    }
+
+    @ExceptionHandler(value = { MessagingException.class })
+    public ResponseDto handleApiRequestException(MessagingException exception) {
+        exception.printStackTrace();
+        return new ResponseDto(false, exception.getMessage(), 400);
     }
 }

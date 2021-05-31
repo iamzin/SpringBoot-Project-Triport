@@ -51,20 +51,20 @@ public class AuthKakaoService {
         String kakaoNickname = userInfo.getNickname();
         String kakaoProfileImgUrl = userInfo.getProfileImgUrl();
 
-        // DB에 중복된 Kakao Id가 있는지 확인
+        // DB에 중복된 Kakao User가 있는지 확인
         Member kakaoUser = memberRepository.findByKakaoId(kakaoId)
                 .orElse(null);
 
         if (kakaoUser == null) {
             Member sameMember = null;
+            // kakaoEmail이 이미 가입된 Member인 경우, kakaoId만 업데이트 처리
             if (memberRepository.existsByEmail(kakaoEmail)) {
                 sameMember = memberRepository.findByEmail(kakaoEmail).orElseThrow(
-                        () -> new IllegalArgumentException("kakaoMember email을 찾을 수 없습니다.")
+                        () -> new IllegalArgumentException("해당 Kakao email로 회원을 찾을 수 없습니다.")
                 );
                 kakaoUser = sameMember;
                 kakaoUser.updateKakoId(kakaoId);
-            } else {
-                // Kakao 정보로 회원가입
+            } else { // kakaoEmail이 새로운 email일 경우, Kakao 정보로 회원가입 처리
                 // Member password == kakaoId + kakaoKey
                 String password = kakaoId + kakaoKey;
                 kakaoUser = new Member().KakaoLoginMember(kakaoId, kakaoEmail, password, kakaoNickname, kakaoProfileImgUrl);

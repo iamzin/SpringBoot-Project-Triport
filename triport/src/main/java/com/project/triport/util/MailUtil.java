@@ -22,21 +22,12 @@ public class MailUtil {
 
     // *임시 비밀번호 Mail 발송
     @Async
-    public void TempPwdMail(Member member, String tmpPwd) {
+    public void TempPwdMail(Member member, String tmpPwd) throws IOException, MessagingException {
 
-        try {
-            MailHandler mailHandler = tempPwdMail(member, tmpPwd);
-            mailHandler.send();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 임시 비밀번호 안내 메일 내용
-    public MailHandler tempPwdMail(Member member, String tmpPwd) throws MessagingException, IOException {
         MailHandler mailHandler = new MailHandler(mailSender);
         String nickname = member.getNickname();
 
+        // 임시 비밀번호 Mail 내용
         // 받는 사람
         mailHandler.setTo(member.getEmail());
         // 보내는 사람
@@ -57,12 +48,12 @@ public class MailUtil {
         // 이미지 삽입
         mailHandler.setInline("tripper_with_logo", "static/tripper_with_logo.png");
 
-        return mailHandler;
+        mailHandler.send();
     }
 
     // *Trils LikeNum 5개인 member에게 promotion 메일 발송
     @Async
-    public void trilsPromoMail(Long likeNum, Member member, boolean isEnabled) throws MessagingException, IOException {
+    public void trilsPromoMail(Member member) throws MessagingException, IOException {
         MailHandler mailHandler = new MailHandler(mailSender);
         String nickname = member.getNickname();
 
@@ -93,12 +84,6 @@ public class MailUtil {
         mailHandler.setInline("triport_logo", "static/triport_logo.png");
         mailHandler.setInline("trils_promo", "static/trils_promo.png");
 
-        if (likeNum == 5 && !isEnabled) {
-            try {
-                mailHandler.send();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        mailHandler.send();
     }
 }
