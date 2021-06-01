@@ -209,17 +209,11 @@ public class BoardService {
                 boardImageInfo.updateShouldBeDelete(true);
             }
 
-//            Optional<BoardImageInfo> firstBoardImageInfo = boardImageInfoRepository.findFirstByBoardOrderByIdAsc(board);
             String thumbNailUrl = "";
-
 
             if(requestDto.getImageUrlList().size() > 0) {
                 thumbNailUrl = requestDto.getImageUrlList().get(0).getImageFilePath();
             }
-
-//            if(firstBoardImageInfo.isPresent()) {
-//                thumbNailUrl = "https://" + S3ImageService.CLOUD_FRONT_DOMAIN_NAME + "/image/" + firstBoardImageInfo.get().getFilePath();
-//            }
 
             board.update(requestDto, thumbNailUrl);
 

@@ -8,5 +8,4 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class ImageRequestDto {
     private MultipartFile imageFile;
-    private String tempId;
 }

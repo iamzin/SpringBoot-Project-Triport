@@ -1,8 +1,6 @@
 package com.project.triport.entity;
 
 import com.project.triport.requestDto.BoardRequestDto;
-//import com.project.triport.requestDto.UserDto;
-import com.project.triport.service.S3ImageService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -71,12 +69,6 @@ public class Board extends Timestamped { //basicBoard에서 지도 주소 값 co
         this.description = boardRequestDto.getDescription();
         this.address = boardRequestDto.getAddress();
         this.thumbNailUrl = thumbNailUrl;
-
-//        if(boardRequestDto.getImageUrlList().size() > 0) {
-//            this.thumbNailUrl = boardRequestDto.getImageUrlList().get(0).getImageFilePath();
-//        } else {
-//            this.thumbNailUrl = "";
-//        }
     }
 
     public void updateCommentNum(int count) {
