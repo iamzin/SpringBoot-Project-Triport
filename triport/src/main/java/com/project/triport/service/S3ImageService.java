@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.mortennobel.imagescaling.AdvancedResizeOp;
+import com.mortennobel.imagescaling.MultiStepRescaleOp;
 import com.project.triport.entity.Board;
 import com.project.triport.entity.BoardImageInfo;
 import com.project.triport.entity.Member;
@@ -26,8 +28,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -80,7 +88,6 @@ public class S3ImageService {
         //fileName 변수는 S3 객체를 식별하는 key 값이고 이를 DB에 저장하는 것
         String fileName = "image/" + date.format(new Date()) + "-" + deleteSpaceFromFileName(Objects.requireNonNull(requestDto.getImageFile().getOriginalFilename()));
 
-
         if (!limitImgSize(requestDto.getImageFile())) {
             throw new IllegalArgumentException("파일 용량 초과!!!");
         }
@@ -89,6 +96,8 @@ public class S3ImageService {
         Member member = getAuthMember();
 
         try {
+            BufferedImage resizeImg = createResizeImg(requestDto.getImageFile(), 500, 700);
+            uploadImgToS3(resizeImg, fileName);
             // 파일 업로드
             s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
@@ -180,5 +189,40 @@ public class S3ImageService {
     public String deleteSpaceFromFileName(String fileName) {
         return fileName.replace(" ", "_");
     }
+
+    public BufferedImage createResizeImg(MultipartFile file, int width, int height) throws IOException {
+        InputStream in = file.getInputStream();
+
+        BufferedImage originalImage = ImageIO.read(in);
+
+        MultiStepRescaleOp rescale = new MultiStepRescaleOp(width, height);
+
+        rescale.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
+
+        BufferedImage thumbImage = rescale.filter(originalImage, null);
+
+        in.close();
+
+        return thumbImage;
+    }
+
+    public void uploadImgToS3(BufferedImage image, String fileName) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(image, "jpg", os);
+
+        byte[] bytes = os.toByteArray();
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+
+        s3Client.putObject(new PutObjectRequest(bucket, fileName, byteArrayInputStream, null)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+    }
+
+//    public ArrayList<Integer> parsingWidthAndHeight(String sizingLine) {
+//        String[] widthAndHeight = sizingLine.split("\\*");
+//        if(widthAndHeight.length == 2) {
+//
+//        }
+//    }
 
 }

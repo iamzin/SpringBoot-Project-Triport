@@ -61,7 +61,7 @@ public class BoardController {
 
     // 게시글 수정
     @PutMapping("/api/boards/{boardId}")
-    public ResponseDto updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto requestDto) throws IOException {
+    public ResponseDto updateBoard(@PathVariable Long boardId, @RequestBody @Valid BoardRequestDto requestDto) throws IOException {
         return boardService.updateBoard(boardId, requestDto);
     }
 

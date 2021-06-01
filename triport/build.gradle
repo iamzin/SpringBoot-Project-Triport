@@ -64,6 +64,9 @@ dependencies {
     implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+
+    // https://mvnrepository.com/artifact/com.mortennobel/java-image-scaling
+    implementation group: 'com.mortennobel', name: 'java-image-scaling', version: '0.8.6'
 }
 
 test {
