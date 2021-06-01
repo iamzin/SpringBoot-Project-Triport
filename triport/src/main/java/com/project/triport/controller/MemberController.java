@@ -1,6 +1,7 @@
 package com.project.triport.controller;
 
 import com.project.triport.requestDto.MemberImgRequestDto;
+import com.project.triport.requestDto.MemberProfileRequestDto;
 import com.project.triport.requestDto.MemberNicknameRequestDto;
 import com.project.triport.requestDto.MemberPwdRequestDto;
 import com.project.triport.responseDto.ResponseDto;
@@ -34,10 +35,15 @@ public class MemberController {
     public ResponseEntity<ResponseDto> updateMemberPwd(@RequestBody @Valid MemberPwdRequestDto memberPwdRequestDto) {
         return ResponseEntity.ok(memberService.updateMemberPwd(memberPwdRequestDto));
     }
-
+    
     @PostMapping("/profile/img")
     public ResponseEntity<ResponseDto> updateMemberProfileImg(@ModelAttribute MemberImgRequestDto memberImgRequestDto) throws IOException {
         return ResponseEntity.ok(memberService.updateMemberProfileImg(memberImgRequestDto));
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity<ResponseDto> updateMemberProfile(@RequestPart(required = false) @ModelAttribute MemberProfileRequestDto memberProfileRequestDto) throws IOException {
+        return ResponseEntity.ok(memberService.updateMemberProfile(memberProfileRequestDto));
     }
 
     @DeleteMapping("/profile")

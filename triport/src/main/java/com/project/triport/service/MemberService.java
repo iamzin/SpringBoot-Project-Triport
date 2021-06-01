@@ -3,6 +3,7 @@ package com.project.triport.service;
 import com.project.triport.entity.*;
 import com.project.triport.repository.*;
 import com.project.triport.requestDto.MemberImgRequestDto;
+import com.project.triport.requestDto.MemberProfileRequestDto;
 import com.project.triport.requestDto.MemberNicknameRequestDto;
 import com.project.triport.requestDto.MemberPwdRequestDto;
 import com.project.triport.responseDto.results.property.information.MemberInformationResponseDto;
@@ -70,6 +71,48 @@ public class MemberService {
     }
 
     @Transactional
+    public ResponseDto updateMemberProfileImg(MemberImgRequestDto memberImgRequestDto) throws IOException {
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
+                );
+
+        MultipartFile profileImgFile = memberImgRequestDto.getProfileImgFile();
+        String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
+        member.updateMemberProfileImg(fileUrl);
+
+        return new ResponseDto(true, "프로필 이미지 수정이 완료되었습니다.", 200);
+    }
+
+    @Transactional
+    public ResponseDto updateMemberProfile(MemberProfileRequestDto memberProfileRequestDto) throws IOException {
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
+                );
+
+        if (memberProfileRequestDto.getProfileImgFile().isEmpty()) {
+            String nickname = memberProfileRequestDto.getNickname();
+            if (memberRepository.existsByNickname(nickname)) {
+                return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
+            }
+            member.updateMemberNickname(nickname);
+            return new ResponseDto(true, "프로필 이미지 수정이 완료되었습니다.", 200);
+        } else if (memberProfileRequestDto.getNickname().isEmpty()) {
+            MultipartFile profileImgFile = memberProfileRequestDto.getProfileImgFile();
+            String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
+            member.updateMemberProfileImg(fileUrl);
+        }
+
+        MultipartFile profileImgFile = memberProfileRequestDto.getProfileImgFile();
+        String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
+        String nickname = memberProfileRequestDto.getNickname();
+
+        member.updateMemberProfile(fileUrl, nickname);
+
+
+        return new ResponseDto(true, "프로필 이미지 수정이 완료되었습니다.", 200);
+    }
+
+    @Transactional
     public ResponseDto updateMemberPwd(MemberPwdRequestDto memberPwdRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
@@ -89,19 +132,6 @@ public class MemberService {
         String encodeNewPassword = passwordEncoder.encode(newPassword);
         member.updatePassword(encodeNewPassword);
         return new ResponseDto(true, "비밀번호 변경이 완료되었습니다.", 200);
-    }
-
-    @Transactional
-    public ResponseDto updateMemberProfileImg(MemberImgRequestDto memberImgRequestDto) throws IOException {
-        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
-                .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
-                );
-
-        MultipartFile profileImgFile = memberImgRequestDto.getProfileImgFile();
-        String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
-        member.updateMemberProfileImg(fileUrl);
-
-        return new ResponseDto(true, "프로필 이미지 수정이 완료되었습니다.", fileUrl, 200);
     }
 
     // member grade up

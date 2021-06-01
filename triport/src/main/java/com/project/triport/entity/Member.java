@@ -72,6 +72,11 @@ public class Member extends Timestamped {
         this.kakaoId = kakaoId;
     }
 
+    public void updateMemberProfile(String fileUrl, String nickname) {
+        this.profileImgUrl = fileUrl;
+        this.nickname = nickname;
+    }
+
     public void updateMemberProfileImg(String fileUrl) {
         this.profileImgUrl = fileUrl;
     }
