@@ -91,6 +91,9 @@ public class MemberService {
 
         if (memberProfileRequestDto.getProfileImgFile().isEmpty()) {
             String nickname = memberProfileRequestDto.getNickname();
+            if (nickname.length() < 3) {
+                return new ResponseDto(false, "닉네임은 3자리 이상 12자리 이하로 입력해 주세요.", 400);
+            }
             if (memberRepository.existsByNickname(nickname)) {
                 return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
             }
@@ -106,9 +109,11 @@ public class MemberService {
         String fileUrl = s3ProfileImageService.getFileUrl(profileImgFile);
         String nickname = memberProfileRequestDto.getNickname();
 
+        if (nickname.length() < 3) {
+            return new ResponseDto(false, "닉네임은 3자리 이상 12자리 이하로 입력해 주세요.", 400);
+        }
+
         member.updateMemberProfile(fileUrl, nickname);
-
-
         return new ResponseDto(true, "프로필 이미지 수정이 완료되었습니다.", 200);
     }
 

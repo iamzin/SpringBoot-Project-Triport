@@ -42,7 +42,7 @@ public class MemberController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<ResponseDto> updateMemberProfile(@RequestPart(required = false) @ModelAttribute MemberProfileRequestDto memberProfileRequestDto) throws IOException {
+    public ResponseEntity<ResponseDto> updateMemberProfile(@RequestPart(required = false) @ModelAttribute @Valid MemberProfileRequestDto memberProfileRequestDto) throws IOException {
         return ResponseEntity.ok(memberService.updateMemberProfile(memberProfileRequestDto));
     }
 
