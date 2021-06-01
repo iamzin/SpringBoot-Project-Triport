@@ -35,7 +35,7 @@ public class MemberController {
     public ResponseEntity<ResponseDto> updateMemberPwd(@RequestBody @Valid MemberPwdRequestDto memberPwdRequestDto) {
         return ResponseEntity.ok(memberService.updateMemberPwd(memberPwdRequestDto));
     }
-    
+
     @PostMapping("/profile/img")
     public ResponseEntity<ResponseDto> updateMemberProfileImg(@ModelAttribute MemberImgRequestDto memberImgRequestDto) throws IOException {
         return ResponseEntity.ok(memberService.updateMemberProfileImg(memberImgRequestDto));
