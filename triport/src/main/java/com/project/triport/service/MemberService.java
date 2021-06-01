@@ -52,7 +52,7 @@ public class MemberService {
     public ResponseDto updateMemberNickname(MemberNicknameRequestDto memberNicknameRequestDto) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail())
                 .orElseThrow(() -> new IllegalArgumentException("로그인한 사용자 정보를 찾을 수 없습니다.")
-        );
+                );
 
         String nickname = memberNicknameRequestDto.getNickname();
         // 변경사항 없을 때
@@ -62,7 +62,7 @@ public class MemberService {
         // 변경사항 있을 때
         // 중복된 닉네임일 때
         else if (memberRepository.existsByNickname(nickname)) {
-                return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
+            return new ResponseDto(false, "이미 존재하는 nickname 입니다.", 400);
         }
 
         member.updateMemberNickname(nickname);

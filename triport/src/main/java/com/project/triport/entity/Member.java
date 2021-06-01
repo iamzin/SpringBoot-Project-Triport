@@ -76,11 +76,6 @@ public class Member extends Timestamped {
         this.profileImgUrl = fileUrl;
     }
 
-    public void updateMemberProfileInfo(String nickname, String newPassword) {
-        this.nickname = nickname;
-        this.password = newPassword;
-    }
-
     public void updateMemberNickname(String nickname) {
         this.nickname = nickname;
     }

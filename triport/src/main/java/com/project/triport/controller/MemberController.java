@@ -1,7 +1,5 @@
 package com.project.triport.controller;
 
-import com.project.triport.entity.Board;
-import com.project.triport.entity.Member;
 import com.project.triport.requestDto.MemberImgRequestDto;
 import com.project.triport.requestDto.MemberNicknameRequestDto;
 import com.project.triport.requestDto.MemberPwdRequestDto;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

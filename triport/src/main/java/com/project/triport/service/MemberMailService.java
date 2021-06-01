@@ -3,7 +3,6 @@ package com.project.triport.service;
 import com.project.triport.entity.Member;
 import com.project.triport.entity.MemberPromotion;
 import com.project.triport.entity.Post;
-import com.project.triport.jwt.CustomUserDetails;
 import com.project.triport.repository.MemberPromotionRepository;
 import com.project.triport.repository.MemberRepository;
 import com.project.triport.repository.PostRepository;
@@ -11,20 +10,15 @@ import com.project.triport.requestDto.MemberMailRequestDto;
 import com.project.triport.responseDto.ResponseDto;
 import com.project.triport.util.MailUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
-//@AllArgsConstructor
 @RequiredArgsConstructor
 public class MemberMailService {
 
@@ -76,7 +70,7 @@ public class MemberMailService {
             memberPromotion.updateTrilsPromo(author, true);
         }
     }
-    
+
     // 임시 비밀번호 생성: 랜덤 영문자+숫자
     public String generateTempPwd() {
 
