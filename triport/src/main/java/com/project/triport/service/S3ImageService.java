@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -92,15 +93,17 @@ public class S3ImageService {
             throw new IllegalArgumentException("파일 용량 초과!!!");
         }
 
+        int[] widthAndHeight = parsingWidthAndHeight(requestDto.getSizingLine());
+
         // "member": 현재 로그인한 유저 정보
         Member member = getAuthMember();
 
         try {
-            BufferedImage resizeImg = createResizeImg(requestDto.getImageFile(), 500, 700);
+            BufferedImage resizeImg = createResizeImg(requestDto.getImageFile(), widthAndHeight[0], widthAndHeight[1]);
             uploadImgToS3(resizeImg, fileName);
             // 파일 업로드
-            s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+//            s3Client.putObject(new PutObjectRequest(bucket, fileName, requestDto.getImageFile().getInputStream(), null)
+//                    .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch(IOException e) {
             throw new IOException("이미지 파일 저장 실패!!!");
         }
@@ -218,11 +221,36 @@ public class S3ImageService {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-//    public ArrayList<Integer> parsingWidthAndHeight(String sizingLine) {
-//        String[] widthAndHeight = sizingLine.split("\\*");
-//        if(widthAndHeight.length == 2) {
-//
-//        }
-//    }
+    public int[] parsingWidthAndHeight(String sizingLine) {
+        int[] imageSize = new int[2];
+        String[] widthAndHeight = sizingLine.split("\\*");
+        // *을 기준으로 파싱했을때 결과가 2개인가
+        // 나온 결과가 자연수인가
+        String pattern = "^[1-9][0-9]*$";
+        // 최대 사이즈 제한 필요 (width=1280px,height=1280)
+        if(widthAndHeight.length == 2) {
+            boolean widthRegex = Pattern.matches(pattern, widthAndHeight[0]);
+            boolean heightRegex = Pattern.matches(pattern, widthAndHeight[1]);
+
+            if (widthRegex && heightRegex) {
+                int width = Integer.parseInt(widthAndHeight[0]);
+                int height = Integer.parseInt(widthAndHeight[1]);
+
+                if(width <= 1280 && height <= 1280) {
+                    imageSize[0] = width;
+                    imageSize[1] = height;
+                    return imageSize;
+                } else {
+                    throw new IllegalArgumentException("이미지 크기 조절 범위를 넘었습니다.");
+                }
+
+            } else {
+                throw new IllegalArgumentException("올바른 이미지 크기를 입력해주세요.");
+            }
+
+        } else {
+            throw new IllegalArgumentException("올바른 이미지 크기를 입력해주세요.");
+        }
+    }
 
 }
