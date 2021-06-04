@@ -62,12 +62,16 @@ public class MemberMailService {
 
         Long likeNum = post.getLikeNum();
         Member author = post.getMember();
-        MemberPromotion memberPromotion = memberPromotionRepository.findByMember(author);
-        boolean isEnabled = memberPromotion.isTrilsFiveLikePromo();
 
-        if (likeNum == 5 && !isEnabled) {
-            mailUtil.trilsPromoMail(author);
-            memberPromotion.updateTrilsPromo(author, true);
+        // 좋아요가 5개인 경우에만 MemberPromotion에서 조회하도록 if문 분리
+        // 매일 자정 발송된 경우(trils_promo == true) history가 삭제되므로 조회되지 않기 때문
+        if (likeNum == 5) {
+            MemberPromotion memberPromotion = memberPromotionRepository.findByMember(author);
+            boolean isEnabled = memberPromotion.isTrilsFiveLikePromo();
+            if (!isEnabled) {
+                mailUtil.trilsPromoMail(author);
+                memberPromotion.updateTrilsPromo(author, true);
+            }
         }
     }
 
