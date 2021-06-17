@@ -35,7 +35,6 @@ Triport 서비스는 여행이라는 테마 아래 영상 <b>릴스 서비스 (=
 #### Security
 - SSL
 - CORS 
-- CSRF
 #### 로그인 - <a href="https://github.com/iamzin/SpringBoot-Project-Triport/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EC%86%8C%EA%B0%9C(Login)" >상세보기 - WIKI 이동</a>
 - Spring Security + JWT 기반 일반 로그인
 - OAuth2 Kakao 소셜 로그인
